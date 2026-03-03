@@ -1,7 +1,7 @@
 <!-- ![walker](walker.gif) -->
 
 
-# Frontend Engineer
+## Resume
 
 Contact: [Linkedin](https://www.linkedin.com/in/jonatan-verstraete-2151b3252/)
 
@@ -10,7 +10,7 @@ Contact: [Linkedin](https://www.linkedin.com/in/jonatan-verstraete-2151b3252/)
 Curiosity brought me to programming. Frustration with bad tooling got me into automation. About 3 years in — strong on React and TypeScript, comfortable across the frontend stack, and genuinely looking for a team where I can grow into more ownership.
 
 
-## Experience
+### Experience
 
 **Frontend Engineer — Bricsys (Hexagon)**
 *2023 — 2026*
@@ -20,7 +20,7 @@ React and Vue work in an enterprise SaaS product. Contributed to the CAD viewer 
 React (TSX) · Vue · Module Federation · TanStack · Playwright · CI/CD
 
 
-## Education
+### Education
 
 **Bachelor — Artevelde University of Applied Sciences**
 *2017 — 2022*
@@ -28,7 +28,7 @@ React (TSX) · Vue · Module Federation · TanStack · Playwright · CI/CD
 Digital media, focusing on full development lifecycle and human-centered design.
 
 
-## Projects
+### Projects
 
 **Timesheet Automation** — CLI that pulls PR data to fill in timesheets automatically. Built out of frustration with a slow internal tool.
 
@@ -39,7 +39,7 @@ Digital media, focusing on full development lifecycle and human-centered design.
 **DoubleDash Editor** — Chrome DevTools sidebar for fuzzy searching CSS variables across sessions.
 
 
-## Skills
+### Skills
 
 TypeScript · React · Vue · Python · Bash · TanStack · Vite · Playwright · Zustand · Tailwind · Node
 
