@@ -1,7 +1,7 @@
 <!-- ![walker](walker.gif) -->
 
 
-## Resume
+# Resume
 
 Contact: [Linkedin](https://www.linkedin.com/in/jonatan-verstraete-2151b3252/)
 
@@ -10,7 +10,7 @@ Contact: [Linkedin](https://www.linkedin.com/in/jonatan-verstraete-2151b3252/)
 Curiosity brought me to programming. Frustration with bad tooling got me into automation. About 3 years in — strong on React and TypeScript, comfortable across the frontend stack, and genuinely looking for a team where I can grow into more ownership.
 
 
-### Experience
+## Experience
 
 **Frontend Engineer — Bricsys (Hexagon)**
 *2023 — 2026*
@@ -20,28 +20,37 @@ React and Vue work in an enterprise SaaS product. Contributed to the CAD viewer 
 React (TSX) · Vue · Module Federation · TanStack · Playwright · CI/CD
 
 
-### Education
+## Education
 
 **Bachelor — Artevelde University of Applied Sciences**
 *2017 — 2022*
 
-Digital media, focusing on full development lifecycle and human-centered design.
+Digital media, focusing on full development lifecycle and human-centered design. [link thesis](https://github.com/jayf0x/bachelor-thesis).
 
 
-### Projects
+## Projects
 
-**Timesheet Automation** — CLI that pulls PR data to fill in timesheets automatically. Built out of frustration with a slow internal tool.
+**[Podcast Tooling](https://github.com/jayf0x/pod-tooling)** — Transcribes, summarizes, and social clip generation using Python, WhisperX and Ollama.
 
-**Podcast Tooling** — Transcribes, summarizes, and formats social clips using WhisperX and Ollama. No timeline editing required.
+**[Audio Bonanza](https://github.com/jayf0x/audio-bonanza)** — Chrome extension for per-tab audio control with an optional Flask SSE backend for LAN music control.
 
-**Audio Bonanza** — Chrome extension for per-tab audio control with an optional Flask SSE backend for remote triggering.
+**[DoubleDash Editor](https://github.com/jayf0x/doubledash-css-var-editor)** — Chrome DevTools for live CSS var editing with general better UX.
 
-**DoubleDash Editor** — Chrome DevTools sidebar for fuzzy searching CSS variables across sessions.
+**Timesheet Automation (IP tool)** — CLI that pulls PR data to fill in timesheets automatically. Built out of frustration with a slow internal tool.
+
+**Simple RAG chatbot** - Chatbot for assistance with Article bis 1.
+
+**[Billit](https://github.com/verstraete-jonatan/billit)** - Basic invoicing generator [app (discontinued)](https://verstraete-jonatan.github.io/) with QR code.
 
 
-### Skills
+
+## Skills
 
 TypeScript · React · Vue · Python · Bash · TanStack · Vite · Playwright · Zustand · Tailwind · Node
+
+Experience:
+Statmic · Wordpress · Svelt · Jquery · Sentry
+
 
 
 > Recommendation letter(s) on request.
