@@ -17,7 +17,6 @@ TEMPLATE_PATH = root / "gen/template.readme.j2"
 
 PROMPT = """
 Extract resume data from HTML into the following JSON format. 
-Ensure skills are categorized. Extract links from projects. 
 Be concise and accurate and keep original content.
 
 JSON Structure:
@@ -39,6 +38,8 @@ JSON Structure:
 Rules:
 - Output ONLY valid **JSON data**.
 - No markdown formatting in the response.
+- Ensure skills are categorized.
+- Extract links (a) from a project and add as `link`. Leave empty if there is no link.
 
 HTML:
 {html_content}
@@ -48,6 +49,13 @@ def get_clean_html():
     if not HTML_PATH.exists():
         raise FileNotFoundError(f"Oops. Missing {HTML_PATH}")
     soup = BeautifulSoup(HTML_PATH.read_text(encoding="utf-8"), "html.parser")
+    
+    # make sure links are includes in text
+    for a in soup.find_all("a"):
+        text = a.get_text(strip=True)
+        href = a.get("href", "")
+        a.replace_with(f"{text} ({href})")
+        
     return soup.find("body").get_text(strip=False)
 
 def main():
