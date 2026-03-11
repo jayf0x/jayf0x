@@ -17,7 +17,8 @@ TEMPLATE_PATH = root / "gen/template.readme.j2"
 
 PROMPT = """
 Extract resume data from HTML into the following JSON format. 
-Ensure skills are categorized. Be concise and accurate.
+Ensure skills are categorized. Extract links from projects. 
+Be concise and accurate and keep original content.
 
 JSON Structure:
 {{
@@ -38,7 +39,6 @@ JSON Structure:
 Rules:
 - Output ONLY valid **JSON data**.
 - No markdown formatting in the response.
-- If a link is missing, use "#".
 
 HTML:
 {html_content}

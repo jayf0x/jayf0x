@@ -8,10 +8,10 @@
 
 ### Experience
 **Frontend Engineer** @ Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
-- Built real-time projection of 3D annotations into 2D space for browser-based BIM viewer using React and CSS transforms across shared monorepo functionality.
-- Helped convert Vue 2 to React as part of a migration using Module Federation, working on converting apps and components within the team lead's architecture.
-- Added form validation to the internal Bricsys component library using TanStack Form for use by other teams.
-- Performed daily tasks including feature design, Azure releases, cross-team ideation, documentation, component performance measuring, and i18n.
+- Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).
+- Helped convert Vue 2 to React as part of a migration using Module Federation. Main architecture was set up by the team lead while I worked on converting apps and components within that setup.
+- Added form validation to the internal Bricsys component library using TanStack Form, intended for use by other teams.
+- Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
 
 
 
@@ -20,28 +20,28 @@
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
-<a href="#"><b>Pure-Paste</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters from copied URLs using merged rules from uBlock Origin and ClearURLs. Fully local and private.</p>
+<a href=""><b>Pure-Paste</b></a>
+<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs. Fully local and private.</p>
 </td>
 <td width="50%" valign="top">
-<a href="#"><b>Audio Bonanza</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">Chrome extension for per-tab audio control (speed, reverb, bass) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering.</p>
+<a href=""><b>Audio Bonanza</b></a>
+<p style="font-size: 0.85em; margin-top: 4px;">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device. Free & local.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
-<a href="#"><b>DoubleDash Editor</b></a>
+<a href=""><b>DoubleDash Editor</b></a>
 <p style="font-size: 0.85em; margin-top: 4px;">Chrome DevTools sidebar with fuzzy-search and live edit CSS vars with better workflow than native browser tooling.</p>
 </td>
 <td width="50%" valign="top">
-<a href="#"><b>Podcast Tooling</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">Local pipeline using WhisperX and Ollama to transcribe audio, generate summaries, and output ready-to-post social clips.</p>
+<a href=""><b>Podcast Tooling</b></a>
+<p style="font-size: 0.85em; margin-top: 4px;">To assist with editing our podcast, I created a local pipeline using WhisperX and Ollama to transcribes audio, generates summaries, and outputs ready-to-post social clips.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
-<a href="#"><b>Timesheet Automation</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app.</p>
+<a href=""><b>Timesheet Automation</b></a>
+<p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
 </td>
 <td width="50%" valign="top">
-<a href="#"><b>Ideaditor</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">Lightweight Markdown knowledge base bundled with Tauri and Bun for faster ideation, compatible with Obsidian.</p>
+<a href=""><b>Ideaditor</b></a>
+<p style="font-size: 0.85em; margin-top: 4px;">Lightweight Markdown knowledge base bundled with Tauri, Bun for faster ideation compatible with Obsidian.</p>
 </td></tr>
 </table>
 
@@ -59,7 +59,7 @@
 </p> -->
 
 <p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=jayf0x&theme=github&hide_border=true&hide_title=true&area=true&bg_color=transparent" alt="contribution graph" height="180" />
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=jayf0x&theme=github&hide_border=true&hide_title=true&area=true&bg_color=transparent" alt="contribution graph" width="80%" />
 </p>
 
 <p align="center">
