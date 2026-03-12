@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+code  .git/hooks/pre-commit
+
+---
+
+python3 ./scripts/precommit.py
+
+git add ./gen/__init__.py
+git add ./README.md
+
+"""
+
+
 import re
 from pathlib import Path
 

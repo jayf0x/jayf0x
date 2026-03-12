@@ -16,7 +16,6 @@
 
 
 ---
-<!--
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
@@ -36,7 +35,6 @@
 <p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
 </td></tr>
 </table>
----
 
 -->
 
@@ -54,4 +52,4 @@
   <strong>
     <a href="./assets/Jonatan Verstraete - resume 2026.pdf">Download PDF</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.14' />
+</p><br><input type='hidden' value='1.19.15' />
