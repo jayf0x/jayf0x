@@ -10,18 +10,18 @@
 **Frontend Engineer** @ Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
 - Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).
 - Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).
-- Strategic support across team teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
+- Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
 
 
 
 ---
-
+<!--
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
 <a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
-<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs. Fully local and private.</p>
+<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
 </td>
 <td width="50%" valign="top">
 <a href="https://github.com/jayf0x/audio-bonanza"><b>Audio Bonanza</b></a>
@@ -36,20 +36,16 @@
 <p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
 </td></tr>
 </table>
-
 ---
 
-### Tech Stack
+-->
+
+### Tech Stack  <img src="./assets/clippy.gif" width="20px" />
 **Core:** React • TypeScript • JavaScript (ESNext) • HTML • CSS/SCSS
 
 **Libraries & Tools:** TanStack (Query, Form, Router) • Zustand • Tailwind • Node • Canvas API • p5.js • Keycloakify
 
 ---
-
-<!-- <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shankerram3&layout=compact&theme=radical&hide_border=true&langs_count=8" height="180" />
-</p> -->
-
 <p align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=jayf0x&theme=github&hide_border=true&hide_title=true&area=true&bg_color=transparent" alt="contribution graph" width="80%" />
 </p>

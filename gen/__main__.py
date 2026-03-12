@@ -3,3 +3,4 @@ from gen.html2pdf import main as updatePDF
 
 updateReadme()
 updatePDF()
+print('Done!')

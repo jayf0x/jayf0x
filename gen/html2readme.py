@@ -108,7 +108,7 @@ def main():
     rendered_md = template.render(**data)
 
     OUTPUT_MD.write_text(rendered_md, encoding="utf-8")
-    print(f"Done: {OUTPUT_MD.resolve()}")
+    print('Updated readme.')
 
 if __name__ == "__main__":
     main()

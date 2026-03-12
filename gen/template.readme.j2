@@ -16,7 +16,7 @@
 {% endfor %}
 
 ---
-
+<!--
 ### Projects
 <table width="100%">
 {%- for project in projects -%}
@@ -28,20 +28,16 @@
 {%- if loop.index0 % 2 == 1 or loop.last %}</tr>{% endif %}
 {%- endfor %}
 </table>
-
 ---
 
-### Tech Stack
+-->
+
+### Tech Stack  <img src="./assets/clippy.gif" width="20px" />
 **Core:** {% for skill in skills.core %}{{ skill }}{% if not loop.last %} • {% endif %}{% endfor %}
 
 **Libraries & Tools:** {% for skill in skills.libraries %}{{ skill }}{% if not loop.last %} • {% endif %}{% endfor %}
 
 ---
-
-<!-- <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shankerram3&layout=compact&theme=radical&hide_border=true&langs_count=8" height="180" />
-</p> -->
-
 <p align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=jayf0x&theme=github&hide_border=true&hide_title=true&area=true&bg_color=transparent" alt="contribution graph" width="80%" />
 </p>
