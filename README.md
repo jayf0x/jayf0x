@@ -54,4 +54,4 @@
   <strong>
     <a href="./assets/Jonatan Verstraete - resume 2026.pdf">Download PDF</a> ✨
   </strong>
-</p>
+</p><br><input type='hidden' value='1.19.14' />
