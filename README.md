@@ -55,6 +55,6 @@
 
 <p align="center">
   <strong>
-    <a href="./assets/Jonatan-Verstraete-resume-2026.pdf">Download PDF</a> ✨
+    <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download PDF</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.17' />
+</p><br><input type='hidden' value='1.19.18' />
