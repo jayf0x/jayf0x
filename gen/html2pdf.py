@@ -2,7 +2,7 @@ from weasyprint import HTML
 from pathlib import Path
 
 html_file = Path("./assets/resume.html")
-pdf_file = Path("./assets/Jonatan Verstraete - resume 2026.pdf")
+pdf_file = Path("./assets/Jonatan-Verstraete-resume-2026.pdf")
 
 
 def main():

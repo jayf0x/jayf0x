@@ -1,6 +1,6 @@
 
 
-![matrix-walker-gif](../assets/walker.gif)
+![matrix-walker-gif](../assets/matrix-walker.gif.gif)
 
 <!-- 
 
