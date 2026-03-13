@@ -19,19 +19,24 @@
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
-<a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
+  <a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
+
 <p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
 </td>
 <td width="50%" valign="top">
-<a href="https://github.com/jayf0x/audio-bonanza"><b>Audio Bonanza</b></a>
+  <a href="https://github.com/jayf0x/audio-bonanza"><b>Audio Bonanza</b></a>
+
 <p style="font-size: 0.85em; margin-top: 4px;">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
-<a href="https://github.com/jayf0x/doubledash-css-var-editor"><b>DoubleDash Editor</b></a>
+  <a href="https://github.com/jayf0x/doubledash-css-var-editor"><b>DoubleDash Editor</b></a>
+
 <p style="font-size: 0.85em; margin-top: 4px;">Chrome DevTools sidebar with fuzzy-search and live edit CSS vars with better workflow than native browser tooling.</p>
 </td>
 <td width="50%" valign="top">
-<a href=""><b>Timesheet Automation</b></a>
+  <b>Timesheet Automation</b>
+
+
 <p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
 </td></tr>
 </table>
@@ -52,4 +57,4 @@
   <strong>
     <a href="./assets/Jonatan Verstraete - resume 2026.pdf">Download PDF</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.15' />
+</p><br><input type='hidden' value='1.19.16' />

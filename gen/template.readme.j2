@@ -21,7 +21,12 @@
 {%- for project in projects -%}
 {%- if loop.index0 % 2 == 0 %}<tr>{% endif %}
 <td width="50%" valign="top">
-<a href="{{ project.link }}"><b>{{ project.name }}</b></a>
+{%- if project.link %}
+  <a href="{{ project.link }}"><b>{{ project.name }}</b></a>
+{%- else %}
+  <b>{{ project.name }}</b>
+{% endif %}
+
 <p style="font-size: 0.85em; margin-top: 4px;">{{ project.description }}</p>
 </td>
 {%- if loop.index0 % 2 == 1 or loop.last %}</tr>{% endif %}
