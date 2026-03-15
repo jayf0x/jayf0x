@@ -1,6 +1,6 @@
 <h1 align="center">Hey, I'm Jonatan <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25"></h1>
 <p align="center">
-  <b>Frontend Engineer — React & TypeScript</b> &nbsp;•&nbsp; Ghent, Belgium<br/>
+  <b>Frontend Engineer</b> &nbsp;•&nbsp; Ghent, Belgium<br/>
   <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
 </p>
 
@@ -41,8 +41,6 @@
 </td></tr>
 </table>
 
--->
-
 ### Tech Stack  <img src="./assets/clippy.gif" width="20px" />
 **Core:** React • TypeScript • JavaScript (ESNext) • HTML • CSS/SCSS
 
@@ -57,4 +55,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.20' />
+</p><br><input type='hidden' value='1.19.21' />
