@@ -41,7 +41,7 @@
     }
 
     html {
-      background: #e8e6e1;
+      background: #363636;
     }
 
 
@@ -81,12 +81,13 @@
     }
 
     h1 {
-      font-family: var(--serif);
+      font-family: var(--sans);
+      font-family: Ubuntu;
       font-size: 3rem;
       font-weight: 700;
       letter-spacing: -0.5px;
       line-height: 1.1;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
       text-align: center;
     }
 
@@ -96,7 +97,7 @@
       font-weight: 400;
       font-style: italic;
       font-family: var(--serif);
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       text-align: center;
 
     }
@@ -278,7 +279,7 @@
 
   <header>
     <h1>Jonatan Verstraete</h1>
-    <p class="tagline">Frontend Engineer</p>
+    <!-- <p class="tagline">Frontend Engineer</p> -->
     <div class="contact-row">
       <div>Ghent, Belgium</div>
     </div>
@@ -328,15 +329,26 @@
   <section>
     <h2>Project Highlights</h2>
 
+    <!-- <div class="project">
+      <span class="project-name"><a href="https://github.com/jayf0x/audio-bonanza">Audio Bonanza</a></span>
+      <span class="project-desc">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device.</span>
+    </div> -->
+
+
+    <div class="project">
+      <span class="project-name"><a href="https://github.com/jayf0x/narronymous">Narronymous</a></span>
+      <span class="project-desc">
+        Local macOS app that anonymizes sensitive documents while keeping the narrative intact. 
+        Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, 
+        so anonymized text stays coherent for LLM analysis or human review.
+      </span>
+    </div>
+
+
     <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/Pure-Paste">Pure-Paste</a></span>
       <span class="project-desc">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any
         copied URL. Uses merged rules from uBlock Origin and ClearURLs.</span>
-    </div>
-
-    <div class="project">
-      <span class="project-name"><a href="https://github.com/jayf0x/audio-bonanza">Audio Bonanza</a></span>
-      <span class="project-desc">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device.</span>
     </div>
 
     <div class="project">

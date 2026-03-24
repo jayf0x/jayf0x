@@ -1,6 +1,6 @@
 <h1 align="center">Hey, I'm Jonatan <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25"></h1>
 <p align="center">
-  <b>Frontend Engineer</b> &nbsp;•&nbsp; Ghent, Belgium<br/>
+  <b></b> &nbsp;•&nbsp; Ghent, Belgium<br/>
   <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
 </p>
 
@@ -19,14 +19,14 @@
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
+  <a href="https://github.com/jayf0x/narronymous"><b>Narronymous</b></a>
+
+<p style="font-size: 0.85em; margin-top: 4px;">Local macOS app that anonymizes sensitive documents while keeping the narrative intact. Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, so anonymized text stays coherent for LLM analysis or human review.</p>
+</td>
+<td width="50%" valign="top">
   <a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
 
 <p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
-</td>
-<td width="50%" valign="top">
-  <a href="https://github.com/jayf0x/audio-bonanza"><b>Audio Bonanza</b></a>
-
-<p style="font-size: 0.85em; margin-top: 4px;">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
   <a href="https://github.com/jayf0x/doubledash-css-var-editor"><b>DoubleDash Editor</b></a>
@@ -55,4 +55,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.21' /><br><input type='hidden' value='1.19.22' />
+</p><br><input type='hidden' value='1.19.23' />
