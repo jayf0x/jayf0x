@@ -12,6 +12,10 @@
 - Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).
 - Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
+<br/>
+**Podcast Tooling & Production** @  (Jan 2022 - present)
+- Maintained website, social media and handled editing workflows.
+- Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.
 
 
 
@@ -50,4 +54,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.27' /><br><input type='hidden' value='1.19.28' />
+</p><br><input type='hidden' value='1.19.29' />
