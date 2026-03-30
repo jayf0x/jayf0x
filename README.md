@@ -19,7 +19,7 @@
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
-  <a href="https://github.com/jayf0x/narronymous"><b>Narronymous</b></a>
+  <a href="https://github.com/jayf0x/DeID"><b>DeID</b></a>
 
 <p style="font-size: 0.85em; margin-top: 4px;">Local macOS app that anonymizes sensitive documents while keeping the narrative intact. Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, so anonymized text stays coherent for LLM analysis or human review.</p>
 </td>
@@ -28,11 +28,6 @@
 
 <p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
 </td></tr><tr>
-<td width="50%" valign="top">
-  <a href="https://github.com/jayf0x/doubledash-css-var-editor"><b>DoubleDash Editor</b></a>
-
-<p style="font-size: 0.85em; margin-top: 4px;">Chrome DevTools sidebar with fuzzy-search and live edit CSS vars with better workflow than native browser tooling.</p>
-</td>
 <td width="50%" valign="top">
   <b>Timesheet Automation</b>
 
@@ -55,4 +50,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.26' />
+</p><br><input type='hidden' value='1.19.27' />
