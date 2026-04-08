@@ -40,6 +40,7 @@ Rules:
 - No markdown formatting in the response.
 - Ensure skills are categorized.
 - Extract links (a) from a project and add as `link`. Leave empty if there is no link.
+- if key is not found (eg. no experience[0].name), use an empty string
 
 HTML:
 {html_content}

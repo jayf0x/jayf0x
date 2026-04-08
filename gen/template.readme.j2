@@ -8,11 +8,11 @@
 
 ### Experience
 {% for job in experience -%}
-**{{ job.role }}** @ {{ job.company }} ({{ job.period }})
+{%- if job.role %}**{{ job.role }}** @ {{ job.company }} ({{ job.period }}){% endif %}
 {% for bullet in job.bullets -%}
 - {{ bullet }}
 {% endfor %}
-{%- if not loop.last %}<br/>{% endif %}
+{%- if not loop.last %}<br/><br/>{% endif %}
 {% endfor %}
 
 ---
