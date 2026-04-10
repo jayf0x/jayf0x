@@ -13,7 +13,7 @@
 - Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
 <br/><br/>
-**Podcast Tooling & Production** @ BLANC (Jan 2022 - present)
+
 - Maintained website, social media and handled editing workflows.
 - Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.
 
@@ -23,7 +23,7 @@
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
-  <a href="https://github.com/jayf0x/DeID"><b>DeID</b></a>
+  <a href="https://jayf0x.github.io/DeID/"><b>DeID</b></a>
 
 <p style="font-size: 0.85em; margin-top: 4px;">Local macOS app that anonymizes sensitive documents while keeping the narrative intact. Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, so anonymized text stays coherent for LLM analysis or human review.</p>
 </td>
@@ -54,4 +54,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.30' /><br><input type='hidden' value='1.19.31' />
+</p><br><input type='hidden' value='1.19.32' />
