@@ -7,13 +7,15 @@
 ---
 
 ### Experience
-**Frontend Engineer** @ Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
+**Frontend Engineer** @Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
 - Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).
 - Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).
 - Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
-<br/><br/>
-**Podcast Tooling & Production** @ BLANC (Jan 2022 - present)
+
+<br/>
+
+**Podcast Tooling & Production** @BLANC.zone (Jan 2022 - present)
 - Maintained website, social media and handled editing workflows.
 - Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.
 
@@ -59,4 +61,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.34' />
+</p><br><input type='hidden' value='1.19.35' />
