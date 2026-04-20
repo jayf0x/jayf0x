@@ -1,21 +1,15 @@
-<h1 align="center">Hey, I'm Jonatan <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25"></h1>
-<p align="center">
-  <b></b> &nbsp;•&nbsp; Ghent, Belgium<br/>
-  <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
-</p>
+name: Jonatan Vons
+location: beglium, gent
 
 ---
 
-### Experience
-**Frontend Engineer** @Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
+**Frontend Engineer**
 - Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).
 - Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).
 - Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
 
-<br/>
-
-**Podcast Tooling & Production** @BLANC.zone (Jan 2022 - present)
+**Podcast Tooling & Production**
 - Maintained website, social media and handled editing workflows.
 - Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.
 
@@ -47,18 +41,7 @@
 </td></tr>
 </table>
 
-### Tech Stack  <img src="./assets/clippy.gif" width="20px" />
+### Tech Stack 
 **Core:** React • TypeScript • JavaScript (ESNext) • HTML • CSS/SCSS
 
 **Libraries & Tools:** TanStack (Query, Form, Router) • Zustand • Tailwind • Node • Canvas API • p5.js • Keycloakify
-
----
-<p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=jayf0x&theme=github&hide_border=true&hide_title=true&area=true&bg_color=transparent" alt="contribution graph" width="80%" />
-</p>
-
-<p align="center">
-  <strong>
-    <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
-  </strong>
-</p><br><input type='hidden' value='1.19.36' />
