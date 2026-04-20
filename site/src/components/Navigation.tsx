@@ -1,4 +1,4 @@
-import { useScrollSpy } from "../../hooks/useScrollSpy"
+import { useScrollSpy } from "../hooks/useScrollSpy"
 
 type NavigationProps = {
   sectionIds: string[]
@@ -23,7 +23,7 @@ export const Navigation = ({ sectionIds }: NavigationProps) => {
               document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
             }}
             aria-label={`Scroll to ${id}`}
-            className={`relative z-10 h-3 w-3 rounded-full border transition ${
+            className={`relative z-10 h-3 w-3 rounded-full border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] ${
               active
                 ? "border-[var(--accent)] bg-[var(--accent)]"
                 : "border-[var(--muted)] bg-[var(--bg)] hover:border-[var(--text)]"

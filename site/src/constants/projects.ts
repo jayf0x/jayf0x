@@ -1,4 +1,4 @@
-import type { ProjectMeta } from "../types/project"
+import type { ProjectMeta } from "../types"
 
 export const PINNED_PROJECTS: ProjectMeta[] = [
   {
@@ -7,7 +7,8 @@ export const PINNED_PROJECTS: ProjectMeta[] = [
     priority: 100,
     tags: ["Tauri", "Svelte", "Python"],
     featured: true,
-    preview: "https://opengraph.githubassets.com/site/jayf0x/PIIPAYA",
+    hasReleases: true,
+    spectrumIndex: 0,
   },
   {
     name: "Pure-Paste",
@@ -15,7 +16,8 @@ export const PINNED_PROJECTS: ProjectMeta[] = [
     priority: 90,
     tags: ["Swift", "macOS"],
     featured: true,
-    preview: "https://opengraph.githubassets.com/site/jayf0x/Pure-Paste",
+    hasReleases: true,
+    spectrumIndex: 1,
   },
   {
     name: "fluidity",
@@ -23,16 +25,19 @@ export const PINNED_PROJECTS: ProjectMeta[] = [
     priority: 80,
     tags: ["React", "WebGL"],
     featured: true,
-    preview: "https://opengraph.githubassets.com/site/jayf0x/fluidity",
+    hasReleases: false,
+    spectrumIndex: 2,
   },
   {
     name: "Timesheet Automation",
     priority: 70,
-    tags: ["CLI", "Automation"],
+    tags: ["Node", "CLI", "Automation"],
     isPrivate: true,
     featured: false,
+    hasReleases: false,
     description:
       "Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into internal timesheets.",
+    spectrumIndex: 3,
   },
 ]
 

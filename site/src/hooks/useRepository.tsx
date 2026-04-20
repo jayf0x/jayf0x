@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react"
 import { PINNED_PROJECTS, PROJECT_OWNER, projectMetaByRepoName } from "../constants/projects"
-import type { Project } from "../types/project"
+import type { Project } from "../types"
 import { fetchLatestDmgUrl, fetchRepositories, type Repository as RawRepository } from "../utils/fetch-repository"
 
-type RepositoryState = {
+export type RepositoryState = {
   repositories: Project[]
   featured: Project[]
+  recentlyUpdated: Project[]
   isLoading: boolean
   error: string | null
 }
 
 const CACHE_TTL_MS = 5 * 60 * 1000
 
-let cache: { repositories: Project[]; featured: Project[] } | null = null
+let cache: { repositories: Project[]; featured: Project[]; recentlyUpdated: Project[] } | null = null
 let cacheTimestamp = 0
-let inflightRequest: Promise<{ repositories: Project[]; featured: Project[] }> | null = null
+let inflightRequest: Promise<{ repositories: Project[]; featured: Project[]; recentlyUpdated: Project[] }> | null = null
 
 const timeSince = (isoDate?: string) => {
   if (!isoDate) return "unknown"
@@ -29,24 +30,29 @@ const timeSince = (isoDate?: string) => {
   return `${Math.floor(diff / day)}d ago`
 }
 
+const ogPreview = (repoName: string) =>
+  `https://opengraph.githubassets.com/site/jayf0x/${repoName}`
+
 const toProject = async (repo: RawRepository): Promise<Project | null> => {
   const meta = projectMetaByRepoName.get(repo.name.toLowerCase())
   if (!meta) return null
 
-  const downloadUrl = await fetchLatestDmgUrl(PROJECT_OWNER, repo.name)
+  const downloadUrl = meta.hasReleases ? await fetchLatestDmgUrl(PROJECT_OWNER, repo.name) : null
 
   return {
     name: meta.name,
     url: repo.html_url,
     description: repo.description ?? "No description provided.",
-    preview: meta.preview,
+    preview: meta.screenshotSrc ?? ogPreview(repo.name),
     tags: meta.tags,
     priority: meta.priority,
     language: repo.language,
     stars: repo.stargazers_count,
     pushedAt: timeSince(repo.pushed_at),
+    pushedAtIso: repo.pushed_at,
     downloadUrl: downloadUrl || undefined,
     featured: meta.featured,
+    spectrumIndex: meta.spectrumIndex,
   }
 }
 
@@ -60,7 +66,7 @@ async function buildRepositories() {
     .filter((project): project is Project => project !== null)
     .sort((a, b) => b.priority - a.priority)
 
-  const privateProjects = PINNED_PROJECTS.filter((project) => project.isPrivate).map((project) => ({
+  const privateProjects: Project[] = PINNED_PROJECTS.filter((project) => project.isPrivate).map((project) => ({
     name: project.name,
     description: project.description ?? "Private project",
     preview: project.preview,
@@ -68,12 +74,17 @@ async function buildRepositories() {
     priority: project.priority,
     isPrivate: true,
     featured: project.featured,
+    spectrumIndex: project.spectrumIndex,
   }))
 
   const repositories = [...publicProjects, ...privateProjects].sort((a, b) => b.priority - a.priority)
   const featured = repositories.filter((project) => project.featured).slice(0, 3)
+  const recentlyUpdated = repositories
+    .filter((project) => Boolean(project.pushedAtIso))
+    .sort((a, b) => new Date(b.pushedAtIso ?? 0).getTime() - new Date(a.pushedAtIso ?? 0).getTime())
+    .slice(0, 5)
 
-  return { repositories, featured }
+  return { repositories, featured, recentlyUpdated }
 }
 
 async function getRepositoriesWithCache() {
@@ -98,6 +109,7 @@ export const useRepositories = (): RepositoryState => {
   const [state, setState] = useState<RepositoryState>({
     repositories: cache?.repositories ?? [],
     featured: cache?.featured ?? [],
+    recentlyUpdated: cache?.recentlyUpdated ?? [],
     isLoading: !cache,
     error: null,
   })
@@ -111,6 +123,7 @@ export const useRepositories = (): RepositoryState => {
         setState({
           repositories: result.repositories,
           featured: result.featured,
+          recentlyUpdated: result.recentlyUpdated,
           isLoading: false,
           error: null,
         })
