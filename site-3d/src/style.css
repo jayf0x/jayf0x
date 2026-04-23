@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* ── Fonts & theme tokens ─────────────────────────────────────────────────── */
+
+@theme {
+  --font-sans: "Geist";
+  --font-mono: "Geist Mono";
+  --color-bright: #fd453a;
+  --color-dark:   #1a1714;
+}
+
+* {
+  @apply antialiased tracking-tight;
+}
+
+p {
+  @apply font-sans leading-tight;
+}
+
+/* ── Global scroll + touch safety ────────────────────────────────────────── */
+/*
+ * Mobile: prevent pull-to-refresh and native rubber-banding.
+ * Lenis (syncTouch: true) owns scroll on all devices — the browser
+ * must not compete for touch events on the root.
+ *
+ * `overflow: hidden` on html/body hides native scrollbars; Lenis fakes
+ * the scroll position internally so the 3D camera orbit still works.
+ */
+html,
+body {
+  overflow: hidden;
+  overscroll-behavior: none;
+  @apply bg-[#faf8f5] font-sans;
+}
+
+/* ── App container ────────────────────────────────────────────────────────── */
+/*
+ * #app is the Three.js canvas mount point.
+ * `touch-action: none` tells the browser "hands off" — our input.js and
+ * Lenis handle all pointer / touch events on this element.
+ */
+#app {
+  width: 100%;
+  height: 100dvh; /* dvh: respects mobile browser chrome (address bar etc.) */
+  touch-action: none;
+}
+
+/* ── Scroll spacer ────────────────────────────────────────────────────────── */
+/*
+ * Provides Lenis with a scrollable range. The spacer itself is invisible;
+ * its height (400vh ≈ 4 full camera orbits per scroll cycle) determines
+ * how fast the orbit feels. Increase for a slower, more cinematic pace.
+ */
+#scroll-spacer {
+  position: relative;
+  width: 1px;
+  height: 400vh;
+  pointer-events: none;
+}
+
+/* ── Offscreen HTML source for Act 1 projection ──────────────────────────── */
+/*
+ * #page-host positions the DOM element that HtmlToCanvas rasterizes.
+ * Must be off-screen (left: -200vw) so it doesn't appear in the DOM
+ * flow, but still "rendered" by the browser so layout + fonts resolve.
+ * aria-hidden prevents screen readers from double-announcing it.
+ */
+#page-host {
+  position: fixed;
+  top: 0;
+  left: -200vw;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── DOM overlays (Act 3: editor + terminal) ─────────────────────────────── */
+/*
+ * DOM overlays sit above the WebGL canvas (z-index > 35).
+ * On mobile, overlays should account for the virtual keyboard:
+ *   - Use dvh / svh units rather than vh
+ *   - Avoid fixed bottom positioning without env(safe-area-inset-bottom)
+ * These base rules are stubs — Stage 3 will build them out.
+ */
+#editor-overlay,
+#terminal-overlay {
+  position: fixed;
+  z-index: 50;
+  /* Mobile keyboard / notch safety */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── HUD elements (rotation arc indicator, etc.) ─────────────────────────── */
+/*
+ * HUD lives above canvas but below overlays.
+ * Appear via JS class toggle — no default visibility.
+ */
+#hud {
+  position: fixed;
+  z-index: 40;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}

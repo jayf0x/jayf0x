@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!--
+      width=device-width   — no scaling on small screens
+      viewport-fit=cover   — extend into notch area (iOS)
+      interactive-widget=resizes-content — shrink content when virtual
+                            keyboard opens (prevents overlay issues in Act 3)
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Jay Fox — Portfolio</title>
+  </head>
+  <body>
+    <!-- Three.js canvas mount point -->
+    <div id="app"></div>
+
+    <!-- Lenis scroll range: drives the camera orbit -->
+    <div id="scroll-spacer" aria-hidden="true"></div>
+
+    <!-- HUD: rotation arc indicator (shown/hidden via JS) -->
+    <div id="hud" aria-hidden="true"></div>
+
+    <!--
+      Act 1 — Offscreen HTML source for HtmlToCanvas projection.
+      Positioned off-screen (left: -200vw via CSS) so it renders
+      but never appears in the visible viewport.
+      aria-hidden: screen readers see the real page content, not this.
+
+      IMPORTANT: this element's background color must match
+      scene.threeScene.background (#faf8f5) so the panel edges
+      are invisible from the rest camera position.
+    -->
+    <div id="page-host" aria-hidden="true">
+      <div
+        id="page"
+        class="flex flex-col justify-center items-center h-full relative"
+        style="background: #faf8f5;"
+      >
+        <!-- Scroll hint -->
+        <p
+          class="font-mono absolute bottom-6 left-1/2 -translate-x-1/2 text-[0.55rem] tracking-[0.5em] uppercase"
+          style="color: rgba(26,23,20,0.28);"
+        >
+          Scroll
+        </p>
+
+        <!-- Resume card — minimal, centered, projects beautifully onto Act 1 panel -->
+        <div class="flex flex-col items-center gap-7" style="color: #1a1714;">
+          <p
+            class="font-mono text-[0.55rem] tracking-[0.6em] uppercase"
+            style="color: rgba(26,23,20,0.32);"
+          >
+            Portfolio &nbsp;·&nbsp; 2024
+          </p>
+
+          <div class="text-center" style="line-height: 0.86;">
+            <h1
+              class="font-sans font-bold tracking-tight"
+              style="font-size: clamp(2.8rem, 6.5vw, 5.5rem); line-height: 0.88;"
+            >
+              Jonatan
+            </h1>
+            <h1
+              class="font-sans font-bold tracking-tight"
+              style="font-size: clamp(2.8rem, 6.5vw, 5.5rem); line-height: 0.88;"
+            >
+              Verstraete
+            </h1>
+          </div>
+
+          <p
+            class="font-mono text-[0.6rem] tracking-[0.35em] uppercase"
+            style="color: rgba(26,23,20,0.38);"
+          >
+            Design &nbsp;·&nbsp; Motion &nbsp;·&nbsp; Code
+          </p>
+
+          <div style="width: 2rem; height: 1px; background: rgba(26,23,20,0.16);"></div>
+
+          <a
+            href="#"
+            class="font-mono text-[0.58rem] tracking-[0.45em] uppercase flex items-center gap-4"
+            style="border: 1px solid rgba(26,23,20,0.55); padding: 1rem 2.5rem;"
+          >
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7,10 12,15 17,10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Resume
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      Act 3 DOM overlays — mounted here so they're in the DOM from load,
+      but hidden until the camera reaches Act 3.
+      Stage 3 will populate and animate these.
+    -->
+    <div id="editor-overlay" style="display: none;" aria-hidden="true"></div>
+    <div id="terminal-overlay" style="display: none;" aria-hidden="true"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

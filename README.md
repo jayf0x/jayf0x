@@ -61,4 +61,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.36' /><br><input type='hidden' value='1.19.37' /><br><input type='hidden' value='1.19.38' />
+</p><br><input type='hidden' value='1.19.36' /><br><input type='hidden' value='1.19.37' /><br><input type='hidden' value='1.19.38' /><br><input type='hidden' value='1.19.39' />
