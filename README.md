@@ -35,11 +35,6 @@
 <p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
-  <a href="https://github.com/jayf0x/fluidity"><b>Fluidity-js</b></a>
-
-<p style="font-size: 0.85em; margin-top: 4px;">React package with customizable WebGL shader using a Web Worker.</p>
-</td>
-<td width="50%" valign="top">
   <b>Timesheet Automation</b>
 
 
@@ -61,4 +56,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.44' />
+</p><br><input type='hidden' value='1.19.45' />
