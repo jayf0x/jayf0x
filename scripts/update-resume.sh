@@ -14,14 +14,14 @@ else
 fi
 
 # Update site assets
-TARGET="$REPO_ROOT/site/src/assets"
+# SITE_ASSETS="$REPO_ROOT/site/src/assets"
 
-for pdf in $REPO_ROOT/assets/*.pdf; do
-    rm $TARGET/resume.pdf $TARGET/resume.png &> /dev/null
-    magick -density 300 -quality 100 "$pdf" "$TARGET/resume.png"
-    cp "$pdf" "$TARGET/resume.pdf"
-    break
-done
+# for pdf in $REPO_ROOT/assets/*.pdf; do
+#     rm -f $SITE_ASSETS/resume.pdf $TARGET/resume.png &> /dev/null
+#     magick -density 300 -quality 100 "$pdf" "$SITE_ASSETS/resume.png"
+#     cp "$pdf" "$SITE_ASSETS/resume.pdf"
+#     break
+# done
 
 # python3 "$SCRIPT_DIR/precommit.py"
 
