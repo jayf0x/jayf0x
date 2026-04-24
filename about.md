@@ -6,4 +6,6 @@ Pipeline where I can edit [raw HTML](./assets/resume.html) or [template](./gen/t
 ├── gen/             # functionality to automate updates and versioning
 ├── scripts/         # commit hooks
 ├── assets/          # Resume (pdf and raw html) and general assets like images
+├── site/            # Active site (proto)
+├── site-3d/         # Active project for threeJS site - who cares about personal sites if it's not nice..
 ```
