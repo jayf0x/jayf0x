@@ -11,35 +11,33 @@ import { placeOnFloor } from '../../../utils/scene.js'
  * scene reads as a perfectly flat red panel — a Malevich-style square with
  * a single "Download Resume" button projected onto it via HtmlToCanvas.
  *
- * As the camera orbits away from 0°, the panel reveals its physical depth
- * (it's a thin BoxGeometry slab) and the gallery behind it comes into view.
+ * Optical illusion: at 0° the scene is indistinguishable from a flat website.
+ * Scrolling reveals the HTML was projected onto 3D geometry the whole time.
  *
- * The HTML texture is always projected from the rest position, so the
- * design on the panel looks "painted on" as the camera moves around it.
+ * uLitness = 0 at rest → flat, no shading, no depth cues.
+ * uLitness = 1 at orbit → PBR lighting, panel edge visible, backing geometry revealed.
+ * Panel edges invisible at rest because scene bg (#faf8f5) matches #page bg exactly.
  *
  * ─────────────────────────────────────────────────────────────────────────
  * TODO (Stage 1) — implement the geometry:
  *
- *   1. Create the red panel:
+ *   1. Replace placeholder cube with the real panel:
  *        const panel = new THREE.Mesh(
  *          new THREE.BoxGeometry(16, 9, 0.15),
  *          new THREE.MeshStandardMaterial({ color: 0xfd453a })
  *        )
  *        panel.castShadow = true
  *        panel.receiveShadow = true
+ *        placeOnFloor(panel, 4.5) // float at mid-camera view
  *        scene.add(panel)
  *        projector.applyTo(panel)
  *
- *   2. Build surrounding geometry that is invisible from 0° but reveals
- *      the gallery room as the camera orbits (walls, floor, ceiling).
- *      Keep geometry behind / beside the panel — z < 0.
+ *   2. Optionally add any 3D backing geometry at z < 0 (behind the panel).
+ *      It must be fully occluded at 0° and reveal naturally on orbit.
+ *      No walls, no room — open scene, fog handles the far bounds.
+ *      Use placeOnFloor(mesh) for anything on the floor.
  *
- *   3. The anamorphic trick: objects placed precisely so they align with
- *      the panel silhouette at exactly 0°. Can be purely spatial — no
- *      shader tricks needed. Place objects behind the panel at angles
- *      that make them invisible when occluded head-on.
- *
- *   4. Call projector.update() once after adding all meshes.
+ *   3. Call projector.update() once after adding all meshes.
  * ─────────────────────────────────────────────────────────────────────────
  *
  * @param {{ scene, camera, width, height }} params
@@ -77,16 +75,54 @@ export function buildAct1({ scene, camera, width, height }) {
     await htmlToCanvas.update()
   })()
 
-  // Phase 0 placeholder — 2×2×2 red cube, bottom at y=0 (floor level)
-  const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(2, 2, 2),
-    new THREE.MeshStandardMaterial({ color: 0xff2200 })
+  // ── Panel ─────────────────────────────────────────────────────────────
+  // BoxGeometry not PlaneGeometry — the 0.15 depth reveals the slab on orbit.
+  const panel = new THREE.Mesh(
+    new THREE.BoxGeometry(16, 9, 0.15),
+    new THREE.MeshStandardMaterial({ color: 0xfd453a })
   )
-  cube.name = 'act1-cube'
-  cube.position.set(0, 0, 5)
-  placeOnFloor(cube)
-  scene.add(cube)
-  projector.applyTo(cube)
+  panel.name = 'act1-panel'
+  panel.castShadow = true
+  panel.receiveShadow = true
+  placeOnFloor(panel, 4.5) // float so panel centre sits in camera FOV
+  scene.add(panel)
+  projector.applyTo(panel)
+
+  // ── Backing geometry ──────────────────────────────────────────────────
+  // Fully occluded at 0°, visible on orbit. Open scene — no walls, no room.
+
+  // Wide back slab — catches panel shadow, reads as floor/rear plane on orbit
+  const back = new THREE.Mesh(
+    new THREE.BoxGeometry(20, 10, 0.3),
+    new THREE.MeshStandardMaterial({ color: 0xe8e0d8 })
+  )
+  back.position.set(0, 0, -12)
+  placeOnFloor(back, 4.5)
+  back.receiveShadow = true
+  scene.add(back)
+
+  // Left depth block — thin side wall, reveals depth on orbit
+  const left = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 9, 12),
+    new THREE.MeshStandardMaterial({ color: 0xd0c8be })
+  )
+  left.position.set(-8, 0, -6)
+  placeOnFloor(left, 0.5)
+  left.castShadow = true
+  left.receiveShadow = true
+  scene.add(left)
+
+  // Right depth block — mirror of left
+  const right = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 9, 12),
+    new THREE.MeshStandardMaterial({ color: 0xd0c8be })
+  )
+  right.position.set(8, 0, -6)
+  placeOnFloor(right, 0.5)
+  right.castShadow = true
+  right.receiveShadow = true
+  scene.add(right)
+
   projector.update()
 
   return {

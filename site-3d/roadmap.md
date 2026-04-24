@@ -26,12 +26,11 @@ Simple checklist. Check off as sessions complete. Each phase = one or more Claud
 See `stages/stage-1/DESIGN.md` for full spec.
 
 - [ ] Red panel (`BoxGeometry 16×9×0.15`) with HTML resume button projected cleanly
-- [ ] Gallery room walls, floor, ceiling visible on orbit
 - [ ] Panel edges invisible at rest (`#faf8f5` bg match)
 - [ ] `uLitness` transitions flat→PBR smoothly during orbit
-- [ ] Plinth + sculpture in gallery for depth
+- [ ] 3D depth visible on orbit — backing geometry reveals as camera moves
 - [ ] HUD arc indicator appears on scroll, fades at rest
-- [ ] Passes visual QA: looks flat at 0°, reveals depth by ~10% scroll
+- [ ] Passes visual QA: indistinguishable from a flat site at 0°, clearly 3D by ~10% scroll
 
 ---
 

@@ -162,7 +162,7 @@ Do not re-implement the snap. Just use the `inAct3` flag.
 
 ## What Stage 3 does NOT own
 
-- Panel, gallery walls — Act 1
+- Panel geometry + optical illusion backing — Act 1
 - Project cubes, bridge — Act 2
 - Camera keyframes for Acts 1 and 2 — Scene.js
 - Monolith visual refinement (roughnessMap, lighting drama, floor, transitions) — post-POC
