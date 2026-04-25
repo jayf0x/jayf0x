@@ -12,3 +12,20 @@ rsync -av --exclude-from=.gitignore $REAL_SITE/ $PUBLC_SITE
 
 
 # cp -R src stages *.md "$PUBLC_SITE"
+
+
+
+if [ "$1" ]; then
+    # has been changed by the command above
+    # if find README.md -mmin -1 -ls; then
+    #     echo "README is unchanged"
+    #     exit
+    # fi
+
+    git add  site-3d
+    git commit -m "(job): update site-3d"
+    # redo due to precommit hook
+    git add site-3d
+    git add readme
+    git push origin main
+fi

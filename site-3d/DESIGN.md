@@ -1,206 +1,174 @@
-# Portfolio — DESIGN.md
-> A spatial journey. One scroll axis. Three acts. No back button needed.
+# The Hidden Gallery — Design
+
+> A portfolio that is a place, not a page. Scroll to orbit. Three acts. No back button needed.
 
 ---
 
-## The Concept
+## Concept
 
-A portfolio that is a place, not a page. The visitor scrolls to orbit a single 3D world, moving through three distinct spaces — each with its own mood, interaction, and reveal. The experience is a zen path: always forward, always discovering, never demanding effort.
+The visitor scrolls to rotate a camera around a single 3D world. Each rotation reveals a new act with its own mood and interaction. The experience is a zen path — always forward, always discovering.
 
-**The emotional arc:**
-- Act 1: *"Oh, elegant."*
-- Act 2: *"Oh wow, there's depth here."*
-- Act 3: *"Oh — there's a person here."*
+**Emotional arc:**
+- Act 1: *"Oh, elegant."* — a flat red panel that hides the whole world behind it
+- Act 2: *"Oh wow, there's depth here."* — cubes stacked in every direction
+- Act 3: *"Oh — there's a person here."* — a monolith holding Jonatan's files and a ghost AI
 
 ---
 
-## Interaction Model
+## World Conventions
 
-**Scroll drives everything.**
+These apply everywhere. Non-negotiable.
 
-- Scroll down / right → rotate camera right around the scene
-- Scroll up / left → rotate camera left
-- Single Y-axis orbit around a central world
-- No click-drag, no pan, no zoom
+**Coordinates:**
+- Floor is at `y = 0`. Everything sits on or above it.
+- Camera eye height: `CAMERA_EYE_HEIGHT = 1.8` (metres). Never changes.
+- Scale: 1 unit = 1 metre.
+- Origin `(0, 0, 0)` is the centre of the world. Camera always looks at it.
 
-**Three scroll zones:**
+**Placing objects:**
+- Always use `placeOnFloor(mesh)` from `utils/scene.js` for anything that stands on the floor.
+- For floating objects: `placeOnFloor(mesh, yOffset)` where yOffset > 0.
+- Never place objects by eyeballing — use the utility or explicit `y = height/2`.
 
-| Zone | Camera Angle | Feel |
-|------|-------------|------|
-| Front | 0° | Locked. Flat illusion. |
-| Middle | ~45°–135° | Free orbit. Alive. |
-| Final | ~180° | Snaps in. Settles. |
+**Camera orbit:**
+- Camera moves on a perfect circle, radius `ORBIT_RADIUS = 12`, at `y = CAMERA_EYE_HEIGHT`.
+- 0° = Act 1 (front, z+). 90° = Act 2 (right side, x+). 180° = Act 3 (back, z-).
+- Scroll drives orbit angle. `ORBIT_WEIGHTS` controls speed per quadrant — tune in `config.js`.
+- Act 3 has an angle-based lock + hysteresis (already implemented in `Scene.js`).
 
-**Rotation arc indicator:** A half-circle HUD at the bottom showing how far you've rotated. Appears once you leave 0°, fades when you return. Disappears entirely once you lock into Act 3.
+**No gallery room:**
+- There are no walls, no ceiling, no room. The scene is open.
+- Fog (`FogExp2, density 0.022`) handles far bounds.
+- The panel in Act 1 is a slab in open space — not framed by a room.
 
 ---
 
 ## Act 1 — The Front Face
 
-**The illusion.**
+**At 0°:** the scene looks like a flat 2D website. A red panel fills the viewport. One button: "Download Resume".
 
-A forced-perspective anamorphic construction. The entire 3D scene is arranged so that from exactly the front camera angle, everything collapses into a flat red square — a Malevich painting. Clean. Almost arrogant.
+**On orbit:** the panel reveals it's a 3D slab (BoxGeometry depth). Objects behind it appear. PBR lighting kicks in. The visitor realises this was 3D the whole time.
 
-A single "Download Resume" button lives on it. That's all.
+**How the illusion works:**
+1. Panel (`BoxGeometry(16, 9, 0.15)`, color `#fd453a`) fills the viewport at rest.
+2. HTML is projected onto the panel face via `createProjector` — looks painted on.
+3. `uLitness = 0` at rest → pure flat projection, no 3D shading cues.
+4. Background `#faf8f5` matches panel edge colour → edges invisible at 0°.
+5. On orbit: `uLitness` ramps up → PBR lighting + panel depth + backing geometry visible.
 
-The visitor thinks this is a minimal 2D site. That's the setup.
-
-> Implementation: narrow FOV (orthographic-feel), geometry precisely angled to read as flat from 0°. Illusion is baked into geometry — no head tracking needed.
+**What the space behind the panel can contain:** anything, as long as it's occluded from 0°. There is no set design — the Stage 1 agent can decide or leave it empty.
 
 ---
 
-## Act 2 — The Middle World
+## Act 2 — The Cube Wall
 
-**Two layers, one scroll.**
+**What it looks like:** a landscape of stacked cubes, like a city or a Tetris formation. Visible from the 90° camera position. Most cubes are white or light gray. Some have project screenshots or GIFs on their face. Clicking a textured cube opens the project URL.
 
-As the camera orbits, the flat illusion breaks and the world opens up. There are two things to see as you pass through:
+**Geometry:** cubes of varying sizes, stacked in a loose grid arrangement. Some taller, some wider. All sitting on the floor (`placeOnFloor`). Clustered roughly around the world origin, slightly offset toward x+ so they're in frame at 90°.
 
-### The Workspace (foreground)
+**Interaction:** clicking or tapping a project cube opens its URL in a new tab. Hover may change colour or scale slightly — at minimum one cube must be interactive.
 
-A messy, lived-in creative space. Not an attic — a working environment mid-session.
-
-- Scattered around: cubes and objects with **project GIFs or screenshots** mapped onto their faces as textures
-- Click a cube → opens the project URL or GitHub repo in a new tab
-- Objects are low-poly, white or near-white, with dramatic lighting and long shadows
-- Feels like you walked into someone's studio
-
-**Cursor effect activates here** (e.g. `ideas/cursor-effect-01.js`) — something that trails or reacts, adds physicality to movement.
-
-### The Bridge (background, large, atmospheric)
-
-Far behind the workspace, emerging from fog: a **massive bridge under construction**.
-
-- Each pillar or arch foot represents a place of work / experience
-- Pillars are themed: logos, colors, or textures from each company subtly applied
-- The bridge recedes into fog — intentionally unfinished, open-ended
-- At the far end of the bridge: a large banner, slack and white, like construction hoardings — *"Your logo here"* — the open role slot
-- Scale is key: the bridge should feel monumental, distant, slightly melancholic in a good way
+**No bridge in the first two iterations.** The bridge concept (career arc, pillars per employer) is an icebox feature. Don't build it until Acts 1-3 are polished.
 
 ---
 
 ## Act 3 — The Monolith
 
-**The landing.**
+**What it looks like:** white void. A tall dark rectangular slab at the centre. Its face is an interactive panel showing three files.
 
-As you continue orbiting, the camera snaps into a white void. Centre stage: **The Monolith** — a tall, dark rectangular slab, standing alone.
+**The files:**
+- `resume.md` — Jonatan's bio/experience. Viewable + downloadable.
+- `info.md` — Links, GitHub, LinkedIn, email.
+- `late-night-claude.md` — Easter egg. A lost file. Something weird.
 
-Its face glows faintly. It is a touchscreen. It holds Jonatan's files.
+**Interaction:** tab switching between files. Download button per file. At the bottom: a single-question chat backed by GPT-1 (loaded lazily on first submit).
 
-### The Files
+**GPT-1:** the first GPT, trained in 2018. Not a chat assistant — each question gets one response. Responses are chaotic and oracular. That's the feature.
 
-Three tabs on the Monolith's face:
-- `resume.md` — viewable, downloadable
-- `info.md` — links, contact, GitHub, LinkedIn
-- `late-night-claude.md` — a lost file; easter egg; something weird
+Prompt framing (prefix, not system prompt — GPT-1 doesn't support one):
+```
+You are an ancient oracle, reappearing from your honorable grave into the modern world.
+A futuristic human is asking you a question. Question: [user input]
+```
 
-Select a tab → content changes on the face. Download button per file.
+Token counter (chars / 4 estimate) + reset button. First response triggers Act 4.
 
-### GPT-1 (the voice)
-
-A single-question chat at the bottom of the Monolith. Not a conversation. One question, one answer.
-
-The Monolith speaks in the voice of GPT-1 — the first GPT, trained in 2018, now reawakened. Its responses are chaotic, oracular, and unhinged. That's the point.
-
-**Load flow:**
-1. User types a question and hits Ask
-2. Model downloads (Transformers.js, ~500 MB, with progress bar)
-3. Response appears — one generation, no history
-4. Token counter shows usage / limit. Reset button clears it.
-5. First response sent → triggers Act 4
-
-**Why GPT-1 specifically:**
-- Genuinely the first GPT — a historical artifact in the truest sense
-- Small enough to run in-browser
-- Outputs are chaotic and unpredictable, which is perfect
-- No API key, no cost — just a weird little ghost in the machine
-
-> Visual design (lighting, roughness, floor, transitions) is decided in Stage 3 refinement — not in the POC.
+**Visual design** (roughnessMap, lighting drama, floor tiles, transitions) — decided in Iteration 2 refinement, not in Iteration 1.
 
 ---
 
 ## Act 4 — The Report
 
-**The reward for finishing.**
+Fires after the first GPT-1 response (or exit intent if Act 3 was reached).
 
-After the first message to GPT-1 — or on exit intent if the visitor reached Act 3 — a confetti popover fires.
+**Consent gate:** check `localStorage.report_consent`. If not set, show a checkbox before writing anything.
 
-### Trigger
+**On consent:** write one row to Supabase, fetch aggregate stats, show a confetti popover.
 
-- Primary: first message sent to GPT-1
-- Secondary: exit intent (mouseleave top of viewport) if `act_reached >= 3`
+**Popover:** `"Visitor #N — here's how you did."` + funnel stats + browser jab + "Continue chatting →" button.
 
-### The Popover
+**Data collected (anonymous):** act reached, whether they typed to GPT-1, browser family (client-side only), time spent. No IP, no personal data, no cookies.
 
-Confetti burst on open. Clean card layout.
-
-**Heading:** *"Visitor #124 — here's how you did."*
-
-**Requires consent before data is written or shown:**
-> *"Share anonymous stats to see how you compare?"*  
-> `[ ] Yes — show me the numbers`
-
-Once consented, stats appear and one row is written to Supabase.
-
-**Stats block:**
-
-| Stat | Source |
-|------|--------|
-| Visitor number (#N overall) | Supabase aggregate |
-| % who made it past Act 1 | Supabase funnel view |
-| % who made it past Act 2 | Supabase funnel view |
-| % who typed to GPT-1 | Supabase funnel view |
-| Time spent on page | Client-side timer (session start → popover open) |
-| Browser jab | `navigator.userAgent`, client-side only, never stored |
-
-**Browser jab examples:**
-- *"Still on Chrome? Brave would've rendered this 12% faster."*
-- *"Safari detected. Respect."*
-- *"Edge? Bold choice. Genuinely."*
-- *"Firefox. A person of culture."*
-
-Footer note: *"Continue chatting with GPT-1 →"* (closes popover, returns to terminal)
-
-### Infrastructure
-
-- **Supabase free tier** — single table, client writes via REST, no auth
-- Row-level security: `INSERT` only from anon key; reads only via service key
-- Schema: `{ id, act_reached, interacted_with_rick, browser_family, time_spent_s, timestamp }`
-- Aggregates: Supabase view (`funnel_stats`) — public read-only, no row data exposed
-- Consent flag: `localStorage` key `report_consent` — never re-prompt once set
-- No cookies, no personal data, no IP stored
+See `stages/stage-4/DESIGN.md` for Supabase schema, RLS setup, and full implementation spec.
 
 ---
 
-## Technical Stack (rough)
+## Iteration Plan
 
-| Layer | Tool |
-|-------|------|
-| 3D scene | Three.js |
-| UI overlays | Vanilla DOM + Tailwind (see backlog re: React) |
-| Scroll → camera | Custom scroll-to-orbit controller |
-| Project textures | GIF/PNG mapped onto PlaneGeometry |
-| Cursor effects | Custom JS (`ideas/cursor-effect-01.js`) |
-| In-browser AI | Transformers.js + GPT-1 from HuggingFace |
-| Resume file | Markdown + PDF, served statically |
-| Analytics funnel | Supabase (Act 4) |
-| Confetti | `canvas-confetti` |
+### Iteration 1 — Skeleton with interaction
+
+All three acts visible and interactive. Ugly is fine. The goal is to prove every mechanic works end-to-end.
+
+**Act 1:**
+- Red panel with HTML projection visible at 0°
+- Illusion partially works (panel is a slab, `uLitness` transitions)
+- No backing geometry required yet
+
+**Act 2:**
+- Cube wall visible from 90° camera position
+- At least one cube is clickable (opens a URL) or changes on hover
+- Cubes sit on the floor (not floating)
+
+**Act 3:**
+- Monolith visible from 180° camera position
+- At least one file visible in the overlay (even static/hardcoded content)
+- Some interaction: tab switching or a dummy download button
+
+**Act 4:** not in Iteration 1.
 
 ---
 
-## What This Is Not
+### Iteration 2 — Content + polish
 
-- Not a chatbot portfolio
-- Not a scrolljacking nightmare
-- Not a "look how much I know Three.js" flex (the tech is in service of a feeling)
-- Not demanding — the visitor can stop at any act and still get something
+**Act 1:** illusion polished. Panel edges invisible. HUD arc. Real resume button linked.
+
+**Act 2:** real project textures on cubes. All project cubes clickable. Hover states. Lighting dramatic.
+
+**Act 3:** real file content (markdown rendered). GPT-1 wired and loading. Download working. Token counter.
+
+**All acts:** consistent lighting. 60fps on mid-range laptop. Mobile tested.
 
 ---
 
-## Open Questions (for later)
+### Iteration 3 — Act 4 + release
 
-- GPT-1 loading time UX — show a "booting historical artifact..." progress bar?
-  - sure.
-- Does the bridge need interactivity (hover a pillar → see role details) or is ambient enough?
-  - ambience is enough, resume got details.
-- Cursor effect in Act 3 — gooey (`ideas/GooeyCursor-main/`) still the plan?
-  - can do without for now.
+- Supabase project set up, `.env` configured
+- Consent gate + popover working end-to-end
+- Browser jab copy written
+- Confetti fires
+- Deploy (Vercel or Netlify, HTTPS, domain)
+
+---
+
+## Icebox
+
+Not in scope for any current iteration. Revisit post-launch.
+
+- **Bridge:** monumental structure in -x direction, pillars per work experience, "Your logo here" banner. Great concept, too much scope for now.
+- **Rapier physics:** workspace cubes have rigid bodies — a fast swipe can knock them. Fun idea, changes the orbit model. Post-launch.
+- **Cursor effect:** noise-driven 3D lines that follow the pointer (see `ideas/cursor-effect-01.js`). Activate in Act 2 zone.
+- **Backing geometry for Act 1:** objects behind the panel that reveal on orbit — adds depth to the illusion. Optional.
+- **GPT-1 IndexedDB cache:** Transformers.js can cache the model between visits. Speeds up repeat loads.
+- **Act 3 visual refinement:** roughnessMap, dramatic directional lighting, white tiled floor, ink-bleed file transitions.
+- **Mobile gyroscope orbit:** `DeviceMotionEvent` tilt as alternative to scroll.
+- **Bridge window in Act 3:** render Act 2 into a WebGLRenderTarget and show it through a "window" in Act 3.

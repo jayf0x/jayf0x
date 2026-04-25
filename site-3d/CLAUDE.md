@@ -20,13 +20,13 @@ Dev server: `http://localhost:5174/` (or 5173 if port is free)
 | File | When to read |
 |------|-------------|
 | `CLAUDE.md` (this file) | Every session — rules + structure |
-| `DESIGN.md` | Once — understand the full vision |
-| `stages/stage-N/DESIGN.md` | Your stage only — actionable spec |
-| `stages/stage-N/backlog.md` | Your stage only — known issues |
+| `DESIGN.md` | Every session — single source of truth for all design decisions |
 | `src/ARCHITECTURE.md` | When adding files or touching core modules |
+| `stages/stage-N/DESIGN.md` | Your act only — implementation notes (how to code it) |
+| `stages/stage-N/backlog.md` | Your act only — known issues |
 | `backlog.md` | If your work intersects a cross-cutting concern |
 
-**Don't read** other stages' design files. Don't read `ideas/` files unless your stage spec references one by name.
+**Don't read** other acts' stage files. Don't read `ideas/` files unless your stage spec references one by name.
 
 ---
 

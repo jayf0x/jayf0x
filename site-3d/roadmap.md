@@ -1,109 +1,76 @@
 # Roadmap
 
-Simple checklist. Check off as sessions complete. Each phase = one or more Claude Code sessions.
+Progress tracker. Each iteration = one or more sessions. Check off as work completes.
 
 ---
 
 ## Phase 0 — Skeleton `[x]`
 
-**Goal:** Verify all mechanics before building real geometry. One placeholder per act. QA the bones.
+Mechanics verified. All core systems working.
 
-- [x] Act 1: red cube with HTML projection
-- [x] Act 2: workspace cube (origin) + bridge rock formation (far −x, in fog)
-- [x] Act 3: monolith slab at 180° camera position
-- [x] Circular camera orbit (true sin/cos, radius 12 m, eye height 1.8 m)
-- [x] Weighted scroll pacing via `ORBIT_WEIGHTS`
+- [x] Circular orbit (sin/cos, radius 12 m, eye height 1.8 m)
+- [x] Weighted scroll pacing (`ORBIT_WEIGHTS`)
 - [x] `litness` wired — flat HTML illusion at 0°, PBR at orbit
 - [x] Act 3 angle-based lock with hysteresis
-- [x] `input.clicked` raycaster wired (log commented out for production — re-enable for final QA)
+- [x] `input.clicked` raycaster wired
+- [x] `placeOnFloor()` utility in `utils/scene.js`
 - [x] Stats panel ≥ 60fps
 - [x] Mobile: single-finger swipe orbits camera
 
 ---
 
-## Phase 1 — Act 1 POC `[ ]`
+## Iteration 1 — Visible + interactive `[ ]`
 
-See `stages/stage-1/DESIGN.md` for full spec.
+**Goal:** all three acts visible and interactive. Rough is fine. Prove every mechanic end-to-end.
 
-- [ ] Red panel (`BoxGeometry 16×9×0.15`) with HTML resume button projected cleanly
-- [ ] Panel edges invisible at rest (`#faf8f5` bg match)
-- [ ] `uLitness` transitions flat→PBR smoothly during orbit
-- [ ] 3D depth visible on orbit — backing geometry reveals as camera moves
-- [ ] HUD arc indicator appears on scroll, fades at rest
-- [ ] Passes visual QA: indistinguishable from a flat site at 0°, clearly 3D by ~10% scroll
+See `DESIGN.md → Iteration 1` for the acceptance bar per act.
 
----
-
-## Phase 2 — Act 2 POC `[ ]`
-
-See `stages/stage-2/DESIGN.md` for full spec.
-
-- [ ] ≥ 3 project cubes with placeholder textures (PNG screenshots)
-- [ ] Clicking a cube opens the correct URL in a new tab
-- [ ] Bridge: ≥ 2 pillars visible in background, recedes into fog
-- [ ] "Your logo here" banner at the far end of the bridge
-- [ ] Fog sells the scale — bridge doesn't hard-clip
-- [ ] Cursor effect activates in Act 2 zone
+- [ ] Act 1: red panel visible at 0°, HTML projection works, `uLitness` transitions visible
+- [ ] Act 2: cube wall visible at 90°, cubes on the floor, at least one interactive cube
+- [ ] Act 3: monolith visible at 180°, file overlay opens, tab switching works
+- [ ] No floating objects — everything placed with `placeOnFloor()`
+- [ ] No console errors
+- [ ] 60fps on mid-range laptop
 
 ---
 
-## Phase 3 — Act 3 POC `[ ]`
+## Iteration 2 — Content + polish `[ ]`
 
-See `stages/stage-3/DESIGN.md` for full spec.
+**Goal:** real content in every act. Looks intentional.
 
-- [ ] Camera snaps to Act 3 position on enter
-- [ ] Monolith geometry visible in white void
-- [ ] File overlay shows: `resume.md`, `info.md`, `late-night-claude.md` tabs
-- [ ] `resume.md` renders as markdown with download button
-- [ ] `late-night-claude.md` tab visible and readable
-- [ ] GPT-1 chat: user can type one question and get a response
-- [ ] Progress bar shows during model download
-- [ ] Token counter visible with reset button
-- [ ] First response triggers Act 4 stub (`act4.trigger()`)
+- [ ] Act 1: illusion polished (edges invisible at 0°), HUD arc, real resume content
+- [ ] Act 2: real project textures on cubes, all cubes clickable, hover states, dramatic lighting
+- [ ] Act 3: markdown rendered, GPT-1 loading + responding, download working, token counter
+- [ ] Mobile tested on real device (orbit, tap, overlay)
+- [ ] No memory leaks visible in DevTools
 
 ---
 
-## Phase 4 — Refinement pass `[ ]`
+## Iteration 3 — Act 4 + release `[ ]`
 
-Polish everything before shipping Act 4.
+See `stages/stage-4/DESIGN.md` for full spec.
 
-- [ ] Lighting: more dramatic shadows, workspace spot light, bridge atmosphere
-- [ ] `ORBIT_WEIGHTS` tuned — orbit pacing feels cinematic, not mechanical
-- [ ] HUD arc polished (smooth draw, right weight)
-- [ ] Editor overlay styled to look like a real (fake) editor
-- [ ] Terminal UI polished — progress bar, cursor blink, response rendering
-- [ ] Cursor effect integrated cleanly (no z-fighting, right activation zone)
-- [ ] GLB assets for bridge pillars (if available — not a blocker)
-- [ ] Real project screenshots in Act 2 cube textures
-- [ ] Mobile tested on real device: orbit, tap-to-click, editor usable
-- [ ] No console errors, no memory leaks spotted in DevTools
-
----
-
-## Phase 5 — Act 4 + Release `[ ]`
-
-See `stages/stage-4/DESIGN.md` for full spec and `stages/stage-4/backlog.md` for prerequisites.
-
-- [ ] Supabase project created, table + view set up, `.env` configured
-- [ ] Consent checkbox + localStorage flag working
-- [ ] Visitor number + funnel stats displaying correctly
-- [ ] Browser jab copy finalized and showing
+- [ ] Supabase project set up, table + view created, `.env` configured
+- [ ] Consent gate + localStorage flag working
+- [ ] Visitor number + funnel stats displaying
 - [ ] Confetti fires on popover open
-- [ ] Popover "Continue chatting with GPT-1 →" closes correctly
-- [ ] Exit intent trigger working (desktop only — mobile skip)
-- [ ] Performance: acts far from camera skip heavy draw calls (see `stages/post-launch/backlog.md`)
-- [ ] Deploy: Vercel / Netlify, domain, HTTPS
+- [ ] Browser jab copy written and showing
+- [ ] Popover closes cleanly
+- [ ] Deploy: Vercel or Netlify, HTTPS, domain
 - [ ] Supabase anon key in environment variables (not in git)
 
 ---
 
-## Icebox (post-launch, no timeline)
+## Icebox
 
-See `stages/post-launch/backlog.md` for full detail.
+See `DESIGN.md → Icebox` for descriptions.
 
-- [ ] Full act dispose/rebuild lifecycle (memory management)
-- [ ] Bridge window in Act 3 (render target from Act 2)
-- [ ] GLB bridge geometry with textured pillars
-- [ ] Mobile gyroscope orbit option
+- [ ] Bridge (work experience arc)
+- [ ] Rapier physics on Act 2 cubes
+- [ ] Cursor effect in Act 2 zone
+- [ ] Act 1 backing geometry
+- [ ] Act 3 visual refinement (lighting, roughnessMap, floor, transitions)
+- [ ] GPT-1 IndexedDB caching
+- [ ] Bridge window in Act 3
+- [ ] Mobile gyroscope orbit
 - [ ] SEO / social preview meta tags
-- [ ] Analytics: project click events, scroll distribution heatmap
