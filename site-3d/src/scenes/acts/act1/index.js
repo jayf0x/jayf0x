@@ -5,52 +5,21 @@ import { collectDocumentCss } from '../../../utils/collect-css.js'
 import { placeOnFloor } from '../../../utils/scene.js'
 
 /**
- * Act 1 — The Front Face
+ * Act 1 — The Front Face (cube illusion)
  *
- * A forced-perspective illusion. From the rest camera position (0°) the
- * scene reads as a perfectly flat red panel — a Malevich-style square with
- * a single "Download Resume" button projected onto it via HtmlToCanvas.
+ * From 0° the scene reads as a perfectly flat website. The HTML is projected
+ * from a frozen camera onto a cluster of rectangular blocks at varying z-depths.
+ * Tiled flush across the viewport so no gaps break the illusion.
  *
- * Optical illusion: at 0° the scene is indistinguishable from a flat website.
- * Scrolling reveals the HTML was projected onto 3D geometry the whole time.
+ * Orbit reveal: scrolling pulls the camera sideways and the "flat" surface
+ * shatters into a dense stack of 3D cuboids with wildly different depths.
  *
- * uLitness = 0 at rest → flat, no shading, no depth cues.
- * uLitness = 1 at orbit → PBR lighting, panel edge visible, backing geometry revealed.
- * Panel edges invisible at rest because scene bg (#faf8f5) matches #page bg exactly.
- *
- * ─────────────────────────────────────────────────────────────────────────
- * TODO (Stage 1) — implement the geometry:
- *
- *   1. Replace placeholder cube with the real panel:
- *        const panel = new THREE.Mesh(
- *          new THREE.BoxGeometry(16, 9, 0.15),
- *          new THREE.MeshStandardMaterial({ color: 0xfd453a })
- *        )
- *        panel.castShadow = true
- *        panel.receiveShadow = true
- *        placeOnFloor(panel, 4.5) // float at mid-camera view
- *        scene.add(panel)
- *        projector.applyTo(panel)
- *
- *   2. Optionally add any 3D backing geometry at z < 0 (behind the panel).
- *      It must be fully occluded at 0° and reveal naturally on orbit.
- *      No walls, no room — open scene, fog handles the far bounds.
- *      Use placeOnFloor(mesh) for anything on the floor.
- *
- *   3. Call projector.update() once after adding all meshes.
- * ─────────────────────────────────────────────────────────────────────────
- *
- * @param {{ scene, camera, width, height }} params
- *   scene    — THREE.Scene to add objects to
- *   camera   — main camera (used to clone the projector camera)
- *   width    — viewport width (from renderer)
- *   height   — viewport height (from renderer)
- * @returns Act1 handle with animate() and onResize()
+ * uLitness = 0 → flat projected texture, no shading cues
+ * uLitness = 1 → full PBR lighting, depth stagger fully readable
  */
 export function buildAct1({ scene, camera, width, height }) {
   // ── Projector camera ──────────────────────────────────────────────────
-  // Frozen at the rest position — never moves with the main camera.
-  // This is what "paints" the HTML onto the panel geometry.
+  // Frozen at the rest position. Never moves. Paints the HTML onto geometry.
   const projectorCamera = camera.clone()
   projectorCamera.updateMatrixWorld()
 
@@ -68,60 +37,48 @@ export function buildAct1({ scene, camera, width, height }) {
     texture: htmlToCanvas.texture,
   })
 
-  // Async: rasterize once fonts and stylesheets are ready
   ;(async () => {
     if (document.fonts?.ready) await document.fonts.ready
     htmlToCanvas.extraCss = await collectDocumentCss()
     await htmlToCanvas.update()
   })()
 
-  // ── Panel ─────────────────────────────────────────────────────────────
-  // BoxGeometry not PlaneGeometry — the 0.15 depth reveals the slab on orbit.
-  const panel = new THREE.Mesh(
-    new THREE.BoxGeometry(16, 9, 0.15),
-    new THREE.MeshStandardMaterial({ color: 0xfd453a })
-  )
-  panel.name = 'act1-panel'
-  panel.castShadow = true
-  panel.receiveShadow = true
-  placeOnFloor(panel, 4.5) // float so panel centre sits in camera FOV
-  scene.add(panel)
-  projector.applyTo(panel)
+  // ── Cube layout ───────────────────────────────────────────────────────
+  // All cubes receive the projection. From 0° they form one flat surface.
+  // Depth (z) varies per cube — that's the illusion. The projection is
+  // perspective-correct so z-stagger is invisible at rest.
+  //
+  // Front row: four 4-wide cubes tiling x −8 → 8 with no gap.
+  // Additional cubes behind add mass + drama on orbit.
 
-  // ── Backing geometry ──────────────────────────────────────────────────
-  // Fully occluded at 0°, visible on orbit. Open scene — no walls, no room.
+  const mat = () => new THREE.MeshStandardMaterial({ color: 0xfaf8f5, roughness: 0.75 })
 
-  // Wide back slab — catches panel shadow, reads as floor/rear plane on orbit
-  const back = new THREE.Mesh(
-    new THREE.BoxGeometry(20, 10, 0.3),
-    new THREE.MeshStandardMaterial({ color: 0xe8e0d8 })
-  )
-  back.position.set(0, 0, -12)
-  placeOnFloor(back, 4.5)
-  back.receiveShadow = true
-  scene.add(back)
+  function addBlock(w, h, d, x, z) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat())
+    mesh.position.set(x, 0, z)
+    placeOnFloor(mesh)
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    scene.add(mesh)
+    projector.applyTo(mesh)
+    return mesh
+  }
 
-  // Left depth block — thin side wall, reveals depth on orbit
-  const left = new THREE.Mesh(
-    new THREE.BoxGeometry(0.3, 9, 12),
-    new THREE.MeshStandardMaterial({ color: 0xd0c8be })
-  )
-  left.position.set(-8, 0, -6)
-  placeOnFloor(left, 0.5)
-  left.castShadow = true
-  left.receiveShadow = true
-  scene.add(left)
+  // Front row — flush tiles, each at a different depth.
+  // Width 4 each, centers at -6, -2, 2, 6  →  spans x: -8 to 8.
+  addBlock(4,  8.0, 0.8,  -6,  0.0)   // far left — shallowest
+  addBlock(4,  9.5, 1.8,  -2, -0.8)   // centre-left — mid depth, tallest
+  addBlock(4,  9.0, 2.2,   2, -1.8)   // centre-right — deeper
+  addBlock(4,  7.5, 1.2,   6, -3.0)   // far right — deepest
 
-  // Right depth block — mirror of left
-  const right = new THREE.Mesh(
-    new THREE.BoxGeometry(0.3, 9, 12),
-    new THREE.MeshStandardMaterial({ color: 0xd0c8be })
-  )
-  right.position.set(8, 0, -6)
-  placeOnFloor(right, 0.5)
-  right.castShadow = true
-  right.receiveShadow = true
-  scene.add(right)
+  // Second layer — emerges from behind the front row on orbit.
+  addBlock(3.0, 7.0, 2.0,  -5, -4.5)
+  addBlock(3.5, 5.5, 2.5,   0, -5.0)
+  addBlock(3.0, 6.0, 2.0,   5, -4.0)
+
+  // Far background — large mass that bleeds into the fog.
+  addBlock(5.0, 4.0, 3.0,  -2, -9.0)
+  addBlock(4.0, 5.0, 3.5,   4, -10.0)
 
   projector.update()
 
@@ -129,21 +86,16 @@ export function buildAct1({ scene, camera, width, height }) {
     projector,
     htmlToCanvas,
 
-    /**
-     * @param {{ litness: number }} frame
-     *   litness — 0 at rest (flat HTML illusion), 1 at full orbit (3D lit)
-     *             driven by Scene.js based on scroll progress
-     */
     animate({ litness }) {
       projector.uniforms.uLitness.value = litness
     },
 
-    onResize(width, height) {
-      projectorCamera.aspect = width / height
+    onResize(newWidth, newHeight) {
+      projectorCamera.aspect = newWidth / newHeight
       projectorCamera.updateProjectionMatrix()
       projector.update()
 
-      htmlToCanvas.resize(width, height)
+      htmlToCanvas.resize(newWidth, newHeight)
       htmlToCanvas.update()
     },
 

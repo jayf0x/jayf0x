@@ -2,73 +2,103 @@ import * as THREE from 'three'
 import { placeOnFloor } from '../../../utils/scene.js'
 
 /**
- * Act 2 — The Workspace + The Bridge
+ * Act 2 — The Cube Formation
  *
- * As the camera orbits past Act 1 (90° position), two things emerge:
+ * Dense mass of rectangular blocks visible from the 90° camera position
+ * (x=12, y=1.8, z=0). From 0° they sit behind the Act 1 panel.
  *
- * ── Foreground: The Workspace ──────────────────────────────────────────────
- * A lived-in creative space. Low-poly objects with project screenshots or
- * GIFs mapped as textures. Each is clickable — raycasting via input.clicked.
- *
- * ── Background: The Bridge ────────────────────────────────────────────────
- * Far outside the orbit circle along the −x axis: a massive bridge/cliff
- * formation that looms in the fog like a mountain range.
- *
- * ─────────────────────────────────────────────────────────────────────────
- * TODO (Stage 2):
- *   - Project cubes with PNG textures from /public/projects/
- *   - On click: window.open(projectUrl, '_blank')
- *   - Cursor-effect-01 integration
- *   - Procedural bridge geometry (pillars, arches, deck)
- *   - Per-pillar company branding
- *   - "Your logo here" banner at far end
- * ─────────────────────────────────────────────────────────────────────────
- *
- * @param {{ scene: THREE.Scene, camera: THREE.Camera }} params
- * @returns Act2 handle with animate()
+ * Project cubes expose their +x face (material index 0) toward the camera.
+ * Clicking a project cube opens its URL.
  */
 export function buildAct2({ scene, camera }) {
-  // Workspace stand-in — centred at origin, bottom at y=0.
-  // At 90° orbit the camera is at (ORBIT_RADIUS, EYE_HEIGHT, 0) looking at origin.
-  const workspace = new THREE.Mesh(
-    new THREE.BoxGeometry(6, 6, 6),
-    new THREE.MeshStandardMaterial({ color: 0x4488ff })
-  )
-  workspace.name = 'act2-workspace'
-  workspace.position.set(0, 0, 0)
-  placeOnFloor(workspace)
-  scene.add(workspace)
-
-  // Bridge / rock formation — far outside the orbit circle on the −x axis.
-  // When camera is at 90° (x=+12) looking at origin, the sight-line continues
-  // to −x, placing this formation as a distant mountain range in the frame.
-  // Positioned at x=−65 (~5× the orbit radius) to feel genuinely distant.
-  const bridge = new THREE.Mesh(
-    new THREE.BoxGeometry(80, 50, 25),
-    new THREE.MeshStandardMaterial({ color: 0x0d1f3c })
-  )
-  bridge.name = 'act2-bridge'
-  bridge.position.set(-65, 0, 0)
-  placeOnFloor(bridge)
-  scene.add(bridge)
-
+  const loader = new THREE.TextureLoader()
   const raycaster = new THREE.Raycaster()
-  const clickables = [workspace]
+  const projectMeshes = []
+
+  function baseMat() {
+    return new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.7 })
+  }
+
+  function addCube([w, h, d], [x, , z]) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), baseMat())
+    mesh.position.set(x, 0, z)
+    placeOnFloor(mesh)
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    scene.add(mesh)
+    return mesh
+  }
+
+  function addProjectCube([w, h, d], [x, , z], texPath, url) {
+    const tex = loader.load(texPath)
+    tex.colorSpace = THREE.SRGBColorSpace
+
+    // Index 0 = +x face — points toward the 90° camera at (12, 1.8, 0)
+    const mats = Array(6).fill(null).map(baseMat)
+    mats[0] = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.4 })
+
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats)
+    mesh.position.set(x, 0, z)
+    placeOnFloor(mesh)
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+    mesh.userData.url = url
+    scene.add(mesh)
+    projectMeshes.push(mesh)
+    return mesh
+  }
+
+  // ── Foreground — small cubes at the panel shadow edge ──────────────────
+  addCube([0.8, 1.2, 0.8], [-3, 0, -1.5])
+  addCube([1.0, 0.8, 1.0], [ 2, 0, -1.2])
+  addCube([0.9, 1.5, 0.9], [-1, 0, -1.8])
+
+  // ── Mid-ground — plain cubes ────────────────────────────────────────────
+  addCube([2,   3,   1.5], [-2, 0, -4  ])
+  addCube([2.5, 2,   2  ], [ 2, 0, -3.5])
+  addCube([2,   2.5, 2  ], [ 3, 0, -5  ])
+
+  // ── Mid-ground — project cubes (tallest three) ──────────────────────────
+  addProjectCube(
+    [1.5, 5, 1.5], [0, 0, -4],
+    '/projects/piipaya.png',
+    'https://github.com/jayf0x/PIIPAYA/'
+  )
+  addProjectCube(
+    [1.5, 4, 1.5], [-3.5, 0, -5],
+    '/projects/pure-paste.png',
+    'https://github.com/jayf0x/Pure-Paste'
+  )
+  addProjectCube(
+    [3, 4, 3], [-1, 0, -9],
+    '/projects/fluidity.png',
+    'https://github.com/jayf0x/fluidity'
+  )
+
+  // ── Far background — large masses disappearing into fog ─────────────────
+  addCube([2.5, 3, 2.5], [ 2, 0, -8 ])
+  addCube([4,   5, 3  ], [-3, 0, -11])
 
   return {
-    animate({ delta, elapsed, progress, input }) {
+    animate({ input }) {
       if (input.clicked && input.clickNdc) {
         raycaster.setFromCamera(input.clickNdc, camera)
-        const hits = raycaster.intersectObjects(clickables)
+        const hits = raycaster.intersectObjects(projectMeshes)
         if (hits.length > 0) {
-          // TODO (final QA step): re-enable this log to verify raycasting works
-          // console.log('[Act 2] clicked:', hits[0].object.name)
+          const url = hits[0].object.userData.url
+          if (url) window.open(url, '_blank', 'noopener')
         }
       }
     },
 
     dispose() {
-      // TODO (post-launch): dispose workspace + bridge geometry/materials
+      projectMeshes.forEach(m => {
+        m.geometry.dispose()
+        m.material.forEach(mat => {
+          if (mat.map) mat.map.dispose()
+          mat.dispose()
+        })
+      })
     },
   }
 }
