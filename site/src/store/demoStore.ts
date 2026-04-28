@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { queue } from "../instrumentation/queue"
+import { zustandLogger } from "../instrumentation/zustandLogger"
 import { useRegistryStore } from "./registryStore"
 
 const reg = useRegistryStore.getState()
@@ -14,10 +14,14 @@ interface DemoState {
   setLoading: (val: boolean) => void
 }
 
-export const useDemoStore = create<DemoState>((set) => ({
-  isLoading: false,
-  setLoading(val) {
-    queue.emit("STATE_UPDATE", "set-loading")
-    set({ isLoading: val })
-  },
-}))
+export const useDemoStore = create<DemoState>(
+  zustandLogger(
+    (set) => ({
+      isLoading: false,
+      setLoading(val) {
+        set({ isLoading: val })
+      },
+    }),
+    "set-loading",
+  ),
+)
