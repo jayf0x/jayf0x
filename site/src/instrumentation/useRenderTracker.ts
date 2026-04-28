@@ -7,6 +7,9 @@ export function useRenderTracker(nodeId: string, label: string, parentId?: strin
     const reg = useRegistryStore.getState()
     reg.registerNode({ id: nodeId, label, type: "COMPONENT", slab: "RENDER_TREE", parentId })
     if (parentId) reg.registerEdge(parentId, nodeId)
+    return () => {
+      useRegistryStore.getState().unregisterNode(nodeId)
+    }
   }, [nodeId, label, parentId])
 
   // Runs after every render — no dep array is intentional

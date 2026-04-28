@@ -31,6 +31,7 @@ interface RegistryState {
   edges: RegistryEdge[]
   registerNode: (node: Omit<RegistryNode, "position">) => void
   registerEdge: (sourceId: string, targetId: string) => void
+  unregisterNode: (id: string) => void
   triggerLayout: () => void
 }
 
@@ -59,6 +60,18 @@ export const useRegistryStore = create<RegistryState>((set, get) => ({
     set((state) => ({
       edges: [...state.edges, { sourceId, targetId }],
     }))
+  },
+
+  unregisterNode(id) {
+    set((state) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [id]: _removed, ...rest } = state.nodes
+      return {
+        nodes: rest,
+        edges: state.edges.filter((e) => e.sourceId !== id && e.targetId !== id),
+      }
+    })
+    get().triggerLayout()
   },
 
   triggerLayout() {

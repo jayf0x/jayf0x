@@ -1,12 +1,7 @@
 import { useRef, useEffect } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
-import { OrbitControls } from "@react-three/drei"
-import {
-  EffectComposer as PostComposer,
-  RenderPass,
-  EffectPass,
-  BloomEffect,
-} from "postprocessing"
+import { Line2Props, OrbitControls } from "@react-three/drei"
+import { EffectComposer as PostComposer, RenderPass, EffectPass, BloomEffect } from "postprocessing"
 import { useControls } from "leva"
 import { useRegistryStore } from "../store/registryStore"
 import { SLABS } from "../layout/slabs"
@@ -80,6 +75,16 @@ function SceneContent() {
   })
 
   const slabList = Object.values(SLABS)
+  const lineRefs = useRef<Line2Props[]>([])
+
+  useFrame((_, delta) => {
+    for (const line of lineRefs.current) {
+      if (line?.material) {
+        line.material.dashOffset -= delta * 0.2
+        // lineRef.current.material.dashOffset += delta * 2
+      }
+    }
+  })
 
   return (
     <>
@@ -100,10 +105,19 @@ function SceneContent() {
         return <EdgeLine key={`${e.sourceId}-${e.targetId}`} source={src} target={tgt} />
       })}
 
-      {crossEdges.map((e) => {
+      {crossEdges.map((e, index) => {
         const src = nodes[e.sourceId]
         const tgt = nodes[e.targetId]
-        return <ThreadLine key={`${e.sourceId}-${e.targetId}`} source={src} target={tgt} />
+        return (
+          <ThreadLine
+            key={`${e.sourceId}-${e.targetId}`}
+            ref={(elm) => {
+              lineRefs.current[index] = elm
+            }}
+            source={src}
+            target={tgt}
+          />
+        )
       })}
 
       <PostFX />
@@ -117,10 +131,7 @@ export function GraphScene() {
       <span className="absolute top-4 left-0 right-0 text-center text-xs text-white/30 z-10 pointer-events-none tracking-widest uppercase">
         What&apos;s Actually Happening
       </span>
-      <Canvas
-        camera={{ position: [0, 3, 8], fov: 50 }}
-        gl={{ antialias: true, alpha: false }}
-      >
+      <Canvas camera={{ position: [0, 3, 8], fov: 50 }} gl={{ antialias: true, alpha: false }}>
         <color attach="background" args={["#0a0a0a"]} />
         <SceneContent />
         <OrbitControls
