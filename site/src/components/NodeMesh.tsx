@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react"
 import { useFrame } from "@react-three/fiber"
+import { Text } from "@react-three/drei"
 import type { Mesh, MeshStandardMaterial } from "three"
 import { Color } from "three"
 import { useHighlightStore } from "../store/highlightStore"
@@ -40,15 +41,28 @@ export function NodeMesh({ node }: Props) {
   })
 
   return (
-    <mesh ref={meshRef} position={node.position}>
-      <sphereGeometry args={[0.12, 12, 12]} />
-      <meshStandardMaterial
+    <group position={node.position}>
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[0.12, 12, 12]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={new Color(color)}
+          emissiveIntensity={IDLE_INTENSITY}
+          roughness={0.4}
+          metalness={0.1}
+        />
+      </mesh>
+      <Text
+        position={[0, -0.22, 0]}
+        fontSize={0.11}
         color={color}
-        emissive={new Color(color)}
-        emissiveIntensity={IDLE_INTENSITY}
-        roughness={0.4}
-        metalness={0.1}
-      />
-    </mesh>
+        anchorX="center"
+        anchorY="top"
+        fillOpacity={0.55}
+        renderOrder={1}
+      >
+        {node.label}
+      </Text>
+    </group>
   )
 }
