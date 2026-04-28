@@ -26,7 +26,7 @@ Mechanics verified. All core systems working.
 See `DESIGN.md → Iteration 1` for the acceptance bar per act.
 
 - [ ] Act 1: red panel visible at 0°, HTML projection works, `uLitness` transitions visible
-- [ ] Act 2: cube wall visible at 90°, cubes on the floor, at least one interactive cube
+- [ ] Act 2: snow globe visible at 90°, Rapier physics running, snow falling, at least one project panel clickable
 - [ ] Act 3: monolith visible at 180°, file overlay opens, tab switching works
 - [ ] No floating objects — everything placed with `placeOnFloor()`
 - [ ] No console errors
@@ -39,7 +39,7 @@ See `DESIGN.md → Iteration 1` for the acceptance bar per act.
 **Goal:** real content in every act. Looks intentional.
 
 - [ ] Act 1: illusion polished (edges invisible at 0°), HUD arc, real resume content
-- [ ] Act 2: real project textures on cubes, all cubes clickable, hover states, dramatic lighting
+- [ ] Act 2: all project panels clickable, shake gesture, frosted glass boundary, snow tuned, dramatic lighting
 - [ ] Act 3: markdown rendered, GPT-1 loading + responding, download working, token counter
 - [ ] Mobile tested on real device (orbit, tap, overlay)
 - [ ] No memory leaks visible in DevTools
@@ -66,7 +66,7 @@ See `stages/stage-4/DESIGN.md` for full spec.
 See `DESIGN.md → Icebox` for descriptions.
 
 - [ ] Bridge (work experience arc)
-- [ ] Rapier physics on Act 2 cubes
+- [ ] Rapier physics advanced (shake gesture, prop tipping)
 - [ ] Cursor effect in Act 2 zone
 - [ ] Act 1 backing geometry
 - [ ] Act 3 visual refinement (lighting, roughnessMap, floor, transitions)

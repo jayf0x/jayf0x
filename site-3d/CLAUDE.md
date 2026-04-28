@@ -48,7 +48,7 @@ src/
         index.js              Stage 1 — front face illusion
         backlog.md
       act2/
-        index.js              Stage 2 — workspace + bridge
+        index.js              Stage 2 — snow globe (Rapier physics)
         backlog.md
       act3/
         index.js              Stage 3 — monolith

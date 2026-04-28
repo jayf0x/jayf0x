@@ -10,7 +10,7 @@ The visitor scrolls to rotate a camera around a single 3D world. Each rotation r
 
 **Emotional arc:**
 - Act 1: *"Oh, elegant."* — a flat red panel that hides the whole world behind it
-- Act 2: *"Oh wow, there's depth here."* — cubes stacked in every direction
+- Act 2: *"Oh wow, there's a whole world here."* — a snow globe with physics, props, and drifting snow
 - Act 3: *"Oh — there's a person here."* — a monolith holding Jonatan's files and a ghost AI
 
 ---
@@ -60,15 +60,22 @@ These apply everywhere. Non-negotiable.
 
 ---
 
-## Act 2 — The Cube Wall
+## Act 2 — The Snow Globe
 
-**What it looks like:** a landscape of stacked cubes, like a city or a Tetris formation. Visible from the 90° camera position. Most cubes are white or light gray. Some have project screenshots or GIFs on their face. Clicking a textured cube opens the project URL.
+**What it looks like:** a snow globe hovering in the act 2 zone. Inside: a low-poly landscape with oversized chess pieces and a flat-screen TV as props. Tiny white snowballs drift in reduced gravity. The visitor can shake the globe by scrolling quickly, triggering a snow flurry.
 
-**Geometry:** cubes of varying sizes, stacked in a loose grid arrangement. Some taller, some wider. All sitting on the floor (`placeOnFloor`). Clustered roughly around the world origin, slightly offset toward x+ so they're in frame at 90°.
+**Physics:** Rapier (`@dimforge/rapier3d-compat`) drives all rigid bodies. An invisible sphere collider acts as the globe boundary — objects bounce off it, snow accumulates on the floor. No manual overlap avoidance needed; physics handles it.
 
-**Interaction:** clicking or tapping a project cube opens its URL in a new tab. Hover may change colour or scale slightly — at minimum one cube must be interactive.
+**Props:** chess pieces and a TV are the initial scene objects. Each is a GLTF model scaled to an "oversized prop" height relative to the low-poly terrain. Mathematical spawn positions (not manual placement) prevent overlap at load time; Rapier settles any remaining collisions on the first few frames.
 
-**No bridge in the first two iterations.** The bridge concept (career arc, pillars per employer) is an icebox feature. Don't build it until Acts 1-3 are polished.
+**Snow:** each snowflake is a tiny `SphereGeometry(0.04)` rigid body. Spawn rate controlled. Gravity reduced (`world.gravity.y = -1`). Snow that lands on the floor or terrain stays put — rigidbody sleeping threshold handles this. A spin/shake gesture re-activates sleeping snowballs.
+
+**Projects:** project links live on panels attached to the inner face of the globe sphere (not cubes). One panel per project. Clicking a panel opens its URL.
+
+**Globe boundary:** `SphereGeometry` with a transparent material (or no material — just a Rapier ball collider). Optional: faint frosted glass shader in Iteration 2.
+
+**Interaction (Iteration 1):** scrolling the camera past Act 2 naturally "rocks" the globe — snow reacts. Project panels clickable.  
+**Interaction (Iteration 2):** shake gesture, snow rate tuned, frosted glass boundary, lighting refinement.
 
 ---
 
@@ -125,9 +132,10 @@ All three acts visible and interactive. Ugly is fine. The goal is to prove every
 - No backing geometry required yet
 
 **Act 2:**
-- Cube wall visible from 90° camera position
-- At least one cube is clickable (opens a URL) or changes on hover
-- Cubes sit on the floor (not floating)
+- Snow globe boundary visible from 90° camera position
+- Rapier world running, at least one prop (chess piece) inside with physics
+- At least one project panel clickable (opens URL)
+- Snow particles spawning and falling
 
 **Act 3:**
 - Monolith visible from 180° camera position
@@ -142,7 +150,7 @@ All three acts visible and interactive. Ugly is fine. The goal is to prove every
 
 **Act 1:** illusion polished. Panel edges invisible. HUD arc. Real resume button linked.
 
-**Act 2:** real project textures on cubes. All project cubes clickable. Hover states. Lighting dramatic.
+**Act 2:** real project panels inside globe clickable. Snow tuned. Shake gesture. Frosted glass boundary. Lighting dramatic.
 
 **Act 3:** real file content (markdown rendered). GPT-1 wired and loading. Download working. Token counter.
 
@@ -165,7 +173,7 @@ All three acts visible and interactive. Ugly is fine. The goal is to prove every
 Not in scope for any current iteration. Revisit post-launch.
 
 - **Bridge:** monumental structure in -x direction, pillars per work experience, "Your logo here" banner. Great concept, too much scope for now.
-- **Rapier physics:** workspace cubes have rigid bodies — a fast swipe can knock them. Fun idea, changes the orbit model. Post-launch.
+- **Rapier physics advanced:** shake gesture that sends snow into a real flurry, dynamic prop tipping. Post-launch (Iteration 2 covers basics).
 - **Cursor effect:** noise-driven 3D lines that follow the pointer (see `ideas/cursor-effect-01.js`). Activate in Act 2 zone.
 - **Backing geometry for Act 1:** objects behind the panel that reveal on orbit — adds depth to the illusion. Optional.
 - **GPT-1 IndexedDB cache:** Transformers.js can cache the model between visits. Speeds up repeat loads.

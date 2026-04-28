@@ -28,7 +28,7 @@ import {
  * Escaping requires scrolling ACT3_HYSTERESIS × threshold beyond the boundary.
  */
 
-const CAMERA_FOV = 45
+const CAMERA_FOV = 100
 
 // ── Orbit math ───────────────────────────────────────────────────────────────
 
