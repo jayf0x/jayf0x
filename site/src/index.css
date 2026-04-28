@@ -3,64 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --bg:      #0b0b0d;
-  --surface: #111114;
-  --line:    rgba(255, 255, 255, 0.06);
-  --text:    #e2e2e6;
-  --sub:     #555560;
-  --accent:  #e8ff3c;
+ font-size: 14px;
+}
 
-  --s-0: #ff3d6b;
-  --s-1: #00cfff;
-  --s-2: #7b61ff;
-  --s-3: #ff8c00;
-
-  --t-xl: 4rem;
-  --t-md: 1rem;
-  --t-sm: 0.75rem;
+* {
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body,
 #root {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 body {
-  margin: 0;
   font-family: "Berkeley Mono", ui-monospace, "Commit Mono", "SF Mono", monospace;
-  background: var(--bg);
-  color: var(--text);
-}
-
-#root {
-  isolation: isolate;
-}
-
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background: var(--line);
 }
