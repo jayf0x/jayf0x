@@ -1,6 +1,12 @@
-import { Canvas } from "@react-three/fiber"
+import { useRef, useEffect } from "react"
+import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
-import { EffectComposer, Bloom } from "@react-three/postprocessing"
+import {
+  EffectComposer as PostComposer,
+  RenderPass,
+  EffectPass,
+  BloomEffect,
+} from "postprocessing"
 import { useControls } from "leva"
 import { useRegistryStore } from "../store/registryStore"
 import { SLABS } from "../layout/slabs"
@@ -8,6 +14,52 @@ import { SlabVolume } from "./SlabVolume"
 import { NodeMesh } from "./NodeMesh"
 import { EdgeLine } from "./EdgeLine"
 import { ThreadLine } from "./ThreadLine"
+
+// Drive postprocessing directly to avoid @react-three/postprocessing's
+// __r3f.objects traversal which broke in R3F v9.
+function PostFX() {
+  const { gl, scene, camera, size } = useThree()
+  const composerRef = useRef<PostComposer | null>(null)
+
+  const { intensity, threshold, smoothing } = useControls("Bloom", {
+    intensity: { value: 1.2, min: 0, max: 5, step: 0.1 },
+    threshold: { value: 0.1, min: 0, max: 1, step: 0.01 },
+    smoothing: { value: 0.9, min: 0, max: 1, step: 0.05 },
+  })
+
+  // Recreate composer whenever renderer / scene / camera changes
+  useEffect(() => {
+    const bloom = new BloomEffect({
+      intensity,
+      luminanceThreshold: threshold,
+      luminanceSmoothing: smoothing,
+    })
+    const composer = new PostComposer(gl)
+    composer.addPass(new RenderPass(scene, camera))
+    composer.addPass(new EffectPass(camera, bloom))
+    composer.setSize(size.width, size.height)
+    composerRef.current = composer
+
+    return () => {
+      composer.dispose()
+      composerRef.current = null
+    }
+    // Intentionally excludes bloom params — those are updated via the second effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gl, scene, camera])
+
+  // Sync size
+  useEffect(() => {
+    composerRef.current?.setSize(size.width, size.height)
+  }, [size])
+
+  // Render after R3F's default pass (priority 1 > default 0)
+  useFrame((_, delta) => {
+    composerRef.current?.render(delta)
+  }, 1)
+
+  return null
+}
 
 function SceneContent() {
   const nodes = useRegistryStore((s) => s.nodes)
@@ -53,21 +105,9 @@ function SceneContent() {
         const tgt = nodes[e.targetId]
         return <ThreadLine key={`${e.sourceId}-${e.targetId}`} source={src} target={tgt} />
       })}
+
+      <PostFX />
     </>
-  )
-}
-
-function PostFX() {
-  const { intensity, threshold, smoothing } = useControls("Bloom", {
-    intensity:  { value: 1.2, min: 0, max: 5,   step: 0.1 },
-    threshold:  { value: 0.1, min: 0, max: 1,   step: 0.01 },
-    smoothing:  { value: 0.9, min: 0, max: 1,   step: 0.05 },
-  })
-
-  return (
-    <EffectComposer>
-      <Bloom intensity={intensity} luminanceThreshold={threshold} luminanceSmoothing={smoothing} />
-    </EffectComposer>
   )
 }
 
@@ -90,7 +130,6 @@ export function GraphScene() {
           dampingFactor={0.08}
           makeDefault
         />
-        <PostFX />
       </Canvas>
     </div>
   )
