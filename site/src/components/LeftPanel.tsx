@@ -1,4 +1,4 @@
-import { DemoButton } from "./DemoButton"
+import { DemoForm } from "./DemoForm"
 
 export function LeftPanel() {
   return (
@@ -6,7 +6,7 @@ export function LeftPanel() {
       <span className="absolute top-4 left-0 right-0 text-center text-xs text-white/30 tracking-widest uppercase">
         The Interface
       </span>
-      <DemoButton />
+      <DemoForm />
     </div>
   )
 }

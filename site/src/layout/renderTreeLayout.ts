@@ -31,12 +31,12 @@ export function layoutRenderTree(
   const lw = w * 0.8
   const ld = d * 0.8
 
-  const hier = hierarchy(root, (n) => childrenOf[n.id])
+  const hier = hierarchy(root, (n: RegistryNode) => childrenOf[n.id])
   const layout = tree<RegistryNode>().size([lw, ld])
   const positioned = layout(hier)
 
   const result: Record<string, [number, number, number]> = {}
-  positioned.each((node) => {
+  positioned.each((node: { data: RegistryNode; x: number; y: number }) => {
     result[node.data.id] = [
       slab.center[0] + node.x - lw / 2,
       slab.center[1],

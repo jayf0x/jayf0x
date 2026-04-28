@@ -34,11 +34,11 @@ export function layoutZustand(
 
   roots.forEach((root, ri) => {
     const colCenterX = slab.center[0] - lw / 2 + colW * (ri + 0.5)
-    const hier = hierarchy(root, (n) => childrenOf[n.id])
+    const hier = hierarchy(root, (n: RegistryNode) => childrenOf[n.id])
     const layout = tree<RegistryNode>().size([colW * 0.85, ld])
     const positioned = layout(hier)
 
-    positioned.each((node) => {
+    positioned.each((node: { data: RegistryNode; x: number; y: number }) => {
       result[node.data.id] = [
         colCenterX + node.x - colW * 0.425,
         slab.center[1],
