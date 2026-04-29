@@ -1,7 +1,8 @@
 <h1 align="center">Hey, I'm Jonatan <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25"></h1>
 <p align="center">
   <b></b> &nbsp;•&nbsp; Ghent, Belgium<br/>
-  <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
+  <!-- <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; -->
+  <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
 </p>
 
 ---
@@ -56,4 +57,4 @@
   <strong>
     <a href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf" download>Download full resume</a> ✨
   </strong>
-</p><br><input type='hidden' value='1.19.45' /><br><input type='hidden' value='1.19.46' /><br><input type='hidden' value='1.19.47' /><br><input type='hidden' value='1.19.48' /><br><input type='hidden' value='1.19.49' /><br><input type='hidden' value='1.19.50' /><br><input type='hidden' value='1.19.51' /><br><input type='hidden' value='1.19.52' /><br><input type='hidden' value='1.19.53' /><br><input type='hidden' value='1.19.54' /><br><input type='hidden' value='1.19.55' /><br><input type='hidden' value='1.19.56' /><br><input type='hidden' value='1.19.57' /><br><input type='hidden' value='1.19.58' /><br><input type='hidden' value='1.19.59' /><br><input type='hidden' value='1.19.60' /><br><input type='hidden' value='1.19.61' /><br><input type='hidden' value='1.19.62' /><br><input type='hidden' value='1.19.63' />
+</p>

@@ -55,8 +55,8 @@ __VERSION__ = "{new_version}"
 INIT_FILE.write_text(new_text)
 
 
-f = open(root / "README.md", 'a')
-f.write(f"<br><input type='hidden' value='{new_version}' />")
-f.close()
+# f = open(root / "README.md", 'a')
+# f.write(f"<br><input type='hidden' value='{new_version}' />")
+# f.close()
 
 print("Version bump:", new_version)
