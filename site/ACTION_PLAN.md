@@ -4,21 +4,6 @@ Source of truth: `backup/phase2.md`. Each stage maps to one or more focused agen
 
 ---
 
-## Stage 0 — Housekeeping ✓
-
-- [x] Rewrite `CLAUDE.md` to reflect `backup/phase2.md` as source of truth
-- [x] Audit `src/html2canvas/` — all 5 files documented and kept (see CLAUDE.md)
-- [x] Audit existing components — no hard conflicts; notes below
-- [x] Create `ACTION_PLAN.md` (this file)
-- [x] Remove dev-only `autoRotate` from `GraphScene`
-
-**Component audit notes:**
-- `GraphScene`, `NodeMesh`, `EdgeLine`, `ThreadLine` — clean, no conflicts
-- `SlabVolume` — explicit border boxes at 0.12 opacity; Track B will soften/remove them
-- Instrumentation hooks, Zustand stores, layout engine — all stable, keep as-is
-
----
-
 ## Stage 1 — Track A: The Illusion + Reveal
 
 Goal: user's first experience is a convincing flat webpage. Rotating breaks the illusion.
