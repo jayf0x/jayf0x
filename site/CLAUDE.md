@@ -1,44 +1,69 @@
 # Frontend Stack Visualizer
 
-**Tagline:** *"Just a button?"*
+A personal portfolio site. The user lands on what looks like a normal flat webpage — a resume, a form — projected onto a 3D slab. When they rotate the camera, the projection stretches and falls apart, revealing the full frontend engine: component trees, state stores, query chains — all rendered as a live 3D graph that lights up as they interact.
 
-A personal portfolio site that shows a deceptively simple UI (button, form) and reveals the full React/Zustand/React Query machinery underneath it in a live 3D graph. The graph lights up as the user interacts — renders, state updates, query calls — all connected and color-coded.
+Source of truth: `backup/phase2.md`. That document overrides everything else.
 
 ---
 
 ## Stack
 
-React 18 + Vite + TypeScript. Tailwind for layout. Leva for all runtime controls. Zustand for all app state. React Query v5 for server state. Three.js via `@react-three/fiber` + `@react-three/drei` for the 3D scene. `@react-three/postprocessing` for bloom. `d3-hierarchy` for tree layout. `nanoid` for IDs.
+React 19 + React Compiler + Vite + TypeScript. Tailwind for layout. Leva for all runtime controls (dev only). Zustand for all app state. React Query v5 for server state. Three.js via `@react-three/fiber` + `@react-three/drei` for the 3D scene. `d3-hierarchy` for tree layout. `nanoid` for IDs. No StrictMode.
 
 Use `bun` not `npm`.
 
 ---
 
+## Two Tracks
+
+### Track A — The Illusion + Reveal
+Entry experience. Camera starts front-facing a projected HTML slab. Rotating reveals the engine behind it. Uses `src/html2canvas/` for the projection technique.
+
+### Track B — Engine Density + Complexity
+The engine itself. Dense, entangled, feels like a real system. 30–50+ nodes. Cross-slab threads. Polling node. File ghost layer. Auth flow cascade.
+
+Both tracks share one Three.js renderer and scene.
+
+---
+
 ## Core Architecture
 
-### Build once, highlight after
+### Graph is static
+Nodes are created at registration time (component mount, store init, query key declaration). Runtime events only change node *state* (idle → active → dimmed). Positions never change after first layout.
 
-The graph is **static**. Nodes are created at registration time (component mount, store init, query key declaration) — not when events fire. Runtime events only change node *state* (idle → active → dimmed). Positions never change after first layout.
+### Engine slabs (Track B)
+Three bounded 3D volumes — not stacked symmetrically, offset in X/Z to feel like a real structure:
 
-### Slabs
+- **Render Tree** (blue `#4f9cf9`) — React component hierarchy, d3-hierarchy tidy tree layout. Nodes have Z variation proportional to depth.
+- **Zustand** (purple `#a855f7`) — store → slices → actions cluster. Slightly to the side and behind render tree.
+- **React Query** (green `#22c55e`) — linear chain per query key. Further below and centered.
 
-Three bounded 3D volumes stacked vertically in world space:
+Slab boundaries are implicit — borders softened or removed, node clustering communicates the region. Cross-slab connections are thread lines (white, 15% opacity at idle, brighten on cascade).
 
-- **Render Tree** (blue `#4f9cf9`) — mirrors the React component hierarchy, Reingold-Tilford tree layout via `d3-hierarchy`
-- **Zustand** (purple `#a855f7`) — one cluster per store; store → slices → actions. All nodes visible at mount, idle until called.
-- **React Query** (green `#22c55e`) — one linear chain per query key: key → loading → result
+### html2canvas projection (Track A)
+`src/html2canvas/` contains the projection pipeline:
+- `html-to-canvas.js` — rasterizes an HTMLElement to a THREE.CanvasTexture via SVG foreignObject
+- `projected-material.js` — shader projector: texture applied as if from a virtual camera, `uLitness` 0→1 blends flat illusion to full PBR
+- `collect-css.js` — embeds Tailwind + fonts into the SVG so styles render correctly
+- `scene.example.js` — reference implementation (Track A entry point)
+- `utils-scene.js` — `placeOnFloor` utility (not used in R3F slab layout; retained for reference)
 
-Slabs stack from y=0 (UI disc) down to y=-7. Cross-slab connections are thread lines (white, 15% opacity at idle, pulse on cascade).
+### Camera (Track A)
+- Default: directly in front of the slab, slight elevation, looking at origin
+- Interaction: orbit on mouse drag / touch swipe / device gyro
+- **No auto-rotate on load** — user must actively rotate to discover the reveal
+- Engine nodes visible at low opacity before rotation, fully visible as camera moves
+
+### Left panel
+HTML overlay, not projected. The Three.js canvas is full-screen behind it. On mobile: panel collapses, gyro drives camera.
 
 ### Cascade IDs
+Every user interaction seeds a `cascadeId` (nanoid). All downstream events inherit it. Causality chain: `USER_EVENT → STATE_UPDATE → RENDER → QUERY_START → QUERY_SUCCESS`. HighlightSystem staggers activation by `cascadeHopDelay` (default 80ms).
 
-Every user interaction seeds a `cascadeId` (nanoid). All downstream events inherit it — Zustand middleware reads it, query callbacks close over it. Causality chain is `USER_EVENT → STATE_UPDATE → RENDER → QUERY_START → QUERY_SUCCESS`. The HighlightSystem staggers activation by `cascadeHopDelay` (default 80ms) so the glow visibly travels the chain.
-
-**React Query async:** capture `getCascadeId()` synchronously before the mutation fires, close over it in `onSuccess`/`onError`. No special async machinery needed.
+**Async:** capture `getCascadeId()` synchronously at the interaction boundary, close over it in async callbacks.
 
 ### Node states
-
-`IDLE` (20% emissive) → `ACTIVE` (100% emissive + bloom) → `DIMMED` (lerping back, 800ms) → `IDLE`. `SELECTED` = pinned at 70%, shows tooltip (Phase 5).
+`IDLE` (20% emissive) → `ACTIVE` (100% emissive + bloom) → `DIMMED` (lerping back, 800ms) → `IDLE`. `SELECTED` = pinned at 70%, shows tooltip (Stage 3).
 
 ### Color language
 
@@ -57,48 +82,38 @@ Every user interaction seeds a `cascadeId` (nanoid). All downstream events inher
 ```
 src/
   components/       GraphScene, SlabVolume, NodeMesh, EdgeLine,
-                    ThreadLine, HighlightAnimator, LeftPanel,
-                    RightPanel, DemoButton
+                    ThreadLine, LeftPanel, RightPanel,
+                    tabs/ (TabButton, TabLoginForm, TabSearch, TabToggle)
+  html2canvas/      html-to-canvas.js, projected-material.js,
+                    collect-css.js, scene.example.js, utils-scene.js
   instrumentation/  queue.ts (ring buffer + cascadeId ref),
                     useRenderTracker.ts, useEventTracker.ts,
                     zustandLogger.ts
-  layout/           slabs.ts (static Slab definitions),
-                    slabLayout.ts + per-type strategies
+  layout/           slabs.ts, slabLayout.ts, renderTreeLayout.ts,
+                    zustandLayout.ts, reactQueryLayout.ts
   store/            registryStore.ts (static graph),
                     highlightStore.ts (NodeState map),
-                    demoStore.ts
-  hooks/            useMockQuery.ts
+                    authStore.ts, demoStore.ts, formStore.ts,
+                    searchStore.ts, toggleStore.ts
+  hooks/            useMockQuery.ts, useFormQueries.ts, useTabQueries.ts
 ```
 
-Phase 1 legacy files (`graphStore.ts`, `eventBus.ts`, `3d-force-graph`) are to be removed in Phase 2.
+---
+
+## What not to build
+
+- No force simulation. Static layout only.
+- No matrix green rain or scanline overlays.
+- No auto-rotate on load (Track A).
+- No over-instrumentation — signal-to-noise ratio matters.
+- All tunable parameters in Leva during dev; hardcoded to final values in prod.
 
 ---
 
-## Layout & Visual
-
-- Split screen: left = "The Interface", right = "What's Actually Happening"
-- Background `#0a0a0a`. Monospace font. Minimal chrome.
-- Camera: `(0, +3, +8)`, angled ~30° down, OrbitControls, auto-rotate until interaction
-- Bloom via `<Bloom>` post-processing pass. All tunables in Leva.
-
----
-
-## Phase Status
-
-- **Phase 1 ✓** — ForceGraph3D POC. Static nodes spawn on click, force layout. Known issue: restarts simulation per event. Intentionally replaced.
-- **Phase 2** — Migration to R3F static scene + three signal types. See action plan.
-- **Phase 3** — Stabilisation, perf audit, `ARCHITECTURE.md`
-- **Phase 4** — UI panel: tab switcher with Button / LoginForm / SearchInput / Toggle
-- **Phase 5** — Polish: bloom tuning, traveling dots, custom cursor, entry animation
-
----
-
-## Open Questions (unresolved)
+## Open Questions
 
 | # | Question |
 |---|---|
-| 2 | Should slab height scale with node count? (decide Phase 3) |
-| 4 | Should `useRenderTracker` filter StrictMode double-renders? |
-| 5 | Is `d3-hierarchy` fast enough for real-time re-layout? (profile Phase 3) |
-| 7 | Physics toggle for exploratory mode? (backlog) |
-| 8 | Thread lines: node-to-node vs slab-boundary? (current plan: node-to-node) |
+| 1 | Should slab height scale with node count? |
+| 2 | Thread lines: node-to-node vs slab-boundary? (current plan: node-to-node) |
+| 3 | Physics toggle for exploratory mode? (backlog) |

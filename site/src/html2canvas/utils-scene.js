@@ -1,3 +1,7 @@
+// Not used in the R3F slab layout — retained for reference.
+// placeOnFloor is a vanilla Three.js scene helper; our layout engine
+// positions nodes via slabLayout.ts instead.
+
 import * as THREE from 'three'
 
 const _box = new THREE.Box3() // reused — no per-call allocation

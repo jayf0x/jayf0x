@@ -87,8 +87,6 @@ export function GraphScene() {
         <color attach="background" args={["#0a0a0a"]} />
         <SceneContent />
         <OrbitControls
-          autoRotate
-          autoRotateSpeed={0.4}
           enableDamping
           dampingFactor={0.08}
           makeDefault

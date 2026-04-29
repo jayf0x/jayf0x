@@ -1,83 +1,109 @@
 # Action Plan
 
-Each item is one focused agent session. Read the referenced CLAUDE.md section before starting.
+Source of truth: `backup/phase2.md`. Each stage maps to one or more focused agent sessions.
 
 ---
 
-## Session A — Infrastructure (CLAUDE.md: Core Architecture, Key Files)
+## Stage 0 — Housekeeping ✓
 
-Replace Phase 1 internals with the Phase 2 architecture.
+- [x] Rewrite `CLAUDE.md` to reflect `backup/phase2.md` as source of truth
+- [x] Audit `src/html2canvas/` — all 5 files documented and kept (see CLAUDE.md)
+- [x] Audit existing components — no hard conflicts; notes below
+- [x] Create `ACTION_PLAN.md` (this file)
+- [x] Remove dev-only `autoRotate` from `GraphScene`
 
-- Install `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `d3-hierarchy`, `nanoid`. Remove `3d-force-graph`.
-- Build `InstrumentationQueue` (ring buffer, cascadeId ref, emit/subscribe)
-- Build `RegistryStore` (idempotent registerNode, debounced layout trigger)
-- Build `HighlightStore` (NodeState map, driven by queue subscription)
-- Gut `graphStore.ts` and `eventBus.ts` — they are replaced by the above
-
-No rendering yet. Verify with unit-style console tests.
-
----
-
-## Session B — Layout Engine (CLAUDE.md: Slabs, Key Files → layout/)
-
-Pure layout math, no React.
-
-- Define slab volumes in `slabs.ts` (centers, dimensions, colors)
-- Render Tree layout: `d3-hierarchy` tidy tree → 3D positions within slab bounds
-- Zustand layout: shallow tree (store → slices → actions) within slab bounds
-- React Query layout: linear chain per query key within slab bounds
-- Wire layout engine into RegistryStore's debounced recompute
-
-Verify by logging computed positions for a known set of registered nodes.
+**Component audit notes:**
+- `GraphScene`, `NodeMesh`, `EdgeLine`, `ThreadLine` — clean, no conflicts
+- `SlabVolume` — explicit border boxes at 0.12 opacity; Track B will soften/remove them
+- Instrumentation hooks, Zustand stores, layout engine — all stable, keep as-is
 
 ---
 
-## Session C — R3F Scene (CLAUDE.md: Layout & Visual, Rendering in DESIGN.md §7)
+## Stage 1 — Track A: The Illusion + Reveal
 
-Build the visible graph with static nodes.
+Goal: user's first experience is a convincing flat webpage. Rotating breaks the illusion.
 
-- `GraphScene`: Canvas root, camera, OrbitControls, lighting, bloom pass
-- `SlabVolume`: bounding box outline per slab
-- `NodeMesh`: sphere at registered position, material driven by NodeState
-- `EdgeLine` / `ThreadLine`: intra-slab edges and cross-slab threads
-- `HighlightAnimator`: `useFrame` loop — ACTIVE → DIMMED → IDLE transitions, emissive lerp
+### Session 1A — Projected Slab
 
-Goal: full graph visible (low opacity) on load, no interaction needed yet.
+- Wire `src/html2canvas/` into the R3F scene:
+  - Instantiate `HtmlToCanvas` on one of the left-panel tab UIs (LoginForm or resume content)
+  - Call `collectDocumentCss()` to embed Tailwind/fonts
+  - Create `createProjector({ camera: projectorCamera, texture })` using a frozen clone of the scene camera at its default position
+  - Add a `BoxGeometry(30, 17, 0.4)` mesh at scene origin, apply projector
+  - `projector.update()` in `useFrame`
+- Camera default: directly in front of slab, slight elevation, looking at origin (no auto-rotate)
+- `uLitness` driven by angular offset from rest position (0 = flat illusion, 1 = full PBR as camera rotates)
 
----
+### Session 1B — Reveal Transition
 
-## Session D — Instrumentation Hooks + Demo Wiring (CLAUDE.md: Core Architecture)
-
-Connect real events to the scene.
-
-- `useRenderTracker`: register component on mount, emit RENDER on every render
-- `useEventTracker`: emit USER_EVENT + set cascadeId at interaction boundary
-- `zustandLogger` middleware: intercept `set()`, emit STATE_UPDATE
-- `useMockQuery`: emit QUERY_START, resolve after 800ms, emit QUERY_SUCCESS (close over cascadeId)
-- Register `demoStore` slices + actions at module load
-- Update `DemoButton` to use all of the above
-
-One click should produce the full `USER_EVENT → STATE_UPDATE → RENDER → QUERY_START → QUERY_SUCCESS` cascade lighting up the graph.
+- Engine nodes (Track B graph) visible at very low opacity from rest position
+- As camera rotates past ~30°, engine opacity increases to full
+- Animate `uLitness` based on camera's angle from default position
+- Optional: brief one-shot particle burst / ripple at the slab edge at the reveal moment
+- Optional: "keep going" hint after ~5s idle near the reveal threshold
 
 ---
 
-## Session E — Phase 4: UI Panel (CLAUDE.md: Phase Status → Phase 4)
+## Stage 2 — Track B: Engine Density + Complexity
 
-Add the full "deceptively simple" left panel.
+Goal: the engine looks and feels like a real system, not a tutorial diagram.
 
-- Tab switcher: Button / LoginForm / SearchInput / Toggle
-- Each component tracked with `useRenderTracker` + `useEventTracker`
-- `SearchInput` debounced → query on change
-- Render tree slab updates as components mount/unmount with tab switches
-- Layout polish: labels, spacing, dark chrome
+### Session 2A — Depth and Layout Improvements
+
+- Add Z variation to nodes within each slab proportional to hierarchy depth (render tree: children further back)
+- Offset slabs in X/Z (not just Y) — Zustand slightly to the side and behind, React Query further below and centered
+- Soften or remove `SlabVolume` border boxes; replace with faint floating label above each cluster
+
+### Session 2B — Cross-Cutting Connections
+
+- Context provider threads: cross-within-render-tree arcs from provider to each consumer
+- Polling arc: looping connection from interval node → query node → affected render nodes (not a straight line)
+- Prop drilling: thin stream line from source to consumer tracing the component path when depth > 2
+
+### Session 2C — Additional Complexity Layers
+
+- **Polling / interval node**: standalone node that pulses every ~5s independently, connects to query layer and back to render nodes
+- **File ghost layer**: sparse file/module nodes above the render tree; faint reference lines from each component to its source file; does not participate in cascades; can be hardcoded paths
+- **Auth flow**: named cascade triggered by the login form tab — `form submit → authStore action → loading state → success/error → re-renders`; distinct highlight path
+
+### Session 2D — Visual Density
+
+- Target 30–50+ visible nodes in default view
+- Ghost nodes (idle, very low opacity) fill out the structure
+- No forced symmetry — vary slab offsets until it reads as a real engine room, not a diagram
 
 ---
 
-## Session F — Phase 5: Polish (CLAUDE.md: Phase Status → Phase 5)
+## Stage 3 — Final Touches
 
-Visual finish.
+### Session 3A — Traveling Light Pulse
 
-- Bloom tuning (not overwhelming at high node count)
-- Traveling dot along thread lines during cross-slab hops
-- Entry animation (graph fades in on mount)
-- Auto-rotate: starts on load, stops on interaction, resumes after 10s idle
+- Small bright point travels along edge lines from node to node when a cascade fires
+- Arrives at each node just before it activates
+- Speed controlled by `cascadeHopDelay`
+
+### Session 3B — Idle Breathing + Micro-interactions
+
+- Slow random low-opacity flickers on ghost nodes when idle (system feels alive)
+- Subtle camera oscillation at rest (not full rotate, tiny drift)
+- Rotation-triggered one-shot effect at the reveal moment (particles or ripple from slab edge)
+
+### Session 3C — Node Inspect
+
+- Click a node: pin tooltip showing node type, label, activation count this session, cascade IDs that triggered it
+- Dismiss on click elsewhere
+
+### Session 3D — Ghost / Replay Mode (stretch)
+
+- Button replays last cascade in slow motion (3× slower, traveling pulse only, no new events)
+
+---
+
+## Architecture constraints (always apply)
+
+- Graph built once at load time — nodes never move or spawn after first layout
+- `html2canvas` projection and 3D engine share one Three.js renderer and scene
+- Instrumentation pipeline (`useRenderTracker`, `useEventTracker`, `zustandLogger` → queue → highlight system) is not restructured unless there is a specific performance reason
+- Left panel is HTML over canvas, not projected
+- Cascade ID: capture synchronously, close over in async callbacks
+- All tunable visual parameters in Leva during dev; hardcoded for prod
