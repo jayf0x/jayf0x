@@ -2,6 +2,7 @@ import { useRenderTracker } from "../../instrumentation/useRenderTracker"
 import { useEventTracker } from "../../instrumentation/useEventTracker"
 import { useToggleStore } from "../../store/toggleStore"
 import { usePrefsQuery } from "../../hooks/useTabQueries"
+import { useRegistryStore } from "../../store/registryStore"
 
 interface ToggleRowProps {
   label: string
@@ -43,8 +44,12 @@ export function TabToggle() {
     useToggleStore()
   const { run } = usePrefsQuery()
 
-  function handleToggle(action: (cascadeId?: string) => void) {
+    function handleToggle(action: (cascadeId?: string) => void, actionNodeId: string) {
     const cascadeId = track()
+    // view → exact method node, view → query
+    const reg = useRegistryStore.getState()
+    reg.registerEdge("toggle-panel", actionNodeId)
+    reg.registerEdge("toggle-panel", "q-prefs-key")
     action(cascadeId)
     run(cascadeId)
   }
@@ -55,21 +60,21 @@ export function TabToggle() {
         label="Notifications"
         description="Push alerts for activity"
         checked={notifications}
-        onToggle={() => handleToggle(toggleNotifications)}
+        onToggle={() => handleToggle(toggleNotifications, "toggle-notifs")}
       />
       <div className="border-t border-white/5" />
       <ToggleRow
         label="Dark Mode"
         description="System color scheme"
         checked={darkMode}
-        onToggle={() => handleToggle(toggleDarkMode)}
+        onToggle={() => handleToggle(toggleDarkMode, "toggle-dark")}
       />
       <div className="border-t border-white/5" />
       <ToggleRow
         label="Analytics"
         description="Usage data collection"
         checked={analytics}
-        onToggle={() => handleToggle(toggleAnalytics)}
+        onToggle={() => handleToggle(toggleAnalytics, "toggle-analytics")}
       />
     </div>
   )

@@ -3,6 +3,7 @@ import { useRenderTracker } from "../../instrumentation/useRenderTracker"
 import { useEventTracker } from "../../instrumentation/useEventTracker"
 import { useAuthStore } from "../../store/authStore"
 import { useLoginQuery } from "../../hooks/useTabQueries"
+import { useRegistryStore } from "../../store/registryStore"
 
 function UsernameField() {
   useRenderTracker("login-username", "UsernameField", "login-form")
@@ -67,6 +68,12 @@ export function TabLoginForm() {
     setLoading(true)
     setDone(false)
     const cascadeId = track()
+    // view → method (exact action nodes, not store root)
+    const reg = useRegistryStore.getState()
+    reg.registerEdge("login-submit", "set-auth-user")
+    reg.registerEdge("login-submit", "set-auth-pass")
+    // view → query
+    reg.registerEdge("login-submit", "q-login-key")
     setUsername(username, cascadeId)
     setPassword(password, cascadeId)
     await run(cascadeId)

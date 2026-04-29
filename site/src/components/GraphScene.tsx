@@ -1,60 +1,15 @@
-import { useRef, useEffect } from "react"
-import { Canvas, useThree, useFrame } from "@react-three/fiber"
+// Canvas imported from the WebGPU entry — uses WebGPURenderer, no WebGL deprecation warning.
+// postprocessing@6 needs WebGLRenderer.getContext() which WebGPURenderer doesn't expose,
+// so bloom is disabled. Re-enable when postprocessing v7 clears the three@0.184 peer range.
+import { useRef } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { Line2Props, OrbitControls } from "@react-three/drei"
-import { EffectComposer as PostComposer, RenderPass, EffectPass, BloomEffect } from "postprocessing"
-import { useControls } from "leva"
 import { useRegistryStore } from "../store/registryStore"
 import { SLABS } from "../layout/slabs"
 import { SlabVolume } from "./SlabVolume"
 import { NodeMesh } from "./NodeMesh"
 import { EdgeLine } from "./EdgeLine"
 import { ThreadLine } from "./ThreadLine"
-
-// Drive postprocessing directly to avoid @react-three/postprocessing's
-// __r3f.objects traversal which broke in R3F v9.
-function PostFX() {
-  const { gl, scene, camera, size } = useThree()
-  const composerRef = useRef<PostComposer | null>(null)
-
-  const { intensity, threshold, smoothing } = useControls("Bloom", {
-    intensity: { value: 1.2, min: 0, max: 5, step: 0.1 },
-    threshold: { value: 0.1, min: 0, max: 1, step: 0.01 },
-    smoothing: { value: 0.9, min: 0, max: 1, step: 0.05 },
-  })
-
-  // Recreate composer whenever renderer / scene / camera changes
-  useEffect(() => {
-    const bloom = new BloomEffect({
-      intensity,
-      luminanceThreshold: threshold,
-      luminanceSmoothing: smoothing,
-    })
-    const composer = new PostComposer(gl)
-    composer.addPass(new RenderPass(scene, camera))
-    composer.addPass(new EffectPass(camera, bloom))
-    composer.setSize(size.width, size.height)
-    composerRef.current = composer
-
-    return () => {
-      composer.dispose()
-      composerRef.current = null
-    }
-    // Intentionally excludes bloom params — those are updated via the second effect
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gl, scene, camera])
-
-  // Sync size
-  useEffect(() => {
-    composerRef.current?.setSize(size.width, size.height)
-  }, [size])
-
-  // Render after R3F's default pass (priority 1 > default 0)
-  useFrame((_, delta) => {
-    composerRef.current?.render(delta)
-  }, 1)
-
-  return null
-}
 
 function SceneContent() {
   const nodes = useRegistryStore((s) => s.nodes)
@@ -81,7 +36,6 @@ function SceneContent() {
     for (const line of lineRefs.current) {
       if (line?.material) {
         line.material.dashOffset -= delta * 0.2
-        // lineRef.current.material.dashOffset += delta * 2
       }
     }
   })
@@ -111,16 +65,12 @@ function SceneContent() {
         return (
           <ThreadLine
             key={`${e.sourceId}-${e.targetId}`}
-            ref={(elm) => {
-              lineRefs.current[index] = elm
-            }}
+            ref={(elm) => { lineRefs.current[index] = elm }}
             source={src}
             target={tgt}
           />
         )
       })}
-
-      <PostFX />
     </>
   )
 }
@@ -131,7 +81,9 @@ export function GraphScene() {
       <span className="absolute top-4 left-0 right-0 text-center text-xs text-white/30 z-10 pointer-events-none tracking-widest uppercase">
         What&apos;s Actually Happening
       </span>
-      <Canvas camera={{ position: [0, 3, 8], fov: 50 }} gl={{ antialias: true, alpha: false }}>
+      <Canvas
+        camera={{ position: [0, 3, 8], fov: 50 }}
+      >
         <color attach="background" args={["#0a0a0a"]} />
         <SceneContent />
         <OrbitControls

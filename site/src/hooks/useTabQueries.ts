@@ -31,14 +31,7 @@ reg.registerNode({ id: "q-prefs-result",  label: "result",    type: "QUERY_RESUL
 reg.registerEdge("q-prefs-key",     "q-prefs-loading")
 reg.registerEdge("q-prefs-loading", "q-prefs-result")
 
-// Cross-slab threads
-reg.registerEdge("tab-btn",      "q-btn-key")
-reg.registerEdge("login-submit", "auth-store")
-reg.registerEdge("auth-store",   "q-login-key")
-reg.registerEdge("search-input", "search-store")
-reg.registerEdge("search-store", "q-search-key")
-reg.registerEdge("toggle-panel", "toggle-store")
-reg.registerEdge("toggle-store", "q-prefs-key")
+// No cross-slab edges here — added dynamically per cascade, cleared on tab switch.
 
 function mockRun(keyId: string, resultId: string, delayMs: number, cascadeId: string): Promise<void> {
   queue.emit("QUERY_START", keyId, cascadeId)

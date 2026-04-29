@@ -11,15 +11,12 @@ reg.registerNode({ id: "q-perms-key",     label: "updatePerms", type: "QUERY_KEY
 reg.registerNode({ id: "q-perms-loading", label: "loading",     type: "QUERY_LOADING", slab: "REACT_QUERY", parentId: "q-perms-key" })
 reg.registerNode({ id: "q-perms-result",  label: "result",      type: "QUERY_RESULT",  slab: "REACT_QUERY", parentId: "q-perms-loading" })
 
-reg.registerEdge("q-profile-key", "q-profile-loading")
+reg.registerEdge("q-profile-key",     "q-profile-loading")
 reg.registerEdge("q-profile-loading", "q-profile-result")
-reg.registerEdge("q-perms-key", "q-perms-loading")
-reg.registerEdge("q-perms-loading", "q-perms-result")
+reg.registerEdge("q-perms-key",       "q-perms-loading")
+reg.registerEdge("q-perms-loading",   "q-perms-result")
 
-// Cross-slab threads: submit-btn → form-store, form-store → q-profile-key
-reg.registerEdge("submit-btn",  "form-store")
-reg.registerEdge("set-role",    "q-profile-key")
-reg.registerEdge("set-role",    "q-perms-key")
+// No cross-slab edges — added dynamically per cascade, cleared on tab switch.
 
 export function useFormQueries() {
   function runProfile(cascadeId: string): Promise<void> {

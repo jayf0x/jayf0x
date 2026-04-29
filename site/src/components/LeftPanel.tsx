@@ -1,15 +1,10 @@
 import { useState } from "react"
 import { useRenderTracker } from "../instrumentation/useRenderTracker"
+import { useRegistryStore } from "../store/registryStore"
 import { TabButton } from "./tabs/TabButton"
 import { TabLoginForm } from "./tabs/TabLoginForm"
 import { TabSearch } from "./tabs/TabSearch"
 import { TabToggle } from "./tabs/TabToggle"
-
-// Eagerly import stores so their nodes register before the graph renders
-import "../store/authStore"
-import "../store/searchStore"
-import "../store/toggleStore"
-import "../hooks/useTabQueries"
 
 const TABS = ["Button", "Form", "Search", "Toggle"] as const
 type Tab = (typeof TABS)[number]
@@ -17,6 +12,13 @@ type Tab = (typeof TABS)[number]
 export function LeftPanel() {
   useRenderTracker("left-panel", "LeftPanel")
   const [activeTab, setActiveTab] = useState<Tab>("Button")
+
+  function switchTab(tab: Tab) {
+    if (tab === activeTab) return
+    // Clear thread lines from the previous cascade before showing new tab
+    useRegistryStore.getState().clearCrossSlabEdges()
+    setActiveTab(tab)
+  }
 
   return (
     <div className="relative flex flex-col w-full h-full border-r border-white/10">
@@ -30,7 +32,7 @@ export function LeftPanel() {
           {TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => switchTab(tab)}
               className={`px-4 py-1.5 text-xs tracking-wider uppercase transition-colors duration-100 border-b-2 ${
                 activeTab === tab
                   ? "text-white border-white/60"

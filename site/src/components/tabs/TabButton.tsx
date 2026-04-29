@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useRenderTracker } from "../../instrumentation/useRenderTracker"
 import { useEventTracker } from "../../instrumentation/useEventTracker"
 import { useButtonQuery } from "../../hooks/useTabQueries"
+import { useRegistryStore } from "../../store/registryStore"
 
 export function TabButton() {
   useRenderTracker("tab-btn", "TabButton", "left-panel")
@@ -15,6 +16,9 @@ export function TabButton() {
     setLoading(true)
     setDone(false)
     const cascadeId = track()
+    // Accurate cross-slab threads for this cascade
+    const reg = useRegistryStore.getState()
+    reg.registerEdge("tab-btn", "q-btn-key")
     await run(cascadeId)
     setLoading(false)
     setDone(true)

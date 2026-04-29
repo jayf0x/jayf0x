@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useRenderTracker } from "../../instrumentation/useRenderTracker"
 import { useSearchStore } from "../../store/searchStore"
 import { useSearchQuery } from "../../hooks/useTabQueries"
+import { useRegistryStore } from "../../store/registryStore"
 import { queue } from "../../instrumentation/queue"
 
 const DEBOUNCE_MS = 400
@@ -18,6 +19,10 @@ export function TabSearch() {
     const val = e.target.value
     const cascadeId = queue.newCascade()
     queue.emit("USER_EVENT", "search-input", cascadeId)
+    // view → method, view → query (not store root)
+    const reg = useRegistryStore.getState()
+    reg.registerEdge("search-input", "set-query")
+    reg.registerEdge("search-input", "q-search-key")
     setQuery(val, cascadeId)
 
     if (timerRef.current) clearTimeout(timerRef.current)
