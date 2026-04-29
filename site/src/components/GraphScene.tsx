@@ -10,6 +10,7 @@ import { SlabVolume } from "./SlabVolume"
 import { NodeMesh } from "./NodeMesh"
 import { EdgeLine } from "./EdgeLine"
 import { ThreadLine } from "./ThreadLine"
+import { ProjectedSlab } from "./ProjectedSlab"
 
 function SceneContent() {
   const nodes = useRegistryStore((s) => s.nodes)
@@ -44,6 +45,8 @@ function SceneContent() {
     <>
       <ambientLight intensity={0.05} />
       <pointLight position={[0, 6, 6]} intensity={0.4} />
+
+      <ProjectedSlab />
 
       {slabList.map((slab) => (
         <SlabVolume key={slab.id} slab={slab} />

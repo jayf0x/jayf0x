@@ -21,7 +21,7 @@ export function LeftPanel() {
   }
 
   return (
-    <div className="relative flex flex-col w-full h-full border-r border-white/10">
+    <div id="page" className="relative flex flex-col w-full h-full bg-[#0a0a0a] border-r border-white/10">
       {/* Header */}
       <div className="flex flex-col gap-3 px-6 pt-6 pb-4 border-b border-white/8">
         <span className="text-white/25 text-[10px] tracking-widest uppercase">
