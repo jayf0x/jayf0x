@@ -113,6 +113,31 @@ export async function fetchRepositories(user: string, options: Options = {}): Pr
   return repos
 }
 
+export async function fetchRepoDetails(owner: string, repo: string): Promise<{
+  name: string
+  url: string
+  description: string | null
+  language: string | null
+  stars: number
+  pushedAt: string
+}> {
+  const token = import.meta.env.VITE_GITHUB_TOKEN as string | undefined
+  const headers = buildHeaders("jayf0x-site", token)
+  const response = await axios.get<Repository>(
+    `${GITHUB_API}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+    { headers }
+  )
+  const r = response.data
+  return {
+    name: r.name,
+    url: r.html_url,
+    description: r.description,
+    language: r.language,
+    stars: r.stargazers_count,
+    pushedAt: r.pushed_at,
+  }
+}
+
 export async function fetchLatestDmgUrl(owner: string, repo: string): Promise<string> {
   try {
     const token = import.meta.env.VITE_GITHUB_TOKEN as string | undefined
