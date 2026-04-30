@@ -3,31 +3,37 @@ import json
 import hashlib
 import subprocess
 import requests
+import logging
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from string import Template
 from ollama import chat
 
 
-MAX_WORKERS = 3
+# ---------------- CONFIG ----------------
+
+MAX_WORKERS = 1
 MODEL = "qwen3.5:9b"
 REPO_LIMIT = 50
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "site/src/assets/repositories.json"
+OUTPUT_FILE = ROOT / "site/src/assets/repositories.json"
 
-TYPES = {
-    "utility",
-    "application",
-    "framework",
-    "library",
-    "tooling",
-    "research",
-    "infrastructure",
-    "ai",
-    "cli",
-    "plugin"
+VALID_TYPES = {
+    "utility", "application", "framework", "library",
+    "tooling", "research", "infrastructure",
+    "ai", "cli", "plugin"
 }
+
+# ---------------- LOGGING ----------------
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+log = logging.getLogger(__name__)
+
+# ---------------- PROMPT ----------------
 
 PROMPT = Template("""
 Extract structured metadata from the README.
@@ -53,70 +59,101 @@ README:
 $content
 """)
 
-def run(cmd):
-    return subprocess.check_output(cmd, shell=True, text=True).strip()
+# ---------------- HELPERS ----------------
 
-def owner():
-    return run("gh api user -q .login")
+def run_cmd(cmd: str) -> str:
+    try:
+        return subprocess.check_output(cmd, shell=True, text=True).strip()
+    except subprocess.CalledProcessError as e:
+        log.error(f"Command failed: {cmd}\n{e}")
+        raise
 
-def repos(o):
-    data = json.loads(run(
-        f'gh repo list {o} --limit {REPO_LIMIT} --json name,visibility,description'
-    ))
-    return [
+
+def get_github_owner():
+    log.info("Fetching GitHub username...")
+    return run_cmd("gh api user -q .login")
+
+
+def fetch_repos(owner: str):
+    log.info(f"Fetching repositories for {owner}...")
+    raw = run_cmd(
+        f'gh repo list {owner} --limit {REPO_LIMIT} --json name,visibility,description'
+    )
+
+    data = json.loads(raw)
+
+    repos = [
         (r["name"], r.get("description", ""))
         for r in data if r["visibility"] == "PUBLIC"
     ]
 
-def readme(o, r):
-    for b in ("main", "master"):
-        u=''
+    log.info(f"Found {len(repos)} public repositories")
+    return repos
+
+
+def fetch_readme(owner: str, repo: str):
+    for branch in ("main", "master"):
+        url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/README.md"
         try:
-            u = f"https://raw.githubusercontent.com/{o}/{r}/{b}/README.md"
-            res = requests.get(u, timeout=10)
+            res = requests.get(url, timeout=10)
             if res.status_code == 200:
+                log.debug(f"{repo}: README found on {branch}")
                 return res.text
-        except:
-            print('failed to fetch readme', u)
-            pass
+        except requests.RequestException as e:
+            log.warning(f"{repo}: README fetch failed ({url}) -> {e}")
+
+    log.warning(f"{repo}: No README found")
     return None
 
-def h(x):
-    return hashlib.sha256(x.encode()).hexdigest()
 
-def query_summary(readme):
-    response = chat(
-        model=MODEL,
-        messages=[{'role': 'user', 'content': PROMPT.substitute(content=readme[:8000])}],
-        format="json",
-        think=False,
-        options={"temperature": 0.1, "seed": 42},
-    )
-    return response.message.content
-        
+def sha256(text: str):
+    return hashlib.sha256(text.encode()).hexdigest()
 
-def safe_json(x):
+
+def query_llm(readme: str):
     try:
-        return json.loads(x)
-    except:
+        response = chat(
+            model=MODEL,
+            messages=[{
+                'role': 'user',
+                'content': PROMPT.substitute(content=readme[:8000])
+            }],
+            format="json",
+            think=False,
+            options={"temperature": 0.1, "seed": 42},
+        )
+        return response.message.content
+    except Exception as e:
+        log.error(f"LLM query failed: {e}")
         return None
+
+
+def safe_json_parse(text):
+    try:
+        return json.loads(text)
+    except Exception:
+        log.warning("Failed to parse JSON from LLM output")
+        return None
+
 
 def normalize_type(t):
     if not t:
         return "utility"
     t = t.lower().strip()
-    return t if t in TYPES else "utility"
+    return t if t in VALID_TYPES else "utility"
 
-def validate(j):
-    if not isinstance(j, dict):
+
+def validate_output(data):
+    if not isinstance(data, dict):
         return None
 
     return {
-        "keywords": list(set(j.get("keywords", [])))[:20],
-        "summary": j.get("summary", "").strip(),
-        "stack": list(set(j.get("stack", [])))[:15],
-        "type": normalize_type(j.get("type"))
+        "keywords": list(set(data.get("keywords", [])))[:20],
+        "summary": data.get("summary", "").strip(),
+        "stack": list(set(data.get("stack", [])))[:15],
+        "type": normalize_type(data.get("type"))
     }
+
 
 def fallback():
     return {
@@ -126,62 +163,104 @@ def fallback():
         "type": "utility"
     }
 
-def process(name, repo_desc, owner, cache):
-    content = readme(owner, name)
-    if not content:
+
+# ---------------- CACHE ----------------
+
+def load_cache():
+    if not OUTPUT_FILE.exists():
+        log.info("No cache file found")
+        return {}
+
+    try:
+        data = json.loads(OUTPUT_FILE.read_text())
+        cache = {x["repo"]: x for x in data if "repo" in x}
+
+        if not cache:
+            log.info("Cache file exists but contains no valid entries")
+            return {}
+
+        log.info(f"Loaded cache with {len(cache)} entries")
+        return cache
+
+    except Exception as e:
+        log.error(f"Failed to read cache: {e}")
+        return {}
+
+
+# ---------------- PROCESSING ----------------
+
+def process_repo(name, repo_desc, owner, cache):
+    log.info(f"Processing: {name}")
+
+    readme = fetch_readme(owner, name)
+    if not readme:
         return None
 
-    hh = h(content)
+    content_hash = sha256(readme)
 
-    # cache hit (but ensure schema compatibility)
-    if name in cache and cache[name].get("hash") == hh:
-        c = cache[name]
-        # migrate missing fields
-        c.setdefault("repo_description", repo_desc or "")
-        c.setdefault("ollama_description", "")
-        c.setdefault("keywords", [])
-        c.setdefault("stack", [])
-        c.setdefault("type", "utility")
-        return c
+    # cache hit
+    if name in cache and cache[name].get("hash") == content_hash:
+        log.info(f"{name}: cache hit")
+        cached = cache[name]
 
-    raw = query_summary(content)
+        cached.setdefault("repo_description", repo_desc or "")
+        cached.setdefault("ollama_description", "")
+        cached.setdefault("keywords", [])
+        cached.setdefault("stack", [])
+        cached.setdefault("type", "utility")
 
-    parsed = safe_json(raw) if raw else None
-    data = validate(parsed) if parsed else fallback()
+        return cached
+
+    log.info(f"{name}: cache miss → querying LLM")
+
+    raw = query_llm(readme)
+    parsed = safe_json_parse(raw) if raw else None
+    validated = validate_output(parsed) if parsed else fallback()
 
     return {
         "repo": name,
-        "hash": hh,
+        "hash": content_hash,
         "repo_description": repo_desc or "",
-        "ollama_description": data["summary"],
-        "keywords": data["keywords"],
-        "stack": data["stack"],
-        "type": data["type"]
+        "ollama_description": validated["summary"],
+        "keywords": validated["keywords"],
+        "stack": validated["stack"],
+        "type": validated["type"]
     }
 
-def main():
-    o = owner()
-    rs = repos(o)
 
-    if OUT.exists():
-        old = {x["repo"]: x for x in json.loads(OUT.read_text())}
+# ---------------- MAIN ----------------
+
+def main():
+    owner = get_github_owner()
+    cache = load_cache()
+
+    # Only fetch repos if cache is empty
+    if cache:
+        log.info("Using cached repositories (skipping GitHub fetch)")
+        repo_list = [(name, cache[name].get("repo_description", "")) for name in cache]
     else:
-        old = {}
+        repo_list = fetch_repos(owner)
 
     results = {}
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-        futs = [
-            ex.submit(process, name, desc, o, old)
-            for name, desc in rs
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = [
+            executor.submit(process_repo, name, desc, owner, cache)
+            for name, desc in repo_list
         ]
-        for f in as_completed(futs):
-            x = f.result()
-            if x:
-                results[x["repo"]] = x
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(list(results.values()), indent=2))
+        for future in as_completed(futures):
+            try:
+                result = future.result()
+                if result:
+                    results[result["repo"]] = result
+            except Exception as e:
+                log.error(f"Worker failed: {e}")
+
+    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_FILE.write_text(json.dumps(list(results.values()), indent=2))
+
+    log.info(f"Done. Wrote {len(results)} repositories.")
 
 
 if __name__ == "__main__":
