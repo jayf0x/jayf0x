@@ -1,5 +1,5 @@
 import { FluidText } from "@jayf0x/fluidity-js";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 export const Background = () => {
@@ -33,21 +33,22 @@ export const Background = () => {
             <FluidText
               isWorkerEnabled={false}
               ref={fluidRef}
-              text="<3/>"
+              text="🐔    <3/>   🥚"
               config={{
                 densityDissipation: 0.99,
                 // waterColor: [0.8, 0.3, 0.5],
                 waterColor: [0.15, 0.1, 0.1],
                 // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
                 shine: 0.001,
-                splatRadius: 0.002,
+                splatRadius: 0.015,
                 specularExp: 7,
                 pressureIterations: 1,
               }}
+              fontSize={400}
+              fontFamily="Courier New"
               algorithm="ripple"
               style={{
-                width: "100vw",
-                height: "100vw",
+                filter: "sepia(0.2)",
               }}
             />
           </div>
