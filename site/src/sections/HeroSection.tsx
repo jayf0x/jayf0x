@@ -14,15 +14,15 @@ const terminalLines = [
 
 export const HeroSection = () => {
   return (
-    <section className="flex flex-col justify-center px-6 pb-8">
+    <section className="flex flex-col justify-center px-6 pb-8 w-full text-nowrap">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="mx-auto flex max-w-3xl flex-col gap-5"
+        className="mx-auto flex max-w-3xl flex-col gap-5 w-full text-center"
       >
         <motion.h1
-          className="text-5xl font-black tracking-tighter text-[var(--text)]"
+          className="text-5xl font-black tracking-tighter text-[var(--text)] w-full"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}

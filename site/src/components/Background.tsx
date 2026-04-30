@@ -12,6 +12,10 @@ export const Background = () => {
       document.documentElement.style.setProperty("--mx", x.toFixed(2));
       document.documentElement.style.setProperty("--my", y.toFixed(2));
 
+
+         document.documentElement.style.setProperty("--mx2", x.toFixed(2) + "px");
+      document.documentElement.style.setProperty("--my2", y.toFixed(2) + "px");
+
       requestAnimationFrame(() => {
         fluidRef.current?.move({ x: event.clientX, y: event.clientY });
       });

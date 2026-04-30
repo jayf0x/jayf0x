@@ -64,9 +64,16 @@ html {
   scrollbar-width: thin;
 }
 
+/* fun stuff */
+
 body {
   animation: sloppy_cursor infinite 2s;
 }
+
+h1 {
+  text-shadow: calc(var(--mx) * 5px) calc(var(--my)  * -5px) 3px #f9634c68;
+}
+
 
 @keyframes sloppy_cursor {
   0% {
@@ -105,3 +112,5 @@ body {
       auto;
   }
 }
+
+
