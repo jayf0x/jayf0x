@@ -13,20 +13,38 @@ REPO_LIMIT = 50
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "site/src/assets/repositories.json"
 
+TYPES = {
+    "utility",
+    "application",
+    "framework",
+    "library",
+    "tooling",
+    "research",
+    "infrastructure",
+    "ai",
+    "cli",
+    "plugin"
+}
+
 PROMPT = """
-Extract 5-20 keywords out of the following README content and output response as list of keywords and short summary.
-This will be used as search results.
+Extract structured metadata from the README.
 
 JSON Structure:
 {
     "keywords": [],
-    "summary": ""
+    "summary": "",
+    "stack": [],
+    "type": ""
 }
 
 Rules:
-- Output ONLY valid JSON data.
-- No markdown formatting in the response.
-- make summary 1-3 sentences.
+- Output ONLY valid JSON
+- keywords: 5-20 items
+- summary: 1-3 sentences
+- stack: technologies, languages, frameworks
+- type must be ONE of:
+  utility, application, framework, library, tooling, research, infrastructure, ai, cli, plugin
+- If unsure, choose "utility"
 
 README:
 {content}
@@ -39,8 +57,13 @@ def owner():
     return run("gh api user -q .login")
 
 def repos(o):
-    data = json.loads(run(f'gh repo list {o} --limit {REPO_LIMIT} --json name,visibility'))
-    return [r["name"] for r in data if r["visibility"] == "PUBLIC"]
+    data = json.loads(run(
+        f'gh repo list {o} --limit {REPO_LIMIT} --json name,visibility,description'
+    ))
+    return [
+        (r["name"], r.get("description", ""))
+        for r in data if r["visibility"] == "PUBLIC"
+    ]
 
 def readme(o, r):
     for b in ("main", "master"):
@@ -51,38 +74,84 @@ def readme(o, r):
                 return res.text
         except:
             pass
+    return None
 
 def h(x):
     return hashlib.sha256(x.encode()).hexdigest()
 
 def ollama(p):
     try:
-        r = subprocess.run(["ollama", "run", MODEL, "--think=false", p],
-                           capture_output=True, text=True, check=True)
+        r = subprocess.run(
+            ["ollama", "run", MODEL, "--think=false", p],
+            capture_output=True, text=True, check=True
+        )
         return r.stdout.strip()
     except:
         return None
 
-def process(r, o, cache):
-    c = readme(o, r)
-    if not c:
-        return None
-    hh = h(c)
-    if r in cache and cache[r]["hash"] == hh:
-        return cache[r]
-    p = PROMPT.format(content=c[:8000])
-    out = ollama(p)
-    if not out:
-        return None
+def safe_json(x):
     try:
-        j = json.loads(out)
+        return json.loads(x)
     except:
         return None
+
+def normalize_type(t):
+    if not t:
+        return "utility"
+    t = t.lower().strip()
+    return t if t in TYPES else "utility"
+
+def validate(j):
+    if not isinstance(j, dict):
+        return None
+
     return {
-        "repo": r,
+        "keywords": list(set(j.get("keywords", [])))[:20],
+        "summary": j.get("summary", "").strip(),
+        "stack": list(set(j.get("stack", [])))[:15],
+        "type": normalize_type(j.get("type"))
+    }
+
+def fallback():
+    return {
+        "keywords": [],
+        "summary": "",
+        "stack": [],
+        "type": "utility"
+    }
+
+def process(name, repo_desc, owner, cache):
+    content = readme(owner, name)
+    if not content:
+        return None
+
+    hh = h(content)
+
+    # cache hit (but ensure schema compatibility)
+    if name in cache and cache[name].get("hash") == hh:
+        c = cache[name]
+        # migrate missing fields
+        c.setdefault("repo_description", repo_desc or "")
+        c.setdefault("ollama_description", "")
+        c.setdefault("keywords", [])
+        c.setdefault("stack", [])
+        c.setdefault("type", "utility")
+        return c
+
+    prompt = PROMPT.format(content=content[:8000])
+    raw = ollama(prompt)
+
+    parsed = safe_json(raw) if raw else None
+    data = validate(parsed) if parsed else fallback()
+
+    return {
+        "repo": name,
         "hash": hh,
-        "keywords": j.get("keywords", []),
-        "summary": j.get("summary", "")
+        "repo_description": repo_desc or "",
+        "ollama_description": data["summary"],
+        "keywords": data["keywords"],
+        "stack": data["stack"],
+        "type": data["type"]
     }
 
 def main():
@@ -97,7 +166,10 @@ def main():
     results = {}
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
-        futs = [ex.submit(process, r, o, old) for r in rs]
+        futs = [
+            ex.submit(process, name, desc, o, old)
+            for name, desc in rs
+        ]
         for f in as_completed(futs):
             x = f.result()
             if x:
@@ -105,6 +177,7 @@ def main():
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(list(results.values()), indent=2))
+
 
 if __name__ == "__main__":
     main()

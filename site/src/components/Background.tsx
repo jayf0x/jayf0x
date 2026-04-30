@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 export const Background = () => {
-  const imgRef = useRef<FluidHandle>(null);
+  const fluidRef = useRef<FluidHandle>(null);
 
   useEffect(() => {
     const onMouseMove = (event: MouseEvent) => {
@@ -13,7 +13,7 @@ export const Background = () => {
       document.documentElement.style.setProperty("--my", y.toFixed(2));
 
       requestAnimationFrame(() => {
-        imgRef.current?.move({ x: event.clientX, y: event.clientY });
+        fluidRef.current?.move({ x: event.clientX, y: event.clientY });
       });
     };
 
@@ -28,29 +28,31 @@ export const Background = () => {
     <div className="fixed inset-0 z-0 overflow-hidden">
       {
         // no use on mobile
-      !isMobile && (
-        <div className="absolute inset-0 opacity-50">
-          <FluidText
-            ref={imgRef}
-            text="<3/>"
-            config={{
-              densityDissipation: 0.99,
-              // waterColor: [0.8, 0.3, 0.5],
-              waterColor: [0.15, 0.1, 0.1],
-              // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
-              shine: 0.001,
-              splatRadius: 0.002,
-              specularExp: 7,
-              pressureIterations: 1,
-            }}
-            algorithm="ripple"
-            style={{
-              width: "100vw",
-              height: "100vw",
-            }}
-          />
-        </div>
-      )}
+        !isMobile && (
+          <div className="absolute inset-0 opacity-50">
+            <FluidText
+              isWorkerEnabled={false}
+              ref={fluidRef}
+              text="<3/>"
+              config={{
+                densityDissipation: 0.99,
+                // waterColor: [0.8, 0.3, 0.5],
+                waterColor: [0.15, 0.1, 0.1],
+                // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
+                shine: 0.001,
+                splatRadius: 0.002,
+                specularExp: 7,
+                pressureIterations: 1,
+              }}
+              algorithm="ripple"
+              style={{
+                width: "100vw",
+                height: "100vw",
+              }}
+            />
+          </div>
+        )
+      }
       <div className="absolute inset-0 opacity-[0.16]">
         <svg
           className="h-full w-full"
