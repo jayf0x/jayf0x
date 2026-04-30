@@ -1,27 +1,35 @@
-import { NavLink } from "react-router-dom"
+import type { Page } from "../App"
 
-export const Navigation = () => {
+type NavigationProps = {
+  current: Page
+  onNavigate: (page: Page) => void
+}
+
+export const Navigation = ({ current, onNavigate }: NavigationProps) => {
   return (
     <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-6 py-4 backdrop-blur-md">
-      <span className="font-mono text-sm font-semibold text-[var(--text)]">jayf0x</span>
+      <button
+        type="button"
+        onClick={() => onNavigate("home")}
+        className="font-mono text-sm font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+      >
+        jayf0x
+      </button>
       <div className="flex items-center gap-6">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            `text-sm transition ${isActive ? "text-[var(--text)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`
-          }
-        >
-          Home
-        </NavLink>
-        <NavLink
-          to="/resume"
-          className={({ isActive }) =>
-            `text-sm transition ${isActive ? "text-[var(--text)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`
-          }
-        >
-          Resume
-        </NavLink>
+        {(["home", "resume"] as Page[]).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => onNavigate(p)}
+            className={`text-sm capitalize transition ${
+              current === p
+                ? "text-[var(--text)]"
+                : "text-[var(--muted)] hover:text-[var(--text)]"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
       </div>
     </nav>
   )
