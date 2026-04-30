@@ -22,19 +22,19 @@ export const Background = () => {
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 opacity-50">
         <FluidText
           ref={imgRef}
           text="<3/>"
           config={{
-            densityDissipation: 0.98,
+            densityDissipation: 0.99,
             // waterColor: [0.8, 0.3, 0.5],
             waterColor: [0.15, 0.1, 0.1],
             // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
             shine: 0.001,
-            splatRadius: 0.006,
+            splatRadius: 0.002,
             specularExp: 7,
-            pressureIterations: 0
+            pressureIterations: 1
           }}
           algorithm="ripple"
           style={{

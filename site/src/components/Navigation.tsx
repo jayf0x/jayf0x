@@ -1,36 +1,28 @@
-import { useScrollSpy } from "../hooks/useScrollSpy"
+import { NavLink } from "react-router-dom"
 
-type NavigationProps = {
-  sectionIds: string[]
-}
-
-export const Navigation = ({ sectionIds }: NavigationProps) => {
-  const activeSection = useScrollSpy(sectionIds)
-
+export const Navigation = () => {
   return (
-    <nav
-      className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 md:flex flex-col items-center gap-3"
-      aria-label="Section navigation"
-    >
-      <div className="absolute h-full w-px bg-[var(--border)]" />
-      {sectionIds.map((id) => {
-        const active = activeSection === id
-        return (
-          <button
-            key={id}
-            type="button"
-            onClick={() => {
-              document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
-            }}
-            aria-label={`Scroll to ${id}`}
-            className={`relative z-10 h-3 w-3 rounded-full border transition ${
-              active
-                ? "border-[var(--accent)] bg-[var(--accent)]"
-                : "border-[var(--muted)] bg-[var(--bg)] hover:border-[var(--text)]"
-            }`}
-          />
-        )
-      })}
+    <nav className="fixed inset-x-0 top-0 z-40 flex items-center justify-between px-6 py-4 backdrop-blur-md">
+      <span className="font-mono text-sm font-semibold text-[var(--text)]">jayf0x</span>
+      <div className="flex items-center gap-6">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `text-sm transition ${isActive ? "text-[var(--text)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`
+          }
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/resume"
+          className={({ isActive }) =>
+            `text-sm transition ${isActive ? "text-[var(--text)]" : "text-[var(--muted)] hover:text-[var(--text)]"}`
+          }
+        >
+          Resume
+        </NavLink>
+      </div>
     </nav>
   )
 }
