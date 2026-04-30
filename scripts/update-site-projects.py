@@ -43,16 +43,16 @@ JSON Structure:
     "keywords": [],
     "summary": "",
     "stack": [],
-    "type": ""
+    "types": []
 }
 
 Rules:
 - Output ONLY valid JSON
 - keywords: 5-20 items
-- summary: 1-3 sentences
+- summary: 1-3 sentences. Keep it short. Do NOT mention the product name, app name, company name, or any proper nouns.
+Describe only what it does and its purpose in a neutral, generic way.
 - stack: technologies, languages, frameworks
-- type must be ONE of:
-  utility, application, framework, library, tooling, research, infrastructure, ai, cli, plugin
+- types must be 1-3 of: $types
 - If unsure, choose "utility"
 
 README:
@@ -77,14 +77,14 @@ def get_github_owner():
 def fetch_repos(owner: str):
     log.info(f"Fetching repositories for {owner}...")
     raw = run_cmd(
-        f'gh repo list {owner} --limit {REPO_LIMIT} --json name,visibility,description'
+        f'gh repo list {owner} --limit {REPO_LIMIT} --json name,visibility,description,updatedAt'
     )
 
     data = json.loads(raw)
 
     repos = [
-        (r["name"], r.get("description", ""))
-        for r in data if r["visibility"] == "PUBLIC"
+        (r["name"], r.get("description", ""), r['updatedAt'])
+        for r in data if r["visibility"] == "PUBLIC" and r['name'] != owner
     ]
 
     log.info(f"Found {len(repos)} public repositories")
@@ -116,7 +116,7 @@ def query_llm(readme: str):
             model=MODEL,
             messages=[{
                 'role': 'user',
-                'content': PROMPT.substitute(content=readme[:8000])
+                'content': PROMPT.substitute(content=readme[:8000], types=", ".join(VALID_TYPES))
             }],
             format="json",
             think=False,
@@ -136,11 +136,11 @@ def safe_json_parse(text):
         return None
 
 
-def normalize_type(t):
-    if not t:
-        return "utility"
-    t = t.lower().strip()
-    return t if t in VALID_TYPES else "utility"
+def normalize_types(types):
+    if not types or not len(types):
+        return []
+
+    return [t.lower().strip() for t in types if t in VALID_TYPES]
 
 
 def validate_output(data):
@@ -151,7 +151,8 @@ def validate_output(data):
         "keywords": list(set(data.get("keywords", [])))[:20],
         "summary": data.get("summary", "").strip(),
         "stack": list(set(data.get("stack", [])))[:15],
-        "type": normalize_type(data.get("type"))
+        "types": normalize_types(data.get("types")),
+        "updatedAt": data.get('updatedAt', '')
     }
 
 
@@ -160,7 +161,8 @@ def fallback():
         "keywords": [],
         "summary": "",
         "stack": [],
-        "type": "utility"
+        "types": [],
+        "updatedAt": ''
     }
 
 
@@ -189,7 +191,7 @@ def load_cache():
 
 # ---------------- PROCESSING ----------------
 
-def process_repo(name, repo_desc, owner, cache):
+def process_repo(name, repo_desc, updatedAt,  owner, cache):
     log.info(f"Processing: {name}")
 
     readme = fetch_readme(owner, name)
@@ -207,7 +209,8 @@ def process_repo(name, repo_desc, owner, cache):
         cached.setdefault("ollama_description", "")
         cached.setdefault("keywords", [])
         cached.setdefault("stack", [])
-        cached.setdefault("type", "utility")
+        cached.setdefault("types", "utility")
+        cached.setdefault("updatedAt", updatedAt or '')
 
         return cached
 
@@ -224,7 +227,7 @@ def process_repo(name, repo_desc, owner, cache):
         "ollama_description": validated["summary"],
         "keywords": validated["keywords"],
         "stack": validated["stack"],
-        "type": validated["type"]
+        "types": validated["types"]
     }
 
 
@@ -245,8 +248,8 @@ def main():
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = [
-            executor.submit(process_repo, name, desc, owner, cache)
-            for name, desc in repo_list
+            executor.submit(process_repo, name, desc, updatedAt, owner, cache)
+            for name, desc, updatedAt  in repo_list
         ]
 
         for future in as_completed(futures):
