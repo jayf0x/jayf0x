@@ -5,6 +5,9 @@ import subprocess
 import requests
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from string import Template
+from ollama import chat
+
 
 MAX_WORKERS = 3
 MODEL = "qwen3.5:9b"
@@ -26,7 +29,7 @@ TYPES = {
     "plugin"
 }
 
-PROMPT = """
+PROMPT = Template("""
 Extract structured metadata from the README.
 
 JSON Structure:
@@ -47,8 +50,8 @@ Rules:
 - If unsure, choose "utility"
 
 README:
-{content}
-"""
+$content
+""")
 
 def run(cmd):
     return subprocess.check_output(cmd, shell=True, text=True).strip()
@@ -67,27 +70,30 @@ def repos(o):
 
 def readme(o, r):
     for b in ("main", "master"):
+        u=''
         try:
             u = f"https://raw.githubusercontent.com/{o}/{r}/{b}/README.md"
             res = requests.get(u, timeout=10)
             if res.status_code == 200:
                 return res.text
         except:
+            print('failed to fetch readme', u)
             pass
     return None
 
 def h(x):
     return hashlib.sha256(x.encode()).hexdigest()
 
-def ollama(p):
-    try:
-        r = subprocess.run(
-            ["ollama", "run", MODEL, "--think=false", p],
-            capture_output=True, text=True, check=True
-        )
-        return r.stdout.strip()
-    except:
-        return None
+def query_summary(readme):
+    response = chat(
+        model=MODEL,
+        messages=[{'role': 'user', 'content': PROMPT.substitute(content=readme[:8000])}],
+        format="json",
+        think=False,
+        options={"temperature": 0.1, "seed": 42},
+    )
+    return response.message.content
+        
 
 def safe_json(x):
     try:
@@ -138,8 +144,7 @@ def process(name, repo_desc, owner, cache):
         c.setdefault("type", "utility")
         return c
 
-    prompt = PROMPT.format(content=content[:8000])
-    raw = ollama(prompt)
+    raw = query_summary(content)
 
     parsed = safe_json(raw) if raw else None
     data = validate(parsed) if parsed else fallback()

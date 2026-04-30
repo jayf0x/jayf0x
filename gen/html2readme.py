@@ -86,7 +86,7 @@ def main():
             messages=[{'role': 'user', 'content': PROMPT.format(html_content=html_text)}],
             format="json",
             think=False,
-            options={"temperature": 0.1}
+            options={"temperature": 0.1, "seed": 42}
         )
         content = response.message.content
 
