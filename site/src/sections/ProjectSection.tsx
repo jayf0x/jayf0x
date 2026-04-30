@@ -204,7 +204,7 @@ export const ProjectSection = () => {
   const hasActiveFilters = filters.size > 0;
 
   return (
-    <section className="px-6 pb-32">
+    <section className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
       <div className="mx-auto max-w-3xl space-y-4">
 
         {/* ── Search bar ── */}
