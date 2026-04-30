@@ -78,7 +78,38 @@ export const Background = () => {
             width="100%"
             height="100%"
             fill="url(#dotPattern)"
-            className="text-[var(--muted)]"
+            className="text-[#DD3162]"
+          />
+        </svg>
+      </div>
+
+
+      <div className="absolute inset-0 opacity-[0.16]">
+        <svg
+          className="h-full w-full"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{
+            transform:
+            "translate3d(calc(var(--mx, 0) * 4px), calc(var(--my, 0) * 4px), 0)",
+          }}
+        >
+          <defs>
+            <pattern
+              id="dotPattern2"
+              x="0"
+              y="0"
+              width="24"
+              height="24"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle cx="3" cy="3" r="2" fill="currentColor" />
+            </pattern>
+          </defs>
+          <rect
+            width="100%"
+            height="100%"
+            fill="url(#dotPattern2)"
+            className="text-[#27449F]"
           />
         </svg>
       </div>
