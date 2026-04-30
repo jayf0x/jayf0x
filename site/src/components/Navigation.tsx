@@ -1,9 +1,14 @@
-import type { Page } from "../App"
+import type { Page } from "../App";
 
 type NavigationProps = {
-  current: Page
-  onNavigate: (page: Page) => void
-}
+  current: Page;
+  onNavigate: (page: Page) => void;
+};
+
+const pages: [string, Page][] = [
+  ["127.0.0.1", "home"],
+  ["~/Resume", "resume"],
+];
 
 export const Navigation = ({ current, onNavigate }: NavigationProps) => {
   return (
@@ -11,26 +16,26 @@ export const Navigation = ({ current, onNavigate }: NavigationProps) => {
       <button
         type="button"
         onClick={() => onNavigate("home")}
-        className="font-mono text-sm font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+        className="font-mono text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent)]"
       >
-        jayf0x
+        Jayf0x
       </button>
       <div className="flex items-center gap-6">
-        {(["home", "resume"] as Page[]).map((p) => (
+        {pages.map(([label, page]) => (
           <button
-            key={p}
+            key={`page-${page}`}
             type="button"
-            onClick={() => onNavigate(p)}
-            className={`text-sm capitalize transition ${
-              current === p
-                ? "text-[var(--text)]"
+            onClick={() => onNavigate(page)}
+            className={`text-lg capitalize transition hover:underline ${
+              current === page
+                ? "text-[var(--accent)]"
                 : "text-[var(--muted)] hover:text-[var(--text)]"
             }`}
           >
-            {p}
+            {label}
           </button>
         ))}
       </div>
     </nav>
-  )
-}
+  );
+};

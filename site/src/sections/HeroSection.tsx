@@ -21,7 +21,7 @@ export const HeroSection = () => {
         className="mx-auto flex max-w-3xl flex-col gap-5"
       >
         <motion.h1
-          className="text-6xl font-black tracking-tighter text-[var(--text)] md:text-8xl"
+          className="text-5xl font-black tracking-tighter text-[var(--text)] sm:stext-8xl"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -43,7 +43,7 @@ export const HeroSection = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <span>~/code</span> <span className="text-[var(--accent)]">❯</span>
+          {/* <span>~/code</span> <span className="text-[var(--accent)]">❯</span> */}
           <div className="mt-2 min-h-[2rem] text-[var(--accent)]">
             <TypeAnimation
               sequence={[...terminalLines.flatMap((l) => [l, 1400])]}
@@ -61,7 +61,7 @@ export const HeroSection = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          Frontend engineer in Ghent. I build interfaces that render fast and hold up.
+          Frontend engineer++ - Gent (BE.)
         </motion.p>
 
         <motion.div
@@ -79,13 +79,13 @@ export const HeroSection = () => {
             <Github size={16} />
             GitHub
           </a>
-          <a
+          {/* <a
             href="mailto:jonatan.vons@gmail.com"
             className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:border-[var(--accent)]"
           >
             <Mail size={16} />
             Email
-          </a>
+          </a> */}
         </motion.div>
       </motion.div>
     </section>
