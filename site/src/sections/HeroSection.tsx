@@ -5,10 +5,12 @@ import { Github, Mail } from "lucide-react"
 const GITHUB_URL = "https://github.com/jayf0x"
 
 const terminalLines = [
+  "Frontend engineer++, Gent (BE.)",
+  "Understand the relations between tech and user",
   "builds real-time 3D annotation projection",
-  "ships WebGL shader tooling",
+  "Things with buttons",
   "automates repetitive workflows",
-  "writes UI that stays fast under load",
+  "Repetitive annoyance -> automation",
 ]
 
 export const HeroSection = () => {
@@ -54,16 +56,6 @@ export const HeroSection = () => {
             <span className="ml-1 inline-block h-4 w-[2px] animate-blink bg-[var(--accent)] align-middle" />
           </div>
         </motion.div>
-
-        <motion.p
-          className="max-w-xl text-base leading-relaxed text-[var(--muted)]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
-          Frontend engineer++ - Gent (BE.)
-        </motion.p>
-
         <motion.div
           className="flex items-center gap-3"
           initial={{ opacity: 0 }}
