@@ -1,20 +1,22 @@
-import { motion } from "framer-motion"
-import { Download, Github } from "lucide-react"
-import { useRepositories } from "../hooks/useRepository"
-import { Skeleton } from "../components/ui/Skeleton"
+import { motion } from "framer-motion";
+import { Download, Github } from "lucide-react";
+import { useRepositories } from "../hooks/useRepository";
+import { Skeleton } from "../components/Skeleton";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-80px" },
   transition: { duration: 0.55, delay, ease: "easeOut" as const },
-})
+});
 
 const projectPlaceholder = (name: string) => (
   <div className="flex aspect-[16/10] items-center justify-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface)] p-8 text-center">
-    <p className="font-mono text-2xl font-semibold tracking-tight text-[var(--text)]">{name}</p>
+    <p className="font-mono text-2xl font-semibold tracking-tight text-[var(--text)]">
+      {name}
+    </p>
   </div>
-)
+);
 
 const ProjectLoading = () => (
   <div className="space-y-10">
@@ -29,17 +31,27 @@ const ProjectLoading = () => (
       </div>
     ))}
   </div>
-)
+);
 
 export const ProjectSection = () => {
-  const { isLoading, repositories, error } = useRepositories()
+  const { isLoading, repositories, error } = useRepositories();
 
   return (
-    <section id="projects" className="border-t border-[var(--border)] px-6 py-32">
+    <section
+      id="projects"
+      className="border-t border-[var(--border)] px-6 py-32"
+      style={{
+        backdropFilter: "blur(10px)",
+      }}
+    >
       <div className="mx-auto max-w-5xl space-y-24">
         <motion.div {...fadeUp()} className="space-y-2 text-center">
-          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--accent)]">Projects</p>
-          <h2 className="text-3xl font-bold text-[var(--text)] md:text-4xl">Selected Work</h2>
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--accent)]">
+            Projects
+          </p>
+          <h2 className="text-3xl font-bold text-[var(--text)] md:text-4xl">
+            Selected Work
+          </h2>
         </motion.div>
 
         {isLoading ? <ProjectLoading /> : null}
@@ -62,8 +74,12 @@ export const ProjectSection = () => {
               <div className="shrink-0 space-y-4 md:w-[58%]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-2xl font-bold text-[var(--text)]">{repo.name}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{repo.description}</p>
+                    <h3 className="text-2xl font-bold text-[var(--text)]">
+                      {repo.name}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                      {repo.description}
+                    </p>
                   </div>
                   {repo.isPrivate ? (
                     <span className="rounded-full border border-[var(--border)] px-2 py-1 text-xs font-mono text-[var(--muted)]">
@@ -83,13 +99,19 @@ export const ProjectSection = () => {
 
                 <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted)]">
                   {repo.stars !== undefined ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-1">★ {repo.stars}</span>
+                    <span className="rounded-full border border-[var(--border)] px-2 py-1">
+                      ★ {repo.stars}
+                    </span>
                   ) : null}
                   {repo.language ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-1">{repo.language}</span>
+                    <span className="rounded-full border border-[var(--border)] px-2 py-1">
+                      {repo.language}
+                    </span>
                   ) : null}
                   {repo.pushedAt ? (
-                    <span className="rounded-full border border-[var(--border)] px-2 py-1">{repo.pushedAt}</span>
+                    <span className="rounded-full border border-[var(--border)] px-2 py-1">
+                      {repo.pushedAt}
+                    </span>
                   ) : null}
                   {repo.downloadUrl ? (
                     <a
@@ -103,7 +125,10 @@ export const ProjectSection = () => {
                     </a>
                   ) : null}
                   {repo.tags.map((tag) => (
-                    <span key={`${repo.name}-${tag}`} className="rounded-full border border-[var(--border)] px-2 py-1">
+                    <span
+                      key={`${repo.name}-${tag}`}
+                      className="rounded-full border border-[var(--border)] px-2 py-1"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -113,7 +138,12 @@ export const ProjectSection = () => {
               <div className="w-full min-w-0 flex-1">
                 <div className="group relative overflow-hidden rounded-xl border border-[var(--border)]">
                   {repo.url ? (
-                    <a href={repo.url} target="_blank" rel="noreferrer" className="block">
+                    <a
+                      href={repo.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block"
+                    >
                       {repo.preview ? (
                         <img
                           src={repo.preview}
@@ -152,5 +182,5 @@ export const ProjectSection = () => {
           ))}
       </div>
     </section>
-  )
-}
+  );
+};

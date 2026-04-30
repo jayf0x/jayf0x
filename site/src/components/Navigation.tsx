@@ -1,4 +1,4 @@
-import { useScrollSpy } from "../../hooks/useScrollSpy"
+import { useScrollSpy } from "../hooks/useScrollSpy"
 
 type NavigationProps = {
   sectionIds: string[]

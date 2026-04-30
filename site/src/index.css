@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   scroll-behavior: smooth;
   width: 100vw;
   height: 100vh;
@@ -21,7 +23,7 @@ body {
   color: var(--text);
 }
 
-html[data-theme="dark"] {
+html {
   --bg: #060608;
   --surface: #0f0f12;
   --surface-2: #1a1a1f;
@@ -32,24 +34,9 @@ html[data-theme="dark"] {
   --accent-glow: rgba(79, 124, 255, 0.15);
 }
 
-html[data-theme="light"] {
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --border: rgba(0, 0, 0, 0.08);
-  --text: #0f0f12;
-  --muted: #6b7280;
-  --accent: #4f7cff;
-  --accent-glow: rgba(79, 124, 255, 0.12);
-}
-
 .blob {
   animation: blob 7s infinite;
   will-change: transform;
-}
-
-html[data-theme="light"] .blob {
-  display: none;
 }
 
 @keyframes blob {

@@ -1,26 +1,14 @@
-import plugin from "tailwindcss/plugin"
+import plugin from "tailwindcss/plugin";
 
-/** All color tokens defined here — single source of truth */
-const tokens = {
-  light: {
-    "--background": "#f7f7f8",
-    "--foreground": "#0f0f10",
-    "--primary": "#2563eb",
-    "--primary-hover": "#1d4ed8",
-    "--muted": "#6b7280",
-    "--surface": "rgba(255,255,255,0.70)",
-    "--border": "rgba(0,0,0,0.08)",
-  },
-  dark: {
-    "--background": "#09090b",
-    "--foreground": "#f1f1f3",
-    "--primary": "#3b82f6",
-    "--primary-hover": "#60a5fa",
-    "--muted": "#9ca3af",
-    "--surface": "rgba(255,255,255,0.04)",
-    "--border": "rgba(255,255,255,0.08)",
-  },
-}
+const darkTheme = {
+  "--background": "#09090b",
+  "--foreground": "#f1f1f3",
+  "--primary": "#3b82f6",
+  "--primary-hover": "#60a5fa",
+  "--muted": "#9ca3af",
+  "--surface": "rgba(255,255,255,0.04)",
+  "--border": "rgba(255,255,255,0.08)",
+};
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -73,9 +61,9 @@ export default {
   plugins: [
     plugin(({ addBase }) => {
       addBase({
-        ":root": tokens.light,
-        ".dark": tokens.dark,
-      })
+        ":root": darkTheme,
+        ".dark": darkTheme,
+      });
     }),
   ],
-}
+};
