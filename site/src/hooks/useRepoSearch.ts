@@ -34,7 +34,7 @@ export function useRepoSearch(query: string, filters: Set<string>) {
     return data.filter((entry) => {
       const queryMatch = hasQuery ? matches(entry, query.trim()) : true
       const filterMatch = hasFilters
-        ? [...filters].every(
+        ? [...filters].some(
             (f) => entry.stack.includes(f) || entry.types.includes(f)
           )
         : true

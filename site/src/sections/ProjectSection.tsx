@@ -22,7 +22,7 @@ const Chip = ({ label, active, onToggle }: ChipProps) => (
   <button
     type="button"
     onClick={onToggle}
-    className={`rounded-full border px-3 py-1 font-mono text-xs transition ${
+    className={`shrink-0 rounded-full border px-3 py-1 font-mono text-xs transition ${
       active
         ? "border-[var(--accent)] bg-[var(--accent-glow)] text-[var(--text)]"
         : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
@@ -164,23 +164,21 @@ export const ProjectSection = () => {
           />
         </motion.div>
 
-        {/* Filter chips */}
+        {/* Filter chips — single scrollable row */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="space-y-2"
+          className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          <div className="flex flex-wrap gap-2">
-            {allStacks.map((s) => (
-              <Chip key={s} label={s} active={filters.has(s)} onToggle={() => toggleFilter(s)} />
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {allTypes.map((t) => (
-              <Chip key={t} label={t} active={filters.has(t)} onToggle={() => toggleFilter(t)} />
-            ))}
-          </div>
+          {[...allStacks, ...allTypes].map((label) => (
+            <Chip
+              key={label}
+              label={label}
+              active={filters.has(label)}
+              onToggle={() => toggleFilter(label)}
+            />
+          ))}
         </motion.div>
 
         {/* Results */}
