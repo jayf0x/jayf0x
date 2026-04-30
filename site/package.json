@@ -1,6 +1,6 @@
 {
   "name": "jayf0x-app",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": false,
   "homepage": "https://jayf0x.github.io/JAYF0X/",
   "scripts": {
@@ -21,15 +21,10 @@
     "leva": "^0.10.1",
     "nanoid": "^5.1.9",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "zustand": "^5.0.12"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/d3-hierarchy": "^3.1.7",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@types/three": "^0.184.0",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.5.0",
     "babel-plugin-react-compiler": "^1.0.0",
