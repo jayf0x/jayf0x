@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Background } from "./components/Background";
-import { Navigation } from "./components/Navigation";
 import { Home } from "./Home";
 import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
@@ -10,7 +9,7 @@ export type Page = "home" | "resume";
 
 const pages: [string, Page][] = [
   ["127.0.0.1", "home"],
-  ["~/Resume", "resume"],
+  ["Résumé", "resume"],
 ];
 
 export const App = () => {
@@ -19,7 +18,7 @@ export const App = () => {
   const isMobile = useIsMobile();
 
   const pageVariants = useMemo(() => {
-    const w = (window.innerWidth / 2) * (page === "home" ? 1 : -1);
+    const w = (window.innerWidth) * (page === "home" ? 1 : -1);
     return {
       initial: { opacity: 0.5, x: w },
       animate: { opacity: 1, x: 0 },
@@ -31,14 +30,14 @@ export const App = () => {
     <div className="min-h-screen w-full text-[var(--text)]">
       <Background />
       <main className="relative z-10">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
-            key={page}
+            key={`motion-page-${page}`}
             variants={pageVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.25, ease: "circInOut" }}
+            transition={{ duration: 0.24, ease: "circInOut" }}
           >
             <div
               className={`flex flex-col ${ isMobile

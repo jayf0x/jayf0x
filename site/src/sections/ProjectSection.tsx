@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Github, Download, ExternalLink } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
@@ -131,6 +131,8 @@ export const ProjectSection = () => {
 
   const { results, allStacks, allTypes } = useRepoSearch(query, filters)
 
+  const chips = useMemo(()=> [...new Set([...allStacks, ...allTypes])], [allStacks, allTypes])
+
   const toggleFilter = (value: string) =>
     setFilters((prev) => {
       const next = new Set(prev)
@@ -141,7 +143,7 @@ export const ProjectSection = () => {
   const hasInput = query.trim().length > 0 || filters.size > 0
 
   return (
-    <section className="flex-1 px-6 pb-32 flex-1">
+    <section className="flex-1 overflow-y-scroll px-6">
       <div className="mx-auto max-w-3xl space-y-5">
 
         {/* Search bar */}
@@ -171,9 +173,9 @@ export const ProjectSection = () => {
           transition={{ duration: 0.4, delay: 0.2 }}
           className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {[...allStacks, ...allTypes].map((label) => (
+          {chips.map((label) => (
             <Chip
-              key={label}
+              key={`chip-${label}`}
               label={label}
               active={filters.has(label)}
               onToggle={() => toggleFilter(label)}
@@ -201,10 +203,10 @@ export const ProjectSection = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-3"
+              className="space-y-3 h-[450px] overflow-y-scroll"
             >
               {results.map((entry, i) => (
-                <RepoCard key={entry.repo} entry={entry} index={i} />
+                <RepoCard key={`search-result-${entry.repo}`} entry={entry} index={i} />
               ))}
             </motion.div>
           )}
