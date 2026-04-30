@@ -2,22 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-size: 14px;
+html, body, #root {
+  scroll-behavior: smooth;
+  width: 100vw;
+  height: 100vh;
 }
 
-* {
+body {
   margin: 0;
-  padding: 0;
+  font-family:
+    "Geist",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 
-html,
-body {
-  width: 100%;
-  min-height: 100vh;
-  overflow-x: hidden;
+html[data-theme="dark"] {
+  --bg: #060608;
+  --surface: #0f0f12;
+  --surface-2: #1a1a1f;
+  --border: rgba(255, 255, 255, 0.07);
+  --text: #e8e8ea;
+  --muted: #5a5a6a;
+  --accent: #4f7cff;
+  --accent-glow: rgba(79, 124, 255, 0.15);
 }
 
-body {
-  font-family: "Berkeley Mono", ui-monospace, "Commit Mono", "SF Mono", monospace;
+html[data-theme="light"] {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --border: rgba(0, 0, 0, 0.08);
+  --text: #0f0f12;
+  --muted: #6b7280;
+  --accent: #4f7cff;
+  --accent-glow: rgba(79, 124, 255, 0.12);
+}
+
+.blob {
+  animation: blob 7s infinite;
+  will-change: transform;
+}
+
+html[data-theme="light"] .blob {
+  display: none;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(20px, -30px) scale(1.05);
+  }
+  66% {
+    transform: translate(-15px, 15px) scale(0.97);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+#root {
+  isolation: isolate;
 }
