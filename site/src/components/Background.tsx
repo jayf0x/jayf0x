@@ -1,5 +1,6 @@
 import { FluidText } from "@jayf0x/fluidity-js";
 import { useEffect, useRef } from "react";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 export const Background = () => {
   const imgRef = useRef<FluidHandle>(null);
@@ -8,8 +9,8 @@ export const Background = () => {
     const onMouseMove = (event: MouseEvent) => {
       const x = -event.clientX / window.innerWidth;
       const y = -event.clientY / window.innerHeight;
-      // document.documentElement.style.setProperty("--mx", x.toFixed(4));
-      // document.documentElement.style.setProperty("--my", y.toFixed(4));
+      document.documentElement.style.setProperty("--mx", x.toFixed(2));
+      document.documentElement.style.setProperty("--my", y.toFixed(2));
 
       requestAnimationFrame(() => {
         imgRef.current?.move({ x: event.clientX, y: event.clientY });
@@ -17,32 +18,39 @@ export const Background = () => {
     };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
 
+  const isMobile = useIsMobile();
+
   return (
     <div className="fixed inset-0 z-0 overflow-hidden">
-      <div className="absolute inset-0 opacity-50">
-        <FluidText
-          ref={imgRef}
-          text="<3/>"
-          config={{
-            densityDissipation: 0.99,
-            // waterColor: [0.8, 0.3, 0.5],
-            waterColor: [0.15, 0.1, 0.1],
-            // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
-            shine: 0.001,
-            splatRadius: 0.002,
-            specularExp: 7,
-            pressureIterations: 1
-          }}
-          algorithm="ripple"
-          style={{
-            width: "100vw",
-            height: "100vw",
-          }}
-        />
-      </div>
+      {
+        // no use on mobile
+      !isMobile && (
+        <div className="absolute inset-0 opacity-50">
+          <FluidText
+            ref={imgRef}
+            text="<3/>"
+            config={{
+              densityDissipation: 0.99,
+              // waterColor: [0.8, 0.3, 0.5],
+              waterColor: [0.15, 0.1, 0.1],
+              // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
+              shine: 0.001,
+              splatRadius: 0.002,
+              specularExp: 7,
+              pressureIterations: 1,
+            }}
+            algorithm="ripple"
+            style={{
+              width: "100vw",
+              height: "100vw",
+            }}
+          />
+        </div>
+      )}
       <div className="absolute inset-0 opacity-[0.16]">
         <svg
           className="h-full w-full"
