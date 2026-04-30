@@ -10,7 +10,7 @@ const terminalLines = [
   "Annoyance with outdates systems = automation",
   "Challenge me: www.chess.com/member/chaos_70b",
   "('b' + 'a' + + 'a' + 'a').toLowerCase()"
-]
+].flatMap((l) => [l, 2000])
 
 export const HeroSection = () => {
   return (
@@ -47,7 +47,7 @@ export const HeroSection = () => {
           {/* <span>~/code</span> <span className="text-[var(--accent)]">❯</span> */}
           <div className="mt-2 min-h-[2rem] text-[var(--accent)]">
             <TypeAnimation
-              sequence={[...terminalLines.flatMap((l) => [l, 1400])]}
+              sequence={terminalLines}
               wrapper="span"
               speed={65}
               repeat={Infinity}

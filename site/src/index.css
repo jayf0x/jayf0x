@@ -58,3 +58,10 @@ html {
 #root {
   isolation: isolate;
 }
+
+
+
+* {
+  scrollbar-color: rgba(255, 255, 255, 0.668) white;
+  scrollbar-width: thin;
+}
