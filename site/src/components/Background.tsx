@@ -48,7 +48,7 @@ export const Background = () => {
               fontFamily="Courier New"
               algorithm="ripple"
               style={{
-                filter: "sepia(0.2)",
+                filter: "grayscale(0.5)",
               }}
             />
           </div>
