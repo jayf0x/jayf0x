@@ -26,7 +26,15 @@ export const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Jonatan Vons
+          {/* <TypeAnimation
+              sequence={["Jonatan Verstraete", 4000, "Jayf0x", 4000]}
+              wrapper="span"
+              speed={1}
+              repeat={Infinity}
+              omitDeletionAnimation
+              preRenderFirstString
+            /> */}
+          Jonatan Verstraete
         </motion.h1>
 
         <motion.div
