@@ -1,22 +1,20 @@
-import { useMemo, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Search, Github, Download, ExternalLink } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
-import { useRepoSearch } from "../hooks/useRepoSearch"
-import { withLocalStorageCache } from "../lib/queryClient"
-import { fetchRepoDetails, fetchLatestDmgUrl } from "../utils/fetch-repository"
-import type { RepoEntry, RepoDetails } from "../types/repository"
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Github, Download } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useRepoSearch } from "../hooks/useRepoSearch";
+import { withLocalStorageCache } from "../lib/queryClient";
+import { fetchRepoDetails, fetchLatestDmgUrl } from "../utils/fetch-repository";
+import type { RepoEntry, RepoDetails } from "../types/repository";
 
-const OWNER = "jayf0x"
-const FIVE_HOURS = 5 * 60 * 60 * 1000
-
-// ── chip ────────────────────────────────────────────────────────────────────
+const OWNER = "jayf0x";
+const FIVE_HOURS = 5 * 60 * 60 * 1000;
 
 type ChipProps = {
-  label: string
-  active: boolean
-  onToggle: () => void
-}
+  label: string;
+  active: boolean;
+  onToggle: () => void;
+};
 
 const Chip = ({ label, active, onToggle }: ChipProps) => (
   <button
@@ -30,34 +28,40 @@ const Chip = ({ label, active, onToggle }: ChipProps) => (
   >
     {label}
   </button>
-)
+);
 
 // ── card ─────────────────────────────────────────────────────────────────────
 
 const timeSince = (iso: string) => {
-  const diff = Date.now() - new Date(iso).getTime()
-  const m = 60_000, h = 60 * m, d = 24 * h
-  if (diff < h) return `${Math.max(1, Math.floor(diff / m))}m ago`
-  if (diff < d) return `${Math.floor(diff / h)}h ago`
-  return `${Math.floor(diff / d)}d ago`
-}
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = 60_000,
+    h = 60 * m,
+    d = 24 * h;
+  if (diff < h) return `${Math.max(1, Math.floor(diff / m))}m ago`;
+  if (diff < d) return `${Math.floor(diff / h)}h ago`;
+  return `${Math.floor(diff / d)}d ago`;
+};
 
-type RepoCardProps = { entry: RepoEntry; index: number }
+type RepoCardProps = { entry: RepoEntry; index: number };
 
 const RepoCard = ({ entry, index }: RepoCardProps) => {
   const { data: details } = useQuery<RepoDetails>({
     queryKey: ["repo", OWNER, entry.repo],
     queryFn: () =>
-      withLocalStorageCache(`gh:${OWNER}:${entry.repo}`, FIVE_HOURS, async () => {
-        const [base, downloadUrl] = await Promise.all([
-          fetchRepoDetails(OWNER, entry.repo),
-          fetchLatestDmgUrl(OWNER, entry.repo),
-        ])
-        return { ...base, downloadUrl: downloadUrl || undefined }
-      }),
-  })
+      withLocalStorageCache(
+        `gh:${OWNER}:${entry.repo}`,
+        FIVE_HOURS,
+        async () => {
+          const [base, downloadUrl] = await Promise.all([
+            fetchRepoDetails(OWNER, entry.repo),
+            fetchLatestDmgUrl(OWNER, entry.repo),
+          ]);
+          return { ...base, downloadUrl: downloadUrl || undefined };
+        },
+      ),
+  });
 
-  const tags = [...new Set([...entry.stack, ...entry.types])]
+  const tags = [...new Set([...entry.stack, ...entry.types])];
 
   return (
     <motion.div
@@ -67,7 +71,9 @@ const RepoCard = ({ entry, index }: RepoCardProps) => {
       className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:border-[var(--accent)]"
     >
       <div className="min-w-0 flex-1 space-y-2">
-        <h3 className="text-base font-semibold text-[var(--text)]">{entry.repo}</h3>
+        <h3 className="text-base font-semibold text-[var(--text)]">
+          {entry.repo}
+        </h3>
 
         <p className="text-sm leading-relaxed text-[var(--muted)]">
           {entry.repo_description}
@@ -90,7 +96,10 @@ const RepoCard = ({ entry, index }: RepoCardProps) => {
             </span>
           )}
           {tags.map((tag) => (
-            <span key={tag} className="rounded-full border border-[var(--border)] px-2 py-0.5">
+            <span
+              key={tag}
+              className="rounded-full border border-[var(--border)] px-2 py-0.5"
+            >
               {tag}
             </span>
           ))}
@@ -120,32 +129,34 @@ const RepoCard = ({ entry, index }: RepoCardProps) => {
         )}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
 // ── section ───────────────────────────────────────────────────────────────────
 
 export const ProjectSection = () => {
-  const [query, setQuery] = useState("")
-  const [filters, setFilters] = useState<Set<string>>(new Set())
+  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<Set<string>>(new Set());
 
-  const { results, allStacks, allTypes } = useRepoSearch(query, filters)
+  const { results, allStacks, allTypes } = useRepoSearch(query, filters);
 
-  const chips = useMemo(()=> [...new Set([...allStacks, ...allTypes])], [allStacks, allTypes])
+  const chips = useMemo(
+    () => [...new Set([...allStacks, ...allTypes])],
+    [allStacks, allTypes],
+  );
 
   const toggleFilter = (value: string) =>
     setFilters((prev) => {
-      const next = new Set(prev)
-      next.has(value) ? next.delete(value) : next.add(value)
-      return next
-    })
+      const next = new Set(prev);
+      next.has(value) ? next.delete(value) : next.add(value);
+      return next;
+    });
 
-  const hasInput = query.trim().length > 0 || filters.size > 0
+  const hasInput = query.trim().length > 0 || filters.size > 0;
 
   return (
     <section className="flex-1 overflow-y-scroll px-6">
       <div className="mx-auto max-w-3xl space-y-5">
-
         {/* Search bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -206,13 +217,16 @@ export const ProjectSection = () => {
               className="space-y-3 h-[450px] overflow-y-scroll"
             >
               {results.map((entry, i) => (
-                <RepoCard key={`search-result-${entry.repo}`} entry={entry} index={i} />
+                <RepoCard
+                  key={`search-result-${entry.repo}`}
+                  entry={entry}
+                  index={i}
+                />
               ))}
             </motion.div>
           )}
         </AnimatePresence>
-
       </div>
     </section>
-  )
-}
+  );
+};
