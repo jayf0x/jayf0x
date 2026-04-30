@@ -7,15 +7,16 @@ const GITHUB_URL = "https://github.com/jayf0x"
 const terminalLines = [
   "Frontend engineer++, Gent (BE.)",
   "Understand the relations between tech and user",
-  "builds real-time 3D annotation projection",
-  "Things with buttons",
-  "automates repetitive workflows",
-  "Repetitive annoyance -> automation",
+  // "builds real-time 3D annotation projection",
+  "Stuff w buttons",
+  "Build a solarsystem in CSS",
+  "Annoyance with outdates systems = automation",
+  "Challenge me: https://www.chess.com/member/chaos_70b",
 ]
 
 export const HeroSection = () => {
   return (
-    <section className="flex min-h-[55vh] flex-col justify-center px-6 pb-8 pt-24">
+    <section className="flex flex-col justify-center px-6 pb-8">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

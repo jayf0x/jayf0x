@@ -8,6 +8,11 @@ import { useIsMobile } from "./hooks/useIsMobile";
 
 export type Page = "home" | "resume";
 
+const pages: [string, Page][] = [
+  ["127.0.0.1", "home"],
+  ["~/Resume", "resume"],
+];
+
 export const App = () => {
   const [page, setPage] = useState<Page>("home");
 
@@ -25,7 +30,6 @@ export const App = () => {
   return (
     <div className="min-h-screen w-full text-[var(--text)]">
       <Background />
-      <Navigation current={page} onNavigate={setPage} />
       <main className="relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
@@ -37,11 +41,44 @@ export const App = () => {
             transition={{ duration: 0.25, ease: "circInOut" }}
           >
             <div
-              className={isMobile ? "w-full" : "min-w-[60%] w-fit m-auto"}
+              className={`flex flex-col ${ isMobile
+                  ? "w-full h-[120vh]"
+                  : "min-w-[60%] w-fit m-auto h-[90vh] mt-[5vh] rounded-xl"}`
+               
+              }
               style={{
                 backdropFilter: "blur(15px) brightness(0.2)",
               }}
             >
+
+              {/* Navigation */}
+              <nav className="items-center justify-between px-6 py-8 mb-5 w-full flex">
+                <button
+                  type="button"
+                  onClick={() => setPage("home")}
+                  className="font-mono text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent)]"
+                >
+                  Jayf0x
+                </button>
+                <div className="flex items-center gap-6">
+                  {pages.map(([label, p]) => (
+                    <button
+                      key={`page-${p}`}
+                      type="button"
+                      onClick={() => setPage(p)}
+                      className={`text-lg capitalize transition hover:underline ${
+                        p === page
+                          ? "text-[var(--accent)]"
+                          : "text-[var(--muted)] hover:text-[var(--text)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+
+              {/* Content */}
               {page === "home" ? <Home /> : <Resume />}
             </div>
           </motion.div>

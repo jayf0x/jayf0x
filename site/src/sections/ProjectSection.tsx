@@ -141,7 +141,7 @@ export const ProjectSection = () => {
   const hasInput = query.trim().length > 0 || filters.size > 0
 
   return (
-    <section className="px-6 pb-32">
+    <section className="flex-1 px-6 pb-32 flex-1">
       <div className="mx-auto max-w-3xl space-y-5">
 
         {/* Search bar */}
