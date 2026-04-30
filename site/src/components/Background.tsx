@@ -1,5 +1,5 @@
 import { FluidText } from "@jayf0x/fluidity-js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 export const Background = () => {
@@ -11,10 +11,6 @@ export const Background = () => {
       const y = -event.clientY / window.innerHeight;
       document.documentElement.style.setProperty("--mx", x.toFixed(2));
       document.documentElement.style.setProperty("--my", y.toFixed(2));
-
-
-         document.documentElement.style.setProperty("--mx2", x.toFixed(2) + "px");
-      document.documentElement.style.setProperty("--my2", y.toFixed(2) + "px");
 
       requestAnimationFrame(() => {
         fluidRef.current?.move({ x: event.clientX, y: event.clientY });
@@ -88,14 +84,13 @@ export const Background = () => {
         </svg>
       </div>
 
-
       <div className="absolute inset-0 opacity-[0.16]">
         <svg
           className="h-full w-full"
           xmlns="http://www.w3.org/2000/svg"
           style={{
             transform:
-            "translate3d(calc(var(--mx, 0) * 4px), calc(var(--my, 0) * 4px), 0)",
+              "translate3d(calc(var(--mx, 0) * 4px), calc(var(--my, 0) * 4px), 0)",
           }}
         >
           <defs>

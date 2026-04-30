@@ -18,7 +18,7 @@ export const App = () => {
   const isMobile = useIsMobile();
 
   const pageVariants = useMemo(() => {
-    const w = (window.innerWidth) * (page === "home" ? 1 : -1);
+    const w = window.innerWidth * (page === "home" ? 1 : -1);
     return {
       initial: { opacity: 0.5, x: w },
       animate: { opacity: 1, x: 0 },
@@ -40,16 +40,15 @@ export const App = () => {
             transition={{ duration: 0.24, ease: "circInOut" }}
           >
             <div
-              className={`flex flex-col ${ isMobile
+              className={`flex flex-col relative ${
+                isMobile
                   ? "w-full h-[120vh]"
-                  : "min-w-[60%] w-fit m-auto h-[90vh] mt-[5vh] rounded-xl"}`
-               
-              }
+                  : "min-w-[60%] w-fit m-auto h-[90vh] mt-[5vh] rounded-xl"
+              }`}
               style={{
                 backdropFilter: "blur(15px) brightness(0.2)",
               }}
             >
-
               {/* Navigation */}
               <nav className="items-center justify-between px-6 py-8 mb-5 w-full flex">
                 <button

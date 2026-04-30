@@ -114,3 +114,40 @@ h1 {
 }
 
 
+
+/* @import url('./lib/sqrcsr-cursor/styles.css'); */
+.sqrcsr-cursor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.sqrcsr-inner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--sqrcsr-columns, 16), 1fr);
+  grid-auto-rows: 1fr;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sqrcsr-inner-box {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 280ms cubic-bezier(.2,.9,.2,1), transform 280ms cubic-bezier(.2,.9,.2,1);
+  transform-origin: center;
+  will-change: opacity, transform;
+  background: rgba(255,255,255,0.03);
+  border-radius: 5px;
+  pointer-events: none;
+  
+}
+
+.sqrcsr-inner-box.visible {
+  opacity: 1;
+  pointer-events: none;
+}
