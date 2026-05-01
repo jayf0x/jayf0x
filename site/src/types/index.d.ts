@@ -27,6 +27,11 @@ declare global {
       details?: RepoDetails;
     };
   }
+
+  // why not...
+  export type str = string
+  export type float = number
+  export type int = number
 }
 
 export {};

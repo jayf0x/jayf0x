@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Background } from "./components/Background";
+import { ChatWidget } from "./components/ChatWidget";
 import { Home } from "./pages/Home";
 import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
@@ -22,6 +23,7 @@ export const App = () => {
   return (
     <div className="min-h-screen w-full text-[var(--text)]">
       <Background />
+      <ChatWidget />
       <main className="relative z-10">
         <AnimatePresence mode="popLayout">
           <motion.div

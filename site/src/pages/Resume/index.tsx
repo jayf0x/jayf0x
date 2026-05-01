@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import SquareCursor from "../../lib/sqrcsr-cursor";
+import SquareCursor from "../../lib/sqrcsr-cursor"
 
 export const Resume = () => {
   const refMain = useRef<HTMLDivElement>(null);
