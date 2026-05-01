@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Background } from "./components/Background";
-import { Home } from "./Home";
+import { Home } from "./pages/Home";
 import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
 
-export type Page = "home" | "resume";
+type Page = "home" | "resume";
 
 const pages: [string, Page][] = [
   ["127.0.0.1", "home"],

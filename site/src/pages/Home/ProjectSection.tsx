@@ -2,11 +2,10 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Github, Download, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useRepoSearch } from "../hooks/useRepoSearch";
-import { withLocalStorageCache } from "../lib/queryClient";
-import { fetchRepoDetails, fetchLatestDmgUrl } from "../utils/fetch-repository";
-import { getStackMeta } from "../lib/stackMeta";
-import type { RepoEntry, RepoDetails } from "../types/repository";
+import { useRepoSearch } from "../../hooks/useRepoSearch";
+import { withLocalStorageCache } from "../../lib/queryClient";
+import { fetchRepoDetails, fetchLatestDmgUrl } from "../../utils/fetch-repository";
+import { getStackMeta } from "../../lib/stackMeta";
 
 const OWNER = "jayf0x";
 const FIVE_HOURS = 5 * 60 * 60 * 1000;
@@ -105,8 +104,8 @@ const timeSince = (iso: string) => {
   return `${Math.floor(diff / d)}d ago`;
 };
 
-const RepoCard = ({ entry }: { entry: RepoEntry }) => {
-  const { data: details } = useQuery<RepoDetails>({
+const RepoCard = ({ entry }: { entry: G.RepoEntry }) => {
+  const { data: details } = useQuery<G.RepoDetails>({
     queryKey: ["repo", OWNER, entry.repo],
     queryFn: () =>
       withLocalStorageCache(`gh:${OWNER}:${entry.repo}`, FIVE_HOURS, async () => {
@@ -187,9 +186,10 @@ export const ProjectSection = () => {
 
   const { results, allStacks, allTypes } = useRepoSearch(query, filters);
 
-  const toggleFilter = (value: string) =>
+  const toggleFilter = (value: string) => 
     setFilters((prev) => {
       const next = new Set(prev);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(value) ? next.delete(value) : next.add(value);
       return next;
     });

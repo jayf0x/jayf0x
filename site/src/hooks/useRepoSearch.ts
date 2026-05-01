@@ -1,10 +1,9 @@
 import { useMemo } from "react"
 import entries from "../assets/repositories.json"
-import type { RepoEntry } from "../types/repository"
 
-const data = entries as RepoEntry[]
+const data = entries as G.RepoEntry[]
 
-function matches(entry: RepoEntry, q: string): boolean {
+function matches(entry: G.RepoEntry, q: string): boolean {
   const lower = q.toLowerCase()
   return (
     entry.repo.toLowerCase().includes(lower) ||
