@@ -40,7 +40,7 @@ export const App = () => {
             transition={{ duration: 0.24, ease: "circInOut" }}
           >
             <div
-              className={`flex flex-col relative ${
+              className={`flex flex-col relative bg-[#0003] ${
                 isMobile
                   ? "w-full h-[120vh]"
                   : "min-w-[60%] w-fit m-auto h-[90vh] mt-[5vh] rounded-xl"
