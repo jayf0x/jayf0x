@@ -19,6 +19,8 @@ REPO_LIMIT = 50
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_FILE = ROOT / "site/src/assets/repositories.json"
 
+GH_FIELDS = ['name','visibility','description','updatedAt','isFork','isEmpty']
+
 VALID_TYPES = {
     "utility", "application", "framework", "library",
     "tooling", "research", "infrastructure",
@@ -77,14 +79,19 @@ def get_github_owner():
 def fetch_repos(owner: str):
     log.info(f"Fetching repositories for {owner}...")
     raw = run_cmd(
-        f'gh repo list {owner} --limit {REPO_LIMIT} --json name,visibility,description,updatedAt'
+        f'gh repo list {owner} --limit {REPO_LIMIT} --json {','.join(GH_FIELDS)}'
     )
 
     data = json.loads(raw)
+    print(data)
 
     repos = [
         (r["name"], r.get("description", ""), r['updatedAt'])
-        for r in data if r["visibility"] == "PUBLIC" and r['name'] != owner
+        for r in data 
+        if r["visibility"] == "PUBLIC" 
+        and r['name'] != owner
+        and r['isFork'] == False
+        and r['isEmpty'] == False
     ]
 
     log.info(f"Found {len(repos)} public repositories")
@@ -236,6 +243,12 @@ def process_repo(name, repo_desc, updatedAt,  owner, cache):
 def main():
     owner = get_github_owner()
     cache = load_cache()
+    fetch_repos(owner)
+    print(" ")
+    print(" ")
+    print(" ")
+    print(cache)
+    exit()
 
     # Only fetch repos if cache is empty
     if cache:
