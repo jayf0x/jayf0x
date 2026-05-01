@@ -89,11 +89,11 @@ const ChipRow = ({
   filters: Set<string>;
   onToggle: (v: string) => void;
 }) => (
-  <div className="flex items-center gap-2">
-    <span className="w-10 shrink-0 text-right font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">
+  <div className="flex flex-col gap-1">
+    <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">
       {label}
     </span>
-    <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="flex gap-1.5 overflow-x-scroll pb-1">
       {items.map((name) => (
         <FilterChip
           key={name}
@@ -230,8 +230,8 @@ export const ProjectSection = () => {
   const hasActiveFilters = filters.size > 0;
 
   return (
-    <section className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
-      <div className="mx-auto max-w-3xl space-y-4">
+    <section className="flex flex-col flex-1 min-h-0 px-6 py-4">
+      <div className="mx-auto w-full max-w-3xl flex flex-col min-h-0 gap-4">
         {/* ── Search bar ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -263,7 +263,7 @@ export const ProjectSection = () => {
                   setQuery("");
                   inputRef.current?.focus();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[var(--muted)] transition-colors hover:text-[var(--text)]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center rounded-full p-1 text-[var(--muted)] transition-colors hover:text-[var(--text)]"
               >
                 <X size={13} />
               </motion.button>
@@ -319,7 +319,7 @@ export const ProjectSection = () => {
         </AnimatePresence>
 
         {/* ── Results ── */}
-        <div className="space-y-2">
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
           <AnimatePresence mode="popLayout" initial={false}>
             {hasInput && results.length === 0 && (
               <motion.p

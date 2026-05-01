@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Background } from "./components/Background";
 import { Home } from "./pages/Home";
@@ -17,14 +17,7 @@ export const App = () => {
 
   const isMobile = useIsMobile();
 
-  const pageVariants = useMemo(() => {
-    const w = window.innerWidth * (page === "home" ? 1 : -1);
-    return {
-      initial: { opacity: 0.5, x: w },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0.5, x: -w },
-    };
-  }, [page]);
+  const pageVariants = usePageAnimation(page);
 
   return (
     <div className="min-h-screen w-full text-[var(--text)]">
@@ -84,4 +77,26 @@ export const App = () => {
       </main>
     </div>
   );
+};
+
+// prevents effect changing mid-transition
+let timeoutID = 0;
+const usePageAnimation = (page: Page) => {
+  const [debounced, setDebounced] = useState(page);
+
+  useEffect(() => {
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+      setDebounced(page);
+    }, 500);
+  }, [page]);
+
+  return useMemo(() => {
+    const w = window.innerWidth * (debounced === "home" ? -1 : 1);
+    return {
+      initial: { opacity: 0.5, x: w },
+      animate: { opacity: 1, x: 0 },
+      exit: { opacity: 0.5, x: -w },
+    };
+  }, [debounced]);
 };
