@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -10,11 +10,7 @@ import {
   Scale,
   Package,
 } from "lucide-react";
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useRepoSearch } from "../../hooks/useRepoSearch";
 import { withLocalStorageCache } from "../../lib/queryClient";
 import {
@@ -204,11 +200,7 @@ const RepoCard = ({ repo }: { repo: GithubRepo }) => {
           </div>
         )}
       </div>
-
-      {/* ── right: links + preview ── */}
-      <div className="flex shrink-0 flex-col items-end gap-1.5 pt-0.5">
-        <ContentLeft repo={repo} />
-      </div>
+      <ContentLeft repo={repo} />
     </div>
   );
 };
@@ -232,7 +224,6 @@ export const ProjectSection = () => {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
 
   const { data: repos = [], isLoading } = useQuery<GithubRepo[]>({
     queryKey: ["repos", OWNER],
@@ -243,46 +234,6 @@ export const ProjectSection = () => {
     staleTime: TWO_HOURS,
     gcTime: TWO_HOURS,
   });
-
-  // Prefetch all per-repo data once repos are loaded
-  useEffect(() => {
-    if (repos.length === 0) return;
-    const opts = { staleTime: TWO_HOURS };
-    repos.forEach((repo) => {
-      queryClient.prefetchQuery({
-        queryKey: ["repo-langs", repo.name],
-        queryFn: () =>
-          withLocalStorageCache(`gh:langs:${repo.name}`, TWO_HOURS, () =>
-            fetchRepoLanguages(repo.languages_url),
-          ),
-        ...opts,
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["repo-preview", repo.name],
-        queryFn: () =>
-          withLocalStorageCache(`gh:preview:${repo.name}`, TWO_HOURS, () =>
-            fetchPreviewUrl(OWNER, repo.name),
-          ),
-        ...opts,
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["repo-npm", repo.name],
-        queryFn: () =>
-          withLocalStorageCache(`npm:${repo.name}`, TWO_HOURS, () =>
-            fetchNpmUrl(repo.name),
-          ),
-        ...opts,
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["repo-dmg", repo.name],
-        queryFn: () =>
-          withLocalStorageCache(`gh:dmg:${repo.name}`, TWO_HOURS, () =>
-            fetchLatestDmgUrl(OWNER, repo.name),
-          ),
-        ...opts,
-      });
-    });
-  }, [repos, queryClient]);
 
   const { results, allStacks, allTopics } = useRepoSearch(
     repos,
@@ -464,8 +415,8 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
   const queryNPM = useQuery<string | null>({
     queryKey: ["repo-npm", repo.name],
     queryFn: () =>
-      withLocalStorageCache(`npm:${repo.name}`, TWO_HOURS, () =>
-        fetchNpmUrl(repo.name),
+      withLocalStorageCache(`npm:${OWNER}:${repo.name}`, TWO_HOURS, () =>
+        fetchNpmUrl(OWNER, repo.name),
       ),
     ...queryOpts,
   });
@@ -480,7 +431,7 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
   });
 
   return (
-    <div>
+    <div className="flex flex-col">
       <div className="flex flex-row justify-end gap-1.5 pt-0.5">
         <a
           href={repo.html_url}
@@ -515,7 +466,7 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
         <div className="mt-1 h-14 w-24 animate-pulse rounded-lg bg-[var(--border)]" />
       ) : previewUrl ? (
         <div
-          className="w-[250px] h-[150px] transition-opacity group-hover:opacity-100 opacity-8"
+          className="w-[250px] h-[150px] transition-opacity group-hover:opacity-100 opacity-8 rounded-md"
           style={{
             background: `url(${previewUrl}) no-repeat`,
             backgroundSize: "140% auto",

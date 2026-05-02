@@ -55,9 +55,14 @@ html {
   }
 }
 
-*:not(.overflow-y) {
+* {
   scrollbar-color: rgba(255, 255, 255, 0.668) white;
   scrollbar-width: thin;
+  /* scrollbar-color: transparent transparent; */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /** Style HTML title - no need for custom popovers...  */

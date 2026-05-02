@@ -69,13 +69,16 @@ export async function fetchPreviewUrl(
   }
 }
 
-export async function fetchNpmUrl(repoName: string): Promise<string | null> {
+export async function fetchNpmUrl(
+  owner: string,
+  repoName: string,
+): Promise<string | null> {
   try {
-    await axios.get(`https://registry.npmjs.org/${repoName}`, {
-      timeout: 5000,
-      headers: { Accept: "application/json" },
-    });
-    return `https://www.npmjs.com/package/${repoName}`;
+    await axios.get(
+      `${GITHUB_API}/users/${encodeURIComponent(owner)}/packages/npm/${encodeURIComponent(repoName)}`,
+      { headers: HEADERS },
+    );
+    return `https://github.com/users/${owner}/packages/npm/package/${repoName}`;
   } catch {
     return null;
   }
