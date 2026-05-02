@@ -483,8 +483,12 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
 
 const LinkIcon = ({
   query,
+  title,
   children,
-}: PropsWithChildren<{ query: UseQueryResult<string | null, Error> }>) => {
+}: PropsWithChildren<{
+  query: UseQueryResult<string | null, Error>;
+  title: string;
+}>) => {
   const { data, isLoading } = query;
   if (isLoading)
     return (
@@ -493,7 +497,7 @@ const LinkIcon = ({
   if (!data) return null;
 
   return (
-    <a href={data} target="_blank" rel="noreferrer" className={iconButtonCls}>
+    <a href={data} target="_blank" rel="noreferrer" title={title} className={iconButtonCls}>
       {children}
     </a>
   );
