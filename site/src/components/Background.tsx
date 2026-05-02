@@ -23,28 +23,29 @@ export const Background = () => {
   }, []);
 
   const isMobile = useIsMobile();
+  const fluidTextSpace =  " ".repeat(Math.floor(window.innerWidth/ 200))
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden">
       {
         // no use on mobile
         !isMobile && (
-          <div className="absolute inset-0 opacity-50">
+          <div className="absolute inset-0 opacity-50 hue_rot" title="Ever seen a chicken ">
             <FluidText
               isWorkerEnabled={false}
               ref={fluidRef}
-              text="🐔    <3/>   🥚"
+              text={`🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚`}
               config={{
                 densityDissipation: 0.99,
                 // waterColor: [0.8, 0.3, 0.5],
                 waterColor: [0.15, 0.1, 0.1],
                 // glowColor: [0.8, 0.3, 0.5].reverse() as [number, number, number],
-                shine: 0.001,
-                splatRadius: 0.015,
+                shine: 0.1,
+                splatRadius: 0.01,
                 specularExp: 7,
                 pressureIterations: 1,
               }}
-              fontSize={400}
+              fontSize={200}
               fontFamily="Courier New"
               algorithm="ripple"
               style={{

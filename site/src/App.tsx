@@ -32,7 +32,7 @@ export const App = () => {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.24, ease: "circInOut" }}
+            transition={{ duration: 0.42, ease: "anticipate" }}
           >
             <div
               className={`flex flex-col relative bg-[#0003] ${
@@ -96,9 +96,13 @@ const usePageAnimation = (page: Page) => {
   return useMemo(() => {
     const w = window.innerWidth * (debounced === "home" ? -1 : 1);
     return {
-      initial: { opacity: 0.5, x: w },
-      animate: { opacity: 1, x: 0 },
-      exit: { opacity: 0.5, x: -w },
+      // initial: { opacity: 0.5, x: w },
+      // animate: { opacity: 1, x: 0 },
+      // exit: { opacity: 0.5, x: -w },
+
+      initial: { x: w },
+      animate: { x: 0 },
+      exit: { x: -w },
     };
   }, [debounced]);
 };

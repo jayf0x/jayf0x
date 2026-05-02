@@ -109,6 +109,23 @@ h1 {
   text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #f9634c68;
 }
 
+
+.hue_rot {
+  animation: hue_rot infinite 10s;
+}
+
+
+@keyframes hue_rot {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+
 @keyframes sloppy_cursor {
   0% {
     cursor:

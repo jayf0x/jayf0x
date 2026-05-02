@@ -23,6 +23,7 @@ import {
 } from "../../utils/fetch-repository";
 import { getStackMeta } from "../../lib/stackMeta";
 
+
 const OWNER = "jayf0x";
 const TWO_HOURS = 2 * 60 * 60 * 1000;
 
@@ -398,7 +399,7 @@ export const ProjectSection = () => {
 };
 
 const iconButtonCls =
-  "rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]";
+  "rounded-full border border-[var(--accent)]/40 p-1.5 text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-glow)] flex center";
 
 const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
   const { data: previewUrl, isLoading: previewLoading } = useQuery<
@@ -432,11 +433,12 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-end gap-1.5 pt-0.5">
+      <div className="flex flex-row justify-end gap-1.5 pt-0.5 items-center">
         <a
           href={repo.html_url}
           target="_blank"
           rel="noreferrer"
+          title="Repository"
           className={iconButtonCls}
         >
           <Github size={13} />
@@ -446,18 +448,19 @@ const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
             href={repo.homepage}
             target="_blank"
             rel="noreferrer"
+            title="Website"
             className={iconButtonCls}
           >
-            <ExternalLink size={13} />
+            <ExternalLink size={15} />
           </a>
         )}
 
-        <LinkIcon query={queryNPM}>
-          <Package size={13} />
+        <LinkIcon query={queryNPM} title="npm package">
+          <Package size={15} />
         </LinkIcon>
 
-        <LinkIcon query={queryDMG}>
-          <Download size={10} /> macOS
+        <LinkIcon query={queryDMG} title="Download macOS app">
+          <Download size={15} />
         </LinkIcon>
       </div>
 
