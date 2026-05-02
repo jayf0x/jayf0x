@@ -2,3 +2,4 @@
 .claude
 node_modules
 backup
+scripts/.repo-cache.json

@@ -1,17 +1,27 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Github, Download, X } from "lucide-react";
+import {
+  Search,
+  Github,
+  Download,
+  X,
+  Archive,
+  ExternalLink,
+  Scale,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRepoSearch } from "../../hooks/useRepoSearch";
 import { withLocalStorageCache } from "../../lib/queryClient";
 import {
-  fetchRepoDetails,
+  fetchUserRepos,
+  fetchRepoLanguages,
   fetchLatestDmgUrl,
+  type GithubRepo,
 } from "../../utils/fetch-repository";
 import { getStackMeta } from "../../lib/stackMeta";
 
 const OWNER = "jayf0x";
-const FIVE_HOURS = 5 * 60 * 60 * 1000;
+const TWO_HOURS = 2 * 60 * 60 * 1000;
 
 // ── spring presets ────────────────────────────────────────────────────────────
 
@@ -106,7 +116,7 @@ const ChipRow = ({
   </div>
 );
 
-// ── card ──────────────────────────────────────────────────────────────────────
+// ── helpers ───────────────────────────────────────────────────────────────────
 
 const timeSince = (iso: string) => {
   const diff = Date.now() - new Date(iso).getTime();
@@ -118,54 +128,72 @@ const timeSince = (iso: string) => {
   return `${Math.floor(diff / d)}d ago`;
 };
 
-const RepoCard = ({ entry }: { entry: G.RepoEntry }) => {
-  const { data: details } = useQuery<G.RepoDetails>({
-    queryKey: ["repo", OWNER, entry.repo],
+// ── card ──────────────────────────────────────────────────────────────────────
+
+const RepoCard = ({ repo }: { repo: GithubRepo }) => {
+  const { data: languages = [] } = useQuery<string[]>({
+    queryKey: ["repo-langs", repo.name],
     queryFn: () =>
       withLocalStorageCache(
-        `gh:${OWNER}:${entry.repo}`,
-        FIVE_HOURS,
-        async () => {
-          const [base, downloadUrl] = await Promise.all([
-            fetchRepoDetails(OWNER, entry.repo),
-            fetchLatestDmgUrl(OWNER, entry.repo),
-          ]);
-          return { ...base, downloadUrl: downloadUrl || undefined };
-        },
+        `gh:langs:${repo.name}`,
+        TWO_HOURS,
+        () => fetchRepoLanguages(repo.languages_url),
       ),
+    staleTime: TWO_HOURS,
+    gcTime: TWO_HOURS,
+  });
+
+  const { data: downloadUrl } = useQuery<string>({
+    queryKey: ["repo-dmg", repo.name],
+    queryFn: () =>
+      withLocalStorageCache(
+        `gh:dmg:${repo.name}`,
+        TWO_HOURS,
+        () => fetchLatestDmgUrl(OWNER, repo.name),
+      ),
+    staleTime: TWO_HOURS,
+    gcTime: TWO_HOURS,
   });
 
   return (
     <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-150 hover:border-[var(--accent)]">
       <div className="min-w-0 flex-1 space-y-2">
         {/* title row */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-sm font-semibold text-[var(--text)]">
-            {entry.repo}
+            {repo.name}
           </h3>
-          {details?.stars !== undefined && details.stars > 0 && (
-            <span className="font-mono text-xs text-[var(--muted)]">
-              ★ {details.stars}
+          {repo.archived && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0 font-mono text-[10px] text-amber-400">
+              <Archive size={9} />
+              archived
             </span>
           )}
-          {details?.pushedAt && (
+          {repo.stargazers_count > 0 && (
             <span className="font-mono text-xs text-[var(--muted)]">
-              · {timeSince(details.pushedAt)}
+              ★ {repo.stargazers_count}
+            </span>
+          )}
+          {repo.pushed_at && (
+            <span className="font-mono text-xs text-[var(--muted)]">
+              · {timeSince(repo.pushed_at)}
             </span>
           )}
         </div>
 
         {/* description */}
-        <p className="text-sm leading-snug text-[var(--muted)]">
-          {entry.repo_description}
-        </p>
+        {repo.description && (
+          <p className="text-sm leading-snug text-[var(--muted)]">
+            {repo.description}
+          </p>
+        )}
 
-        {/* stack badges */}
+        {/* stack + topic badges */}
         <div className="flex flex-wrap gap-1.5">
-          {entry.stack.map((s) => (
-            <StackBadge key={s} name={s} size="xs" />
+          {languages.map((lang) => (
+            <StackBadge key={lang} name={lang} size="xs" />
           ))}
-          {entry.types.map((t) => (
+          {repo.topics.map((t) => (
             <span
               key={t}
               className="rounded-full border border-[var(--border)] px-2 py-0 font-mono text-[10px] text-[var(--muted)]"
@@ -174,23 +202,39 @@ const RepoCard = ({ entry }: { entry: G.RepoEntry }) => {
             </span>
           ))}
         </div>
+
+        {/* license */}
+        {repo.license && (
+          <div className="flex items-center gap-1 text-[var(--muted)]">
+            <Scale size={10} />
+            <span className="font-mono text-[10px]">{repo.license.spdx_id}</span>
+          </div>
+        )}
       </div>
 
       {/* actions */}
       <div className="flex shrink-0 flex-col items-end gap-1.5 pt-0.5">
-        {details?.url && (
+        <a
+          href={repo.html_url}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
+        >
+          <Github size={13} />
+        </a>
+        {repo.homepage && (
           <a
-            href={details.url}
+            href={repo.homepage}
             target="_blank"
             rel="noreferrer"
             className="rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
           >
-            <Github size={13} />
+            <ExternalLink size={13} />
           </a>
         )}
-        {details?.downloadUrl && (
+        {downloadUrl && (
           <a
-            href={details.downloadUrl}
+            href={downloadUrl}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1 rounded-full border border-[var(--accent)] bg-[var(--accent-glow)] px-2 py-0.5 font-mono text-[10px] text-[var(--text)]"
@@ -203,6 +247,19 @@ const RepoCard = ({ entry }: { entry: G.RepoEntry }) => {
   );
 };
 
+// ── loading skeleton ──────────────────────────────────────────────────────────
+
+const LoadingSkeleton = () => (
+  <div className="space-y-2">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <div
+        key={i}
+        className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--surface)]"
+      />
+    ))}
+  </div>
+);
+
 // ── section ───────────────────────────────────────────────────────────────────
 
 export const ProjectSection = () => {
@@ -210,12 +267,23 @@ export const ProjectSection = () => {
   const [filters, setFilters] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { results, allStacks, allTypes } = useRepoSearch(query, filters);
+  const { data: repos = [], isLoading } = useQuery<GithubRepo[]>({
+    queryKey: ["repos", OWNER],
+    queryFn: () =>
+      withLocalStorageCache(
+        `gh:repos:${OWNER}`,
+        TWO_HOURS,
+        () => fetchUserRepos(OWNER),
+      ),
+    staleTime: TWO_HOURS,
+    gcTime: TWO_HOURS,
+  });
+
+  const { results, allStacks, allTopics } = useRepoSearch(repos, query, filters);
 
   const toggleFilter = (value: string) =>
     setFilters((prev) => {
       const next = new Set(prev);
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(value) ? next.delete(value) : next.add(value);
       return next;
     });
@@ -272,25 +340,31 @@ export const ProjectSection = () => {
         </motion.div>
 
         {/* ── Filter chips ── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ ...springGentle, delay: 0.08 }}
-          className="space-y-2"
-        >
-          <ChipRow
-            label="Stack"
-            items={allStacks}
-            filters={filters}
-            onToggle={toggleFilter}
-          />
-          <ChipRow
-            label="Type"
-            items={allTypes}
-            filters={filters}
-            onToggle={toggleFilter}
-          />
-        </motion.div>
+        {!isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ ...springGentle, delay: 0.08 }}
+            className="space-y-2"
+          >
+            {allStacks.length > 0 && (
+              <ChipRow
+                label="Stack"
+                items={allStacks}
+                filters={filters}
+                onToggle={toggleFilter}
+              />
+            )}
+            {allTopics.length > 0 && (
+              <ChipRow
+                label="Topics"
+                items={allTopics}
+                filters={filters}
+                onToggle={toggleFilter}
+              />
+            )}
+          </motion.div>
+        )}
 
         {/* ── Meta row: count + clear ── */}
         <AnimatePresence>
@@ -320,38 +394,42 @@ export const ProjectSection = () => {
 
         {/* ── Results ── */}
         <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {hasInput && results.length === 0 && (
-              <motion.p
-                key="empty"
-                layout
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={springGentle}
-                className="py-10 text-center font-mono text-sm text-[var(--muted)]"
-              >
-                No matches.
-              </motion.p>
-            )}
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : (
+            <AnimatePresence mode="popLayout" initial={false}>
+              {hasInput && results.length === 0 && (
+                <motion.p
+                  key="empty"
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={springGentle}
+                  className="py-10 text-center font-mono text-sm text-[var(--muted)]"
+                >
+                  No matches.
+                </motion.p>
+              )}
 
-            {results.map((entry, i) => (
-              <motion.div
-                key={entry.repo}
-                layout
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.97,
-                  transition: { duration: 0.12 },
-                }}
-                transition={{ ...spring, delay: i * 0.025 }}
-              >
-                <RepoCard entry={entry} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              {results.map((repo, i) => (
+                <motion.div
+                  key={repo.id}
+                  layout
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.97,
+                    transition: { duration: 0.12 },
+                  }}
+                  transition={{ ...spring, delay: i * 0.025 }}
+                >
+                  <RepoCard repo={repo} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </section>

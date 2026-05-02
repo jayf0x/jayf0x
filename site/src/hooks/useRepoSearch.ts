@@ -1,28 +1,34 @@
 import { useMemo } from "react";
-import entries from "../assets/repositories.json";
+import type { GithubRepo } from "../utils/fetch-repository";
 
-const data = entries as G.RepoEntry[];
-
-function matches(entry: G.RepoEntry, q: string): boolean {
+function matches(repo: GithubRepo, q: string): boolean {
   const lower = q.toLowerCase();
   return (
-    entry.repo.toLowerCase().includes(lower) ||
-    entry.repo_description.toLowerCase().includes(lower) ||
-    entry.ollama_description.toLowerCase().includes(lower) ||
-    entry.keywords.some((k) => k.toLowerCase().includes(lower)) ||
-    entry.stack.some((s) => s.toLowerCase().includes(lower)) ||
-    entry.types.some((t) => t.toLowerCase().includes(lower))
+    repo.name.toLowerCase().includes(lower) ||
+    (repo.description?.toLowerCase().includes(lower) ?? false) ||
+    repo.topics.some((t) => t.toLowerCase().includes(lower)) ||
+    (repo.language?.toLowerCase().includes(lower) ?? false)
   );
 }
 
-export function useRepoSearch(query: string, filters: Set<string>) {
+export function useRepoSearch(
+  repos: GithubRepo[],
+  query: string,
+  filters: Set<string>,
+) {
   const allStacks = useMemo(
-    () => [...new Set(data.flatMap((e) => e.stack))].sort(),
-    [],
+    () =>
+      [
+        ...new Set(
+          repos.map((r) => r.language).filter(Boolean) as string[],
+        ),
+      ].sort(),
+    [repos],
   );
-  const allTypes = useMemo(
-    () => [...new Set(data.flatMap((e) => e.types))].sort(),
-    [],
+
+  const allTopics = useMemo(
+    () => [...new Set(repos.flatMap((r) => r.topics))].sort(),
+    [repos],
   );
 
   const results = useMemo(() => {
@@ -30,16 +36,16 @@ export function useRepoSearch(query: string, filters: Set<string>) {
     const hasFilters = filters.size > 0;
     if (!hasQuery && !hasFilters) return [];
 
-    return data.filter((entry) => {
-      const queryMatch = hasQuery ? matches(entry, query.trim()) : true;
+    return repos.filter((repo) => {
+      const queryMatch = hasQuery ? matches(repo, query.trim()) : true;
       const filterMatch = hasFilters
         ? [...filters].some(
-            (f) => entry.stack.includes(f) || entry.types.includes(f),
+            (f) => repo.language === f || repo.topics.includes(f),
           )
         : true;
       return queryMatch && filterMatch;
     });
-  }, [query, filters]);
+  }, [repos, query, filters]);
 
-  return { results, allStacks, allTypes };
+  return { results, allStacks, allTopics };
 }
