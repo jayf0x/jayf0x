@@ -99,6 +99,21 @@ html {
   z-index: 1001;
 } */
 
+@keyframes ad-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ad-fade-in {
+  animation: ad-fade-in 0.45s ease;
+}
+
 @keyframes ad-float {
   0%,
   100% {
@@ -176,6 +191,51 @@ h1 {
       url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACVUlEQVR4AbRVTagSURj9HJX8K9FNEQ+XbgJnVSIuXJkLf8BVQ6D0gudPULpMXbgNkcBEF9Gjle4CWwhvpxuhIhWE1i6ChxXCMxJFzencBz58mMybNDjHufPN/c4Z7z0zwykUiplOp1sYDIYIEd0A9wpOo9Fw0WhU6XK5nkA5Be4VnFqtJrvdTplMhk+n04dQfw5eB/cCbqXicDjI5/Pd9Pv9gtlsfoC6AtwZFwZMiZlks1ne7Xa/ViqVQdQOwJ1wyYAp2Ww2KpVKCixdASZ3Udvpn2wYQJiwRDQYDA5CodA7jB/D5J/TtWEAMUJ0Sa/XUzKZVDidzqeosY3HQT7+asBkVCoV8TxPqVSKR8JW6TKwa3K41WAlwjbe6/XeCgaDgslkeriqX/UoacCEmAmeEd7j8ZRwLitdkgaz2Yym0ylZrVbK5XIq7M8rmNwDJXsxhzYmMcHhcMiunTMcDpNWq50bjcYzi8VyJooi24djIvKCktgw6PV6FIlEaLFYnDfjjtnxC34egYdrbGMsiUsGrVaLRZPq9TrhTtebf+DkPVhb4ynGkrgwaDabVKvVTmHyZj6fH1er1WW/3ye8ZSkQCNyG0n3wGigLHFuKTqcjFgqFTj6ff4vuo+VyeZRIJH63222KxWIkCMId1JOgHpQFbjKZiHj3zBqNRhmdL8C9gsNafx2Px8JoNGLJ+LVXdYixPWBfsk8Y/xcwgxMoXykRmCcbzEB2k5yGrQZI0gnS9a1SqVC32/0O0Q/gHJSFbQYinoVnxWLxYzwe/1kulz9D9SUoOwR/AAAA//+3SEO6AAAABklEQVQDADvntTn7UgAeAAAAAElFTkSuQmCC"),
       auto;
   }
+}
+
+/* ── Resume page: red button ─────────────────────────────────────────────── */
+
+.resume-label {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.red-button {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background: radial-gradient(circle at 36% 32%, #ff9090 0%, #e00000 48%, #7a0000 100%);
+  box-shadow:
+    0 0 28px rgba(255, 55, 55, 0.65),
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 3px 7px rgba(255, 190, 190, 0.45),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.45);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.red-button:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 55px rgba(255, 55, 55, 0.95),
+    0 12px 28px rgba(0, 0, 0, 0.55),
+    inset 0 3px 7px rgba(255, 190, 190, 0.5),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+}
+
+.red-button:active {
+  transform: scale(0.91);
+  box-shadow:
+    0 0 18px rgba(255, 55, 55, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.65),
+    inset 0 5px 10px rgba(0, 0, 0, 0.5),
+    inset 0 -1px 3px rgba(255, 150, 150, 0.2);
 }
 
 /* @import url('./lib/sqrcsr-cursor/styles.css'); */

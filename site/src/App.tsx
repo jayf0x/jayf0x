@@ -22,7 +22,7 @@ export const App = () => {
   const pageVariants = usePageAnimation(page);
 
   return (
-    <div className="min-h-screen w-full text-[var(--text)]">
+    <div className="h-screen w-screen text-[var(--text)]">
       <Background />
       <ChatWidget />
       <FakeAds />
