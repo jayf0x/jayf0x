@@ -9,18 +9,27 @@ const HEADERS = {
 export interface GithubRepo {
   id: number;
   name: string;
+  full_name: string;
   html_url: string;
   description: string | null;
   fork: boolean;
   size: number;
   stargazers_count: number;
+  watchers_count: number;
+  forks_count: number;
+  open_issues_count: number;
   language: string | null;
   pushed_at: string;
+  created_at: string;
   topics: string[];
   archived: boolean;
+  disabled: boolean;
+  has_pages: boolean;
   homepage: string | null;
   languages_url: string;
-  license: { spdx_id: string; name: string } | null;
+  license: { key: string; name: string; spdx_id: string } | null;
+  default_branch: string;
+  visibility: string;
 }
 
 interface ReleaseAsset {
@@ -47,17 +56,42 @@ export async function fetchRepoLanguages(languagesUrl: string): Promise<string[]
   return Object.keys(response.data);
 }
 
+export async function fetchPreviewUrl(
+  owner: string,
+  repo: string,
+): Promise<string | null> {
+  const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/assets/preview.png`;
+  try {
+    await axios.head(url);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchNpmUrl(repoName: string): Promise<string | null> {
+  try {
+    await axios.get(`https://registry.npmjs.org/${repoName}`, {
+      timeout: 5000,
+      headers: { Accept: "application/json" },
+    });
+    return `https://www.npmjs.com/package/${repoName}`;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchLatestDmgUrl(
   owner: string,
   repo: string,
-): Promise<string> {
+): Promise<string | null> {
   try {
     const response = await axios.get<Release>(
       `${GITHUB_API}/repos/${owner}/${repo}/releases/latest`,
     );
     const dmg = response.data.assets?.find((a) => a.name.endsWith(".dmg"));
-    return dmg?.browser_download_url ?? "";
+    return dmg?.browser_download_url ?? null;
   } catch {
-    return "";
+    return null;
   }
 }

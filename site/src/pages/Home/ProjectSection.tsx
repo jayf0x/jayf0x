@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -8,13 +8,20 @@ import {
   Archive,
   ExternalLink,
   Scale,
+  Package,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { useRepoSearch } from "../../hooks/useRepoSearch";
 import { withLocalStorageCache } from "../../lib/queryClient";
 import {
   fetchUserRepos,
   fetchRepoLanguages,
+  fetchPreviewUrl,
+  fetchNpmUrl,
   fetchLatestDmgUrl,
   type GithubRepo,
 } from "../../utils/fetch-repository";
@@ -128,37 +135,24 @@ const timeSince = (iso: string) => {
   return `${Math.floor(diff / d)}d ago`;
 };
 
+const queryOpts = { staleTime: TWO_HOURS, gcTime: TWO_HOURS };
+
 // ── card ──────────────────────────────────────────────────────────────────────
 
 const RepoCard = ({ repo }: { repo: GithubRepo }) => {
   const { data: languages = [] } = useQuery<string[]>({
     queryKey: ["repo-langs", repo.name],
     queryFn: () =>
-      withLocalStorageCache(
-        `gh:langs:${repo.name}`,
-        TWO_HOURS,
-        () => fetchRepoLanguages(repo.languages_url),
+      withLocalStorageCache(`gh:langs:${repo.name}`, TWO_HOURS, () =>
+        fetchRepoLanguages(repo.languages_url),
       ),
-    staleTime: TWO_HOURS,
-    gcTime: TWO_HOURS,
-  });
-
-  const { data: downloadUrl } = useQuery<string>({
-    queryKey: ["repo-dmg", repo.name],
-    queryFn: () =>
-      withLocalStorageCache(
-        `gh:dmg:${repo.name}`,
-        TWO_HOURS,
-        () => fetchLatestDmgUrl(OWNER, repo.name),
-      ),
-    staleTime: TWO_HOURS,
-    gcTime: TWO_HOURS,
+    ...queryOpts,
   });
 
   return (
     <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-150 hover:border-[var(--accent)]">
+      {/* ── left: content ── */}
       <div className="min-w-0 flex-1 space-y-2">
-        {/* title row */}
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-sm font-semibold text-[var(--text)]">
             {repo.name}
@@ -181,14 +175,12 @@ const RepoCard = ({ repo }: { repo: GithubRepo }) => {
           )}
         </div>
 
-        {/* description */}
         {repo.description && (
           <p className="text-sm leading-snug text-[var(--muted)]">
             {repo.description}
           </p>
         )}
 
-        {/* stack + topic badges */}
         <div className="flex flex-wrap gap-1.5">
           {languages.map((lang) => (
             <StackBadge key={lang} name={lang} size="xs" />
@@ -203,45 +195,19 @@ const RepoCard = ({ repo }: { repo: GithubRepo }) => {
           ))}
         </div>
 
-        {/* license */}
         {repo.license && (
           <div className="flex items-center gap-1 text-[var(--muted)]">
             <Scale size={10} />
-            <span className="font-mono text-[10px]">{repo.license.spdx_id}</span>
+            <span className="font-mono text-[10px]">
+              {repo.license.spdx_id}
+            </span>
           </div>
         )}
       </div>
 
-      {/* actions */}
+      {/* ── right: links + preview ── */}
       <div className="flex shrink-0 flex-col items-end gap-1.5 pt-0.5">
-        <a
-          href={repo.html_url}
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
-        >
-          <Github size={13} />
-        </a>
-        {repo.homepage && (
-          <a
-            href={repo.homepage}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]"
-          >
-            <ExternalLink size={13} />
-          </a>
-        )}
-        {downloadUrl && (
-          <a
-            href={downloadUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 rounded-full border border-[var(--accent)] bg-[var(--accent-glow)] px-2 py-0.5 font-mono text-[10px] text-[var(--text)]"
-          >
-            <Download size={10} /> macOS
-          </a>
-        )}
+        <ContentLeft repo={repo} />
       </div>
     </div>
   );
@@ -253,7 +219,7 @@ const LoadingSkeleton = () => (
   <div className="space-y-2">
     {Array.from({ length: 4 }).map((_, i) => (
       <div
-        key={i}
+        key={`skeleton-${i}`}
         className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--surface)]"
       />
     ))}
@@ -266,24 +232,68 @@ export const ProjectSection = () => {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const { data: repos = [], isLoading } = useQuery<GithubRepo[]>({
     queryKey: ["repos", OWNER],
     queryFn: () =>
-      withLocalStorageCache(
-        `gh:repos:${OWNER}`,
-        TWO_HOURS,
-        () => fetchUserRepos(OWNER),
+      withLocalStorageCache(`gh:repos:${OWNER}`, TWO_HOURS, () =>
+        fetchUserRepos(OWNER),
       ),
     staleTime: TWO_HOURS,
     gcTime: TWO_HOURS,
   });
 
-  const { results, allStacks, allTopics } = useRepoSearch(repos, query, filters);
+  // Prefetch all per-repo data once repos are loaded
+  useEffect(() => {
+    if (repos.length === 0) return;
+    const opts = { staleTime: TWO_HOURS };
+    repos.forEach((repo) => {
+      queryClient.prefetchQuery({
+        queryKey: ["repo-langs", repo.name],
+        queryFn: () =>
+          withLocalStorageCache(`gh:langs:${repo.name}`, TWO_HOURS, () =>
+            fetchRepoLanguages(repo.languages_url),
+          ),
+        ...opts,
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["repo-preview", repo.name],
+        queryFn: () =>
+          withLocalStorageCache(`gh:preview:${repo.name}`, TWO_HOURS, () =>
+            fetchPreviewUrl(OWNER, repo.name),
+          ),
+        ...opts,
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["repo-npm", repo.name],
+        queryFn: () =>
+          withLocalStorageCache(`npm:${repo.name}`, TWO_HOURS, () =>
+            fetchNpmUrl(repo.name),
+          ),
+        ...opts,
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["repo-dmg", repo.name],
+        queryFn: () =>
+          withLocalStorageCache(`gh:dmg:${repo.name}`, TWO_HOURS, () =>
+            fetchLatestDmgUrl(OWNER, repo.name),
+          ),
+        ...opts,
+      });
+    });
+  }, [repos, queryClient]);
+
+  const { results, allStacks, allTopics } = useRepoSearch(
+    repos,
+    query,
+    filters,
+  );
 
   const toggleFilter = (value: string) =>
     setFilters((prev) => {
       const next = new Set(prev);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(value) ? next.delete(value) : next.add(value);
       return next;
     });
@@ -433,5 +443,104 @@ export const ProjectSection = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+const iconButtonCls =
+  "rounded-full border border-[var(--border)] p-1.5 text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--text)]";
+
+const ContentLeft = ({ repo }: { repo: GithubRepo }) => {
+  const { data: previewUrl, isLoading: previewLoading } = useQuery<
+    string | null
+  >({
+    queryKey: ["repo-preview", repo.name],
+    queryFn: () =>
+      withLocalStorageCache(`gh:preview:${repo.name}`, TWO_HOURS, () =>
+        fetchPreviewUrl(OWNER, repo.name),
+      ),
+    ...queryOpts,
+  });
+
+  const queryNPM = useQuery<string | null>({
+    queryKey: ["repo-npm", repo.name],
+    queryFn: () =>
+      withLocalStorageCache(`npm:${repo.name}`, TWO_HOURS, () =>
+        fetchNpmUrl(repo.name),
+      ),
+    ...queryOpts,
+  });
+
+  const queryDMG = useQuery<string | null>({
+    queryKey: ["repo-dmg", repo.name],
+    queryFn: () =>
+      withLocalStorageCache(`gh:dmg:${repo.name}`, TWO_HOURS, () =>
+        fetchLatestDmgUrl(OWNER, repo.name),
+      ),
+    ...queryOpts,
+  });
+
+  return (
+    <div>
+      <div className="flex flex-row justify-end gap-1.5 pt-0.5">
+        <a
+          href={repo.html_url}
+          target="_blank"
+          rel="noreferrer"
+          className={iconButtonCls}
+        >
+          <Github size={13} />
+        </a>
+        {repo.homepage && (
+          <a
+            href={repo.homepage}
+            target="_blank"
+            rel="noreferrer"
+            className={iconButtonCls}
+          >
+            <ExternalLink size={13} />
+          </a>
+        )}
+
+        <LinkIcon query={queryNPM}>
+          <Package size={13} />
+        </LinkIcon>
+
+        <LinkIcon query={queryDMG}>
+          <Download size={10} /> macOS
+        </LinkIcon>
+      </div>
+
+      {/* preview image */}
+      {previewLoading ? (
+        <div className="mt-1 h-14 w-24 animate-pulse rounded-lg bg-[var(--border)]" />
+      ) : previewUrl ? (
+        <div
+          className="w-[250px] h-[150px] transition-opacity group-hover:opacity-100 opacity-8"
+          style={{
+            background: `url(${previewUrl}) no-repeat`,
+            backgroundSize: "140% auto",
+            backgroundPosition: "top left",
+          }}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const LinkIcon = ({
+  query,
+  children,
+}: PropsWithChildren<{ query: UseQueryResult<string | null, Error> }>) => {
+  const { data, isLoading } = query;
+  if (isLoading)
+    return (
+      <div className="h-[30px] w-[30px] animate-pulse rounded-full bg-[var(--border)]" />
+    );
+  if (!data) return null;
+
+  return (
+    <a href={data} target="_blank" rel="noreferrer" className={iconButtonCls}>
+      {children}
+    </a>
   );
 };

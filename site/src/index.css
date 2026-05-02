@@ -55,14 +55,44 @@ html {
   }
 }
 
-#root {
-  isolation: isolate;
-}
-
-* {
+*:not(.overflow-y) {
   scrollbar-color: rgba(255, 255, 255, 0.668) white;
   scrollbar-width: thin;
 }
+
+/** Style HTML title - no need for custom popovers...  */
+
+/* *[title] {
+  position: relative;
+  text-decoration: none;
+  color: #007bff;
+}
+
+*[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: blob 7s infinite;
+}
+
+*[title]:hover::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 100%;
+  border: 6px solid transparent;
+  border-bottom-color: #333;
+  z-index: 1001;
+} */
 
 /* fun stuff */
 
