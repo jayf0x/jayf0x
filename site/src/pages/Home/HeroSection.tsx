@@ -1,5 +1,6 @@
-import { motion } from "framer-motion"
-import { TypeAnimation } from "react-type-animation"
+import { motion } from "framer-motion";
+import { TypeAnimation } from "react-type-animation";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const terminalLines = [
   "Frontend engineer++",
@@ -9,10 +10,16 @@ const terminalLines = [
   "Build a solarsystem in CSS",
   "Annoyance with outdates systems = automation",
   "Challenge me: www.chess.com/member/chaos_70b",
-  "('b' + 'a' + + 'a' + 'a').toLowerCase()"
-].flatMap((l) => [l, 2000])
+  "('b' + 'a' + + 'a' + 'a').toLowerCase()",
+].flatMap((l) => [l, 2000]);
+
+
+const textAsUniqueColor = (text: string) => text.split("").map((char, idx, arr)=> <span style={{color:
+  `hsl(${(360/arr.length) * idx}, 40%, 40%)`
+}}>{char}</span>)
 
 export const HeroSection = () => {
+  const isMobile = useIsMobile()
   return (
     <section className="flex flex-col justify-center px-6 pb-8 w-full text-nowrap">
       <motion.div
@@ -22,7 +29,7 @@ export const HeroSection = () => {
         className="mx-auto flex max-w-3xl flex-col gap-5 w-full text-center"
       >
         <motion.h1
-          className="text-5xl font-black tracking-tighter text-[var(--text)] w-full"
+          className="w-full center"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -35,7 +42,9 @@ export const HeroSection = () => {
               omitDeletionAnimation
               preRenderFirstString
             /> */}
-          Jonatan Verstraete
+         {!isMobile && <h1 className="lg:text-5xl sm:text-xl font-black tracking-tighter text-[var(--text)]">
+            {textAsUniqueColor('Jonatan Verstraete')}
+          </h1>}
         </motion.h1>
 
         <motion.div
@@ -80,5 +89,5 @@ export const HeroSection = () => {
         </motion.div> */}
       </motion.div>
     </section>
-  )
-}
+  );
+};

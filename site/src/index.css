@@ -99,6 +99,20 @@ html {
   z-index: 1001;
 } */
 
+@keyframes ad-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.ad-float {
+  animation: ad-float 3.6s ease-in-out infinite;
+}
+
 /* fun stuff */
 
 body {
@@ -106,7 +120,7 @@ body {
 }
 
 h1 {
-  text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #f9634c68;
+  text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #4c91f943;
 }
 
 

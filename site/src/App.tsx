@@ -5,6 +5,7 @@ import { ChatWidget } from "./components/ChatWidget";
 import { Home } from "./pages/Home";
 import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
+import { FakeAds } from "./components/FakeAds";
 
 type Page = "home" | "resume";
 
@@ -24,6 +25,7 @@ export const App = () => {
     <div className="min-h-screen w-full text-[var(--text)]">
       <Background />
       <ChatWidget />
+      <FakeAds />
       <main className="relative z-10">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -38,21 +40,14 @@ export const App = () => {
               className={`flex flex-col relative bg-[#0003] ${
                 isMobile
                   ? "w-full h-[120vh]"
-                  : "min-w-[60%] w-fit m-auto h-[90vh] mt-[5vh] rounded-xl"
+                  : "w-[60%] m-auto h-[90vh] mt-[5vh] rounded-xl"
               }`}
               style={{
                 backdropFilter: "blur(15px) brightness(0.2)",
               }}
             >
               {/* Navigation */}
-              <nav className="items-center justify-between px-6 py-8 mb-5 w-full flex">
-                <button
-                  type="button"
-                  onClick={() => setPage("home")}
-                  className="font-mono text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent)]"
-                >
-                  Jayf0x
-                </button>
+              <nav className="items-center justify-end px-2 py-2 mb-2 w-full flex">
                 <div className="flex items-center gap-6">
                   {pages.map(([label, p]) => (
                     <button

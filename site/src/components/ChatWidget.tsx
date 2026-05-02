@@ -81,7 +81,9 @@ const BotMessage = ({
   const clean = cleanResponse(content);
   const { unique, repeated } = splitAtRepeat(clean);
   const hasRepeat = repeated.length > 0;
-  const repeatLineCount = repeated.split("\n").filter((l) => l.length > 0).length;
+  const repeatLineCount = repeated
+    .split("\n")
+    .filter((l) => l.length > 0).length;
 
   return (
     <div className="flex flex-col items-start">
@@ -146,7 +148,9 @@ const BotMessage = ({
           >
             <ChevronDown size={11} />
           </motion.span>
-          {expanded ? "Show less" : `${repeatLineCount} repeated lines — Show more`}
+          {expanded
+            ? "Show less"
+            : `${repeatLineCount} repeated lines — Show more`}
         </motion.button>
       )}
     </div>
@@ -218,7 +222,7 @@ export const ChatWidget = () => {
       setElapsed(0);
       elapsedTimerRef.current = setInterval(
         () => setElapsed((s) => s + 1),
-        1000
+        1000,
       );
     } else {
       if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
@@ -234,7 +238,7 @@ export const ChatWidget = () => {
     if (!isPending) return;
     const id = setInterval(
       () => setStatusIdx((i) => (i + 1) % STATUS_MESSAGES.length),
-      2800
+      2800,
     );
     return () => clearInterval(id);
   }, [isPending]);
@@ -265,7 +269,11 @@ export const ChatWidget = () => {
     cancel();
     setMessages((prev) => [
       ...prev,
-      { id: `cancelled-${Date.now()}`, role: "assistant", content: "…cancelled." },
+      {
+        id: `cancelled-${Date.now()}`,
+        role: "assistant",
+        content: "…cancelled.",
+      },
     ]);
   };
 
@@ -577,7 +585,9 @@ export const ChatWidget = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={isPending ? "Generating…" : "Ask GPT-1 something…"}
+                  placeholder={
+                    isPending ? "Generating…" : "Ask GPT-1 something…"
+                  }
                   disabled={isPending}
                   maxLength={512}
                   className="flex-1 bg-transparent text-sm text-[var(--text)] outline-none disabled:opacity-40 min-w-0 placeholder:text-[var(--muted)]"
@@ -630,9 +640,14 @@ export const ChatWidget = () => {
                 className="absolute inset-0 rounded-full pointer-events-none"
                 initial={{ opacity: 0.4, scale: 1 }}
                 animate={{ opacity: 0, scale: 1.6 }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+                transition={{
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                }}
                 style={{
-                  background: "linear-gradient(135deg, #4f7cff 0%, #7c4fff 100%)",
+                  background:
+                    "linear-gradient(135deg, #4f7cff 0%, #7c4fff 100%)",
                 }}
               />
             )}
@@ -641,7 +656,10 @@ export const ChatWidget = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center"
-                style={{ background: "#ffb800", borderColor: "rgba(8,8,12,0.97)" }}
+                style={{
+                  background: "#ffb800",
+                  borderColor: "rgba(8,8,12,0.97)",
+                }}
               >
                 <motion.span
                   className="block w-2 h-2 rounded-full bg-amber-400"
