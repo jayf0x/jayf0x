@@ -132,7 +132,7 @@ const MatrixRain: AdComp = () => (
       </div>
       <div>
         <TypeAnimation
-          sequence={["RED", 2200, "RED −50%", 2000, "BUY RED", 2200]}
+          sequence={["RED", 2200, "RED -50%", 2000, "BUY RED", 2200]}
           speed={20}
           repeat={Infinity}
           omitDeletionAnimation

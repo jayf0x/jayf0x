@@ -1,0 +1,40 @@
+#red-button {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background: radial-gradient(
+    circle at 36% 32%,
+    #ff9090 0%,
+    #e00000 48%,
+    #7a0000 100%
+  );
+  box-shadow:
+    0 0 28px rgba(255, 55, 55, 0.65),
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 3px 7px rgba(255, 190, 190, 0.45),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+#red-button:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 55px rgba(255, 55, 55, 0.95),
+    0 12px 28px rgba(0, 0, 0, 0.55),
+    inset 0 3px 7px rgba(255, 190, 190, 0.5),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+}
+
+#red-button:active {
+  transform: scale(0.91);
+  box-shadow:
+    0 0 18px rgba(255, 55, 55, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.65),
+    inset 0 5px 10px rgba(0, 0, 0, 0.5),
+    inset 0 -1px 3px rgba(255, 150, 150, 0.2);
+}

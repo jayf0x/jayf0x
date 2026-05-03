@@ -10,26 +10,16 @@ type Message = {
   content: string;
   animate?: boolean;
 };
-
-const INITIAL_MESSAGE: Message = {
-  id: "init",
-  role: "assistant",
-  content:
-    "I am an historical artifact (GPT-1) and not a helpful assistant. How can I help?",
-  animate: true,
-};
-
 const STATUS_MESSAGES = [
-  "Autocompleting…",
-  "Loading from tape drive…",
-  "Warming up transformers…",
-  "Reading ancient weights…",
-  "Token by token…",
-  "Consulting 2018 knowledge…",
-  "Running on a 2018 server…",
-  "Computing attention heads…",
-  "Fetching from HuggingFace…",
-  "Generating next token…",
+  "Autocompleting",
+  "Generating gibberish",
+  "Loading from tape drive",
+  "Warming up transformers",
+  "Token by token",
+  "Consulting 2018 knowledge",
+  "Computing attention heads",
+  "Fetching from HuggingFace",
+  "Reading ancient weights",
 ];
 
 // Module-level set so animation state survives open/close without replaying
@@ -90,7 +80,7 @@ const BotMessage = ({
       {shouldAnimate ? (
         <span className="whitespace-pre-wrap">
           <TypeAnimation
-            key={id}
+            key={`message-bot-${id}`}
             sequence={[
               unique,
               () => {
@@ -98,7 +88,7 @@ const BotMessage = ({
                 setTyped(true);
               },
             ]}
-            speed={82}
+            speed={62}
             cursor={false}
             wrapper="span"
           />
@@ -162,10 +152,11 @@ const BotMessage = ({
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
-  const [statusIdx, setStatusIdx] = useState(0);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [statusMessage, setStatusMessage] = useState("");
   const [countdown, setCountdown] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [hasInitialized, setHasInitialized] = useState<boolean>(false);
 
   const { init, sendMessage, cancel, isPending, eta, response, error } =
     useChatLLM();
@@ -237,7 +228,12 @@ export const ChatWidget = () => {
   useEffect(() => {
     if (!isPending) return;
     const id = setInterval(
-      () => setStatusIdx((i) => (i + 1) % STATUS_MESSAGES.length),
+      () =>
+        setStatusMessage((prev) => {
+          const idx =
+            (STATUS_MESSAGES.indexOf(prev) + 1) % STATUS_MESSAGES.length;
+          return STATUS_MESSAGES[idx] ?? STATUS_MESSAGES.at(0);
+        }),
       2800,
     );
     return () => clearInterval(id);
@@ -276,6 +272,38 @@ export const ChatWidget = () => {
       },
     ]);
   };
+
+  const initMessages = useCallback(() => {
+    if (isOpen && !hasInitialized) {
+      const msgs = [
+        "Hey there 👋",
+        "I am an historical artifact and not a helpful assistant.",
+        "How can I help?",
+      ];
+
+      msgs.forEach((text, idx) => {
+        const msg: Message = {
+          id: "init",
+          role: "assistant",
+          content: text,
+          animate: true,
+        };
+
+        setTimeout(
+          () => {
+            setMessages((prev) => [...prev, msg]);
+          },
+          (idx) * text.length * 50,
+        );
+      });
+
+      setHasInitialized(true);
+    }
+  }, [isOpen, hasInitialized]);
+
+  useEffect(() => {
+    initMessages();
+  }, [isOpen]);
 
   const countdownProgress =
     countdown !== null && initialEtaRef.current
@@ -355,7 +383,6 @@ export const ChatWidget = () => {
                           border: "1px solid rgba(79,124,255,0.2)",
                         }}
                       >
-                        
                         OG
                       </div>
                     )}
@@ -514,7 +541,7 @@ export const ChatWidget = () => {
                       <div className="mb-1.5 h-4 flex items-center">
                         <AnimatePresence mode="wait">
                           <motion.span
-                            key={statusIdx}
+                            key={`status-${statusMessage}`}
                             initial={{ opacity: 0, y: 3 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -3 }}
@@ -522,7 +549,7 @@ export const ChatWidget = () => {
                             className="text-[11px] font-mono"
                             style={{ color: "rgba(226,208,144,0.7)" }}
                           >
-                            {STATUS_MESSAGES[statusIdx]}
+                            {statusMessage}…
                           </motion.span>
                         </AnimatePresence>
                       </div>

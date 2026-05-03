@@ -24,7 +24,7 @@ export const HeroSection = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="mx-auto flex max-w-3xl flex-col gap-5 w-full text-center"
       >
-        <motion.h1
+        <motion.div
           className="w-full center"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ export const HeroSection = () => {
               <TextWithSecret text="Jonatan Verstraete " secret="Jayf0x" />
             </p>
           )}
-        </motion.h1>
+        </motion.div>
 
         <motion.div
           className="font-mono text-sm text-[var(--muted)] md:text-base"
@@ -54,29 +54,6 @@ export const HeroSection = () => {
             <span className="ml-1 inline-block h-4 w-[2px] animate-blink bg-[var(--accent)] align-middle" />
           </div>
         </motion.div>
-        {/* <motion.div
-          className="flex items-center gap-3"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-        >
-          <a
-            href={GITHUB_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:border-[var(--accent)]"
-          >
-            <Github size={16} />
-            GitHub
-          </a>
-          <a
-            href="mailto:jonatan.vons@gmail.com"
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:border-[var(--accent)]"
-          >
-            <Mail size={16} />
-            Email
-          </a>
-        </motion.div> */}
       </motion.div>
     </section>
   );
