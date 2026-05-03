@@ -47,7 +47,7 @@ export const Resume = memo(() => {
 
       {/* Center overlay — resume download */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
-        <span className="text-[#9994] text-sm uppercase">The red button</span>
+        <span className="text-[#9994] text-sm uppercase">Download PDF</span>
         <div className="ad-float pointer-events-auto">
           <a
             href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf"
@@ -58,15 +58,12 @@ export const Resume = memo(() => {
               id="red-button"
               className="flex size-full center"
               aria-label="Download resume"
-              title="Download PDF"
+              title="Doubt everything. Find your own light. - Buddha"
             >
               <FileHeart size={42} className="m-auto opacity-60" />
             </div>
           </a>
         </div>
-        <span className="text-[#9994] text-xs uppercase">
-          Press Space to pause
-        </span>
       </div>
 
       {/* Bottom-left controls */}
@@ -96,9 +93,9 @@ export const Resume = memo(() => {
           </button>
         </div>
         <a
-          href="https://en.wikipedia.org/wiki/Day_and_Night_(cellular_automaton)"
+          href="https://golly.sourceforge.io/webapp/golly.html"
           target="_blank"
-          className="border-[#fff3] border rounded-md p-1"
+          className="border-[#fff3] border rounded-md p-1 flex flex-row text-md"
         >
           <Info size={15} />
         </a>

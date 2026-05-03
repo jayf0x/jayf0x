@@ -26,15 +26,15 @@ const COLORS_CSS_CONWAY = [
 ];
 
 const COLORS_CSS_DAYNIGHT = [
-  "rgb(200,60,20)",
-  "rgb(215,80,10)",
-  "rgb(230,115,5)",
-  "rgb(248,165,15)",
-  "rgb(255,210,45)",
-  "rgb(255,230,80)",
-  "rgb(248,185,25)",
-  "rgb(235,130,10)",
-  "rgb(215,85,5)",
+  "rgb(255,245,220)", // 0 neighbors – bright edge/isolated
+  "rgb(255,215,150)", // 1
+  "rgb(255,180,70)",  // 2
+  "rgb(245,135,25)",  // 3 – birth threshold
+  "rgb(218,90,8)",    // 4
+  "rgb(185,55,4)",    // 5
+  "rgb(150,28,2)",    // 6
+  "rgb(115,10,1)",    // 7
+  "rgb(78,3,1)",      // 8 – deep interior, darkest
 ];
 
 // ── WGSL: compute (one generation step) ─────────────────────────────────────
@@ -99,15 +99,15 @@ ${
     vec3f( 14.0,  38.0, 110.0),
 `
     : `
-    vec3f(200.0,  60.0,  20.0),
-    vec3f(215.0,  80.0,  10.0),
-    vec3f(230.0, 115.0,   5.0),
-    vec3f(248.0, 165.0,  15.0),
-    vec3f(255.0, 210.0,  45.0),
-    vec3f(255.0, 230.0,  80.0),
-    vec3f(248.0, 185.0,  25.0),
-    vec3f(235.0, 130.0,  10.0),
-    vec3f(215.0,  85.0,   5.0),
+    vec3f(255.0, 245.0, 220.0),
+    vec3f(255.0, 215.0, 150.0),
+    vec3f(255.0, 180.0,  70.0),
+    vec3f(245.0, 135.0,  25.0),
+    vec3f(218.0,  90.0,   8.0),
+    vec3f(185.0,  55.0,   4.0),
+    vec3f(150.0,  28.0,   2.0),
+    vec3f(115.0,  10.0,   1.0),
+    vec3f( 78.0,   3.0,   1.0),
 `
 }
   );
@@ -155,12 +155,44 @@ ${
   }
 `;
 
+// ── Known patterns ────────────────────────────────────────────────────────────
+// '.' = dead, 'O' = alive  (ASCII art from Conway.txt / DayNight.txt)
+const CONWAY_PATTERNS: string[][] = [
+  // Glider (diagonal c/4, period 4)
+  [".O.", "O..", "OOO"],
+  // LWSS (c/2, period 4)
+  [".O..O", "O....", "O...O", "OOOO."],
+  // MWSS (c/2, period 4)
+  ["...O..", ".O...O", "O.....", "O....O", "OOOOO."],
+  // HWSS (c/2, period 4)
+  ["...OO..", ".O....O", "O......", "O.....O", "OOOOOO."],
+  // Schick engine tagalong (c/2, period 12) — two LWSS needed to drive it,
+  // but placed solo it evolves interestingly
+  ["OOOO.....", "O...O....", "O........", ".O..O..OO", "......OOO",
+   ".O..O..OO", "O........", "O...O....", "OOOO....."],
+];
+
+const DAYNIGHT_PATTERNS: string[][] = [
+  // Rocket predecessor — spontaneously generates the period-40 rocket (Fig 3)
+  [".OO.....", "O.OO....", "OOOOOOOO", "O.OO....", ".OO....."],
+  // Two-rockets predecessor — generates two rockets in opposite directions (Fig 4)
+  ["..O...", ".OOOOO", "OOOOO.", ".OOOOO", "..O..."],
+  // Period-32 c/2 spaceship (Fig 9)
+  ["...O....", ".OOO....", "O.OOO.O.", "OOOOO.OO", "O.OOO.O.", ".OOO....", "...O...."],
+  // Snail — period-14 c/7 spaceship (Fig 11)
+  ["..O..", "O.OO.", "OOOOO", "O.OO.", "..O.."],
+  // Butterfly — diagonal period-3 c/3 spaceship (Fig 10)
+  [".OOO.", "O.OOO", "OO...", "OO...", ".O..."],
+  // Period-2 even-symmetry c/2 spaceship (Fig 5)
+  ["....OOO..", "..O.OO...", ".OOOOOO.O", "OOOOOOOO.", "OOOOOOOO.", ".OOOOOO.O", "..O.OO...", "....OOO.."],
+];
+
 export function createConwayEngine(
   canvas: HTMLCanvasElement,
   isConway: boolean = true,
   config: ConwayConfig = {},
 ): ConwayControls {
-  const { targetCols = 40, stepMs = 240 } = config;
+  const { targetCols = 80, stepMs = 240 } = config;
 
   const COLORS_CSS = isConway ? COLORS_CSS_CONWAY : COLORS_CSS_DAYNIGHT;
   const WGSL_COMPUTE = buildComputeWGSL(isConway);
@@ -191,8 +223,35 @@ export function createConwayEngine(
     counts = new Uint8Array(total);
   };
 
+  const placePattern = (pattern: string[], ox: number, oy: number) => {
+    for (let r = 0; r < pattern.length; r++) {
+      for (let c = 0; c < pattern[r].length; c++) {
+        if (pattern[r][c] === "O") {
+          const gx = ox + c, gy = oy + r;
+          if (gx >= 0 && gx < cols && gy >= 0 && gy < rows)
+            current[gy * cols + gx] = 1;
+        }
+      }
+    }
+  };
+
   const seed = () => {
-    for (let i = 0; i < total; i++) current[i] = Math.random() < 0.12 ? 1 : 0;
+    current.fill(0);
+    const patterns = isConway ? CONWAY_PATTERNS : DAYNIGHT_PATTERNS;
+    const margin = 5;
+    // Scale count to grid area, minimum 6
+    const count = Math.max(6, Math.round((cols * rows) / 350));
+    for (let i = 0; i < count; i++) {
+      const p = patterns[i % patterns.length];
+      const pw = Math.max(...p.map((r) => r.length));
+      const ph = p.length;
+      const maxX = cols - margin - pw;
+      const maxY = rows - margin - ph;
+      if (maxX <= margin || maxY <= margin) continue;
+      const x = margin + Math.floor(Math.random() * (maxX - margin));
+      const y = margin + Math.floor(Math.random() * (maxY - margin));
+      placePattern(p, x, y);
+    }
   };
 
   // ── CPU step ──────────────────────────────────────────────────────────────
