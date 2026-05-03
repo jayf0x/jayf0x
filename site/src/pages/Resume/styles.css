@@ -30,6 +30,65 @@
     inset 0 -3px 5px rgba(0, 0, 0, 0.4);
 }
 
+/* ── Simulation controls ─────────────────────────────────────────────────── */
+
+.sim-ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 12, 20, 0.6);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.sim-ctrl-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(30, 35, 55, 0.75);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sim-mode-toggle {
+  display: flex;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 12, 20, 0.6);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+
+.sim-mode-toggle button {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.sim-mode-toggle button:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sim-mode-toggle button:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sim-mode-toggle button.active {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 #red-button:active {
   transform: scale(0.91);
   box-shadow:

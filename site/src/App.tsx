@@ -23,10 +23,10 @@ export const App = () => {
 
   return (
     <div className="h-screen w-screen text-[var(--text)]">
-      <Background />
       <ChatWidget />
       <FakeAds />
-      <main className="relative z-10">
+      <Background />
+      <main className="relative z-20">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`motion-page-${page}`}
@@ -47,7 +47,7 @@ export const App = () => {
               }}
             >
               {/* Navigation */}
-              <nav className="items-center justify-end px-2 py-2 mb-2 w-full flex">
+              <nav className="items-center justify-end px-[3rem] pt-[2rem] mb-2 w-full flex">
                 <div className="flex items-center gap-6">
                   {pages.map(([label, p]) => (
                     <button

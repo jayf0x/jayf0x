@@ -19,5 +19,6 @@
     "types": ["@webgpu/types"]
   },
   "include": ["src"],
+  "exclude": ["dist", "node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

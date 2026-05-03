@@ -31,9 +31,9 @@ export const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           {!isMobile && (
-            <p className="lg:text-5xl sm:text-xl font-black tracking-tighter text-[var(--text)]">
-              <TextWithSecret text="Jonatan Verstraete " secret="Jayf0x" />
-            </p>
+            <div className="lg:text-5xl sm:text-xl font-black tracking-tighter text-[var(--text)]">
+              <TextWithSecret text="Jonatan" secret="JayF0x" />
+            </div>
           )}
         </motion.div>
 

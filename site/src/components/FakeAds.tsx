@@ -79,7 +79,7 @@ export const FakeAds = () => {
   }, [rotateSlot, activeCount]);
 
   return (
-    <div className="fixed size-full inset-0">
+    <div className="fixed size-full inset-0 z-10">
       {isMobile ? (
         <div
           className="fixed bottom-0 left-0 right-0 z-20 flex overflow-hidden"
