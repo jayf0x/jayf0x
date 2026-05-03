@@ -32,7 +32,7 @@ export const Background = () => {
         !isMobile && (
           <div className="absolute inset-0 opacity-50 hue_rot" title="Ever seen a chicken ">
             <FluidText
-              isWorkerEnabled={false}
+              isWorkerEnabled={true}
               ref={fluidRef}
               text={`🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚`}
               config={{

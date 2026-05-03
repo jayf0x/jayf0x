@@ -195,15 +195,6 @@ h1 {
 
 /* ── Resume page: red button ─────────────────────────────────────────────── */
 
-.resume-label {
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  pointer-events: none;
-  user-select: none;
-}
-
 .red-button {
   width: 92px;
   height: 92px;

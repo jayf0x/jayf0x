@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import {
   PropsWithChildren,
   useCallback,
@@ -79,13 +78,6 @@ export const FakeAds = () => {
     return () => timers.forEach(clearInterval);
   }, [rotateSlot, activeCount]);
 
-  const adTransition = {
-    initial: { y: 16, scale: 0.96 },
-    animate: { y: 0, scale: 1 },
-    exit: { y: -10, scale: 0.97 },
-    transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] as const },
-  };
-
   return (
     <div className="fixed size-full inset-0">
       {isMobile ? (
@@ -95,15 +87,7 @@ export const FakeAds = () => {
         >
           {slots.slice(0, 3).map((slot, i) => (
             <div key={i} className="relative flex-1 overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slot.v}
-                  className="absolute inset-0"
-                  {...adTransition}
-                >
-                  <slot.Ad />
-                </motion.div>
-              </AnimatePresence>
+              <slot.Ad />
             </div>
           ))}
         </div>
@@ -111,15 +95,7 @@ export const FakeAds = () => {
         <div className="relative size-full">
           {slots.map((slot, i) => (
             <FloatingPanel key={i} style={SLOT_POSITIONS[i]}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={slot.v}
-                  className="absolute inset-0"
-                  {...adTransition}
-                >
-                  <slot.Ad />
-                </motion.div>
-              </AnimatePresence>
+              <slot.Ad />
             </FloatingPanel>
           ))}
         </div>
@@ -179,57 +155,33 @@ const MatrixRain: AdComp = () => (
 
 // ── Ad: Edo Japan / js-canvas ─────────────────────────────────────────────────
 
-const IMG_FILTERS = [
-  "none",
-  "sepia(0.65)",
-  "hue-rotate(60deg) saturate(1.8)",
-  "brightness(1.2) contrast(1.15)",
-  "hue-rotate(200deg) saturate(1.4)",
-];
-
-const IdyllicLandscape: AdComp = () => {
-  const [filterIdx, setFilterIdx] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(
-      () => setFilterIdx((i) => (i + 1) % IMG_FILTERS.length),
-      4500,
-    );
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <a
-      href="https://github.com/jayf0x/js-canvas"
-      target="_blank"
-      rel="noreferrer"
-      className="relative block size-full overflow-hidden"
+const IdyllicLandscape: AdComp = () => (
+  <a
+    href="https://github.com/jayf0x/js-canvas"
+    target="_blank"
+    rel="noreferrer"
+    className="relative block size-full overflow-hidden"
+  >
+    <img
+      className="absolute inset-0 w-full h-full object-cover"
+      src="https://raw.githubusercontent.com/jayf0x/js-canvas/main/previews/trees.gif"
+    />
+    <div
+      className="absolute inset-0 flex flex-col justify-end p-3"
+      style={{
+        background:
+          "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)",
+      }}
     >
-      <img
-        className="absolute inset-0 w-full h-full object-cover"
-        src="https://raw.githubusercontent.com/jayf0x/js-canvas/main/previews/trees.gif"
-        style={{
-          filter: IMG_FILTERS[filterIdx],
-          transition: "filter 1.4s ease",
-        }}
-      />
-      <div
-        className="absolute inset-0 flex flex-col justify-end p-3"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)",
-        }}
-      >
-        <p className="text-white font-bold text-sm leading-snug">
-          Travel to Edo Japan in 2D!
-        </p>
-        <p className="text-white/55 text-[10px] mt-0.5">
-          jayf0x/js-canvas — play it now →
-        </p>
-      </div>
-    </a>
-  );
-};
+      <p className="text-white font-bold text-sm leading-snug">
+        Travel to Edo Japan in 2D!
+      </p>
+      <p className="text-white/55 text-[10px] mt-0.5">
+        jayf0x/js-canvas — play it now →
+      </p>
+    </div>
+  </a>
+);
 
 // ── Ad: Windows 98 ────────────────────────────────────────────────────────────
 

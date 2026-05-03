@@ -321,17 +321,7 @@ export const ChatWidget = () => {
                   🤖
                 </div>
                 <span className="text-sm font-semibold text-[var(--text)] tracking-tight">
-                  GPT-1
-                </span>
-                <span
-                  className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded tracking-widest uppercase"
-                  style={{
-                    background: "rgba(255, 176, 0, 0.08)",
-                    border: "1px solid rgba(255, 176, 0, 0.2)",
-                    color: "#ffb800",
-                  }}
-                >
-                  artifact
+                  OpenAI GPT 1
                 </span>
               </div>
               <button
@@ -365,7 +355,8 @@ export const ChatWidget = () => {
                           border: "1px solid rgba(79,124,255,0.2)",
                         }}
                       >
-                        🤖
+                        
+                        OG
                       </div>
                     )}
                     <div
