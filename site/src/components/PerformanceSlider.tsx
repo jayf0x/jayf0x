@@ -38,7 +38,7 @@ export const PerformanceSlider = () => {
         }}
       >
         {/* Header row */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between -mb-[2rem]">
           <div className="flex items-center gap-2">
             <span
               className="inline-block w-1.5 h-1.5 rounded-full"
