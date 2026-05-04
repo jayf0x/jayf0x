@@ -3,6 +3,7 @@ import { createConwayEngine, ConwayControls } from "../../lib/conway/conway";
 import { FileHeart, Info, Pause, Play } from "lucide-react";
 
 import "./styles.css";
+import { InfoPopover } from "../../components/InfoPopover";
 
 type SimMode = "conway" | "daynight";
 
@@ -92,13 +93,14 @@ export const Resume = memo(() => {
             Day &amp; Night
           </button>
         </div>
-        <a
-          href="https://golly.sourceforge.io/webapp/golly.html"
-          target="_blank"
-          className="border-[#fff3] border rounded-md p-1 flex flex-row text-md"
-        >
-          <Info size={15} />
-        </a>
+
+        <InfoPopover
+          title="More info"
+          items={[
+            ["More examples", "https://golly.sourceforge.io/webapp/golly.html"],
+            ["Useful info", "https://members.tip.net.au/~dbell/"],
+          ]}
+        />
       </div>
     </div>
   );
