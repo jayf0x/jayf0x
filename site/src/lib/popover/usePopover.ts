@@ -5,7 +5,7 @@ import {
   PositionPopover,
   UsePopoverProps,
   UsePopoverResult,
-} from ".";
+} from "./types";
 import {
   EMPTY_RECT,
   CreateContainerProps,
@@ -27,7 +27,7 @@ const usePopoverElement = ({
 
   useLayoutEffect(() => {
     element.className = containerClassName ?? "";
-  }, [containerClassName, element]);
+  }, [containerClassName]);
 
   return ref;
 };
@@ -47,8 +47,6 @@ const POPOVER_STYLE: Partial<CSSStyleDeclaration> = {
   transform: "translate(var(--popover-x, 0px), var(--popover-y, 0px))",
   transition: "opacity 0.12s ease",
   opacity: "0",
-  pointerEvents: "none",
-  background: "#ffffff",
   borderRadius: "8px",
   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 6px rgba(0, 0, 0, 0.08)",
 };
@@ -232,7 +230,7 @@ export const usePopover = (props: UsePopoverProps): UsePopoverResult => {
           top: Math.max(0, rawViolations.top),
           left: Math.max(0, rawViolations.left),
           right: Math.max(0, rawViolations.right),
-          bottom: Math.max(0, rawViolations.bottom),
+          bottom: Math.max(0, rawViolations.bottom) + 1,
         },
         hasViolations:
           rawViolations.top > 0 ||

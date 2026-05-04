@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowContainerProps } from ".";
+import { ArrowContainerProps } from "./types";
 import { useArrowContainer } from "./useArrowContainer";
 
 export const ArrowContainer = ({

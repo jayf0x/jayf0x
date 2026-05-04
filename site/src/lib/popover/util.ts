@@ -1,4 +1,4 @@
-import { PopoverPosition, PopoverAlign, Rect } from "./index";
+import type { PopoverPosition, PopoverAlign, Rect } from "./types";
 
 export const EMPTY_RECT: Rect = {
   top: 0,

@@ -124,8 +124,22 @@ html {
   }
 }
 
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(-2px);
+  }
+  50% {
+    transform: translateY(6px) translateX(2px);
+  }
+}
+
 .ad-float {
-  animation: ad-float 3.6s ease-in-out infinite;
+  animation: ad-float 4s ease-in-out infinite;
+}
+
+.floaty {
+  animation: floaty 3s ease-in-out infinite;
 }
 
 /* fun stuff */
@@ -138,11 +152,9 @@ h1 {
   text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #4c91f943;
 }
 
-
 .hue_rot {
   animation: hue_rot infinite 30s;
 }
-
 
 @keyframes hue_rot {
   0% {
@@ -153,7 +165,6 @@ h1 {
     filter: hue-rotate(360deg);
   }
 }
-
 
 @keyframes sloppy_cursor {
   0% {

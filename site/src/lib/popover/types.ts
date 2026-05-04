@@ -68,7 +68,7 @@ export type BasePopoverProps = {
   parentElement?: HTMLElement;
   boundaryElement?: HTMLElement;
   boundaryInset?: number;
-  containerClassName?: string;
+  containerClassName?: React.HTMLAttributes<HTMLElement>['className'];
   transform?: PositionTransform;
   transformMode?: "relative" | "absolute";
 };
@@ -125,11 +125,3 @@ export type UseArrowContainerResult = {
   arrowStyle: React.CSSProperties;
   arrowContainerStyle: React.CSSProperties;
 };
-
-export const usePopover: (props: UsePopoverProps) => UsePopoverResult;
-export const useArrowContainer: (
-  props: UseArrowContainerProps,
-) => UseArrowContainerResult;
-
-export const Popover: (props: PopoverProps) => JSX.Element | null;
-export const ArrowContainer: (props: ArrowContainerProps) => JSX.Element | null;

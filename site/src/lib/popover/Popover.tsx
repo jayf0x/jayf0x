@@ -10,12 +10,9 @@ import {
   useMemo,
 } from "react";
 import { PopoverPortal } from "./PopoverPortal";
-import { PopoverPosition, PopoverProps, PopoverState } from ".";
+import { PopoverPosition, PopoverProps, PopoverState } from "./types";
 import { EMPTY_RECT, getScrollableAncestors } from "./util";
 import { usePopover } from "./usePopover";
-export { useArrowContainer } from "./useArrowContainer";
-export { ArrowContainer } from "./ArrowContainer";
-export { usePopover };
 
 const DEFAULT_POSITIONS: PopoverPosition[] = ["top", "left", "right", "bottom"];
 
@@ -333,12 +330,12 @@ const PopoverInternal = forwardRef(
   },
 );
 
-export const Popover = forwardRef<HTMLElement, PopoverProps>((props, ref) => {
+const Popover = forwardRef<HTMLElement, PopoverProps>((props, ref) => {
   if (typeof window === "undefined") return props.children;
   return <PopoverInternal {...props} ref={ref} />;
 });
 
-export const useMemoizedArray = <T extends number | string>(
+const useMemoizedArray = <T extends number | string>(
   externalArray: T[],
 ) => {
   const prevArrayRef = useRef(externalArray);
@@ -362,3 +359,6 @@ export const useMemoizedArray = <T extends number | string>(
 
   return array;
 };
+
+
+export { usePopover, Popover };

@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from "react";
-import { UseArrowContainerProps } from ".";
+import { UseArrowContainerProps } from "./types";
 
 export const useArrowContainer = ({
   childRect,
