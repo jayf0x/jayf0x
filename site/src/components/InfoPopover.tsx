@@ -27,33 +27,45 @@ export const InfoPopover = ({ title, items = [] }: InfoPopoverProps) => {
         trigger="click"
         // align="start"
         content={({ position, childRect, popoverRect }) => (
-          <ArrowContainer
-            position={position}
-            childRect={childRect}
-            popoverRect={popoverRect}
-            arrowColor={"white"}
-            arrowSize={15}
-            className="popover-arrow-container floaty"
-            arrowClassName="popover-arrow"
-          >
-            <ul className="bg-[linear-gradient(90deg,rgba(255,_227,_227,_1)_0%,_rgba(235,_255,_237,_1)_100%)] p-1 flex flex-col gap-1  rounded-md">
-              {items.map(([label, href]) => (
-                <li key={label}>
-                  {href ? (
-                    <a
-                      href={href}
-                      target="_blank"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {label}
-                    </a>
-                  ) : (
-                    <span>{label}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </ArrowContainer>
+      <ArrowContainer
+        position={position}
+        childRect={childRect}
+        popoverRect={popoverRect}
+        // match arrow color to the popover accent (purple)
+        arrowColor={"#7c4fff"}
+        arrowSize={12}
+        className="popover-arrow-container floaty"
+        arrowClassName="popover-arrow"
+      >
+        <ul
+          className="p-2 flex flex-col gap-2 rounded-xl"
+          style={{
+            background: "linear-gradient(135deg, #4f7cff 0%, #7c4fff 100%)",
+            border: "1px solid rgba(124,79,255,0.12)",
+            boxShadow: "0 16px 48px rgba(124,79,255,0.14)",
+            color: "white",
+            minWidth: "180px",
+          }}
+        >
+          {items.map(([label, href]) => (
+            <li key={label}>
+              {href ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                  style={{ color: "rgba(255,255,255,0.95)" }}
+                >
+                  {label}
+                </a>
+              ) : (
+                <span>{label}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </ArrowContainer>
         )}
 
         // containerClassName=""
