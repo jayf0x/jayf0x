@@ -18,7 +18,10 @@ export const PerformanceSlider = () => {
     (clientX: number) => {
       if (!trackRef.current) return;
       const { left, width } = trackRef.current.getBoundingClientRect();
-      const pct = Math.max(0, Math.min(100, Math.round(((clientX - left) / width) * 100)));
+      const pct = Math.max(
+        0,
+        Math.min(100, Math.round(((clientX - left) / width) * 100)),
+      );
       setValue(pct);
     },
     [setValue],
@@ -34,7 +37,8 @@ export const PerformanceSlider = () => {
           background: "rgba(6, 6, 8, 0.82)",
           backdropFilter: "blur(16px) saturate(1.4)",
           border: "1px solid rgba(255,255,255,0.08)",
-          boxShadow: "0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
+          boxShadow:
+            "0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
         }}
       >
         {/* Header row */}
@@ -48,11 +52,17 @@ export const PerformanceSlider = () => {
                 animation: "pulse 2s infinite",
               }}
             />
-            <span className="text-[10px] font-mono tracking-[0.22em] uppercase text-[rgba(255,255,255,0.35)]">
-              <InfoPopover title="Temperature" items={[
-                ['What is LLM temperature', 'https://www.ibm.com/think/topics/llm-temperature']
-              ]} />
-            </span>
+            <div className="text-[10px] z-10 font-mono tracking-[0.22em] uppercase text-[rgba(255,255,255,0.35)]">
+              <InfoPopover
+                title="Temperature"
+                items={[
+                  [
+                    "About LLM temperature",
+                    "https://www.promptingguide.ai/introduction/settings",
+                  ],
+                ]}
+              />
+            </div>
           </div>
           <span className="text-[11px] font-mono font-bold tabular-nums text-[var(--accent)]">
             {String(value).padStart(3, " ")}%
@@ -72,7 +82,11 @@ export const PerformanceSlider = () => {
                 >
                   <span
                     className="text-[8px] font-mono uppercase tracking-wider whitespace-nowrap mb-1 transition-colors duration-300"
-                    style={{ color: active ? "rgba(221,49,98,0.95)" : "rgba(255,255,255,0.22)" }}
+                    style={{
+                      color: active
+                        ? "rgba(221,49,98,0.95)"
+                        : "rgba(255,255,255,0.22)",
+                    }}
                   >
                     {cp.tag}
                   </span>
@@ -115,13 +129,28 @@ export const PerformanceSlider = () => {
           {/* Track groove */}
           <div
             className="absolute inset-x-0 overflow-hidden"
-            style={{ top: "50%", transform: "translateY(-50%)", height: 8, borderRadius: 4 }}
+            style={{
+              top: "50%",
+              transform: "translateY(-50%)",
+              height: 8,
+              borderRadius: 4,
+            }}
           >
             <div
               className="absolute inset-y-0 left-0"
-              style={{ width: `${value}%`, background: `linear-gradient(90deg, var(--accent) 0%, #8b5cf6 55%, #DD3162 100%)`, opacity: 0.8, boxShadow: "none", border: "1px solid rgba(255,255,255,0.09)", backgroundClip: "padding-box" }}
+              style={{
+                width: `${value}%`,
+                background: `linear-gradient(90deg, var(--accent) 0%, #8b5cf6 55%, #DD3162 100%)`,
+                opacity: 0.8,
+                boxShadow: "none",
+                border: "1px solid rgba(255,255,255,0.09)",
+                backgroundClip: "padding-box",
+              }}
             />
-            <div className="absolute inset-0 rounded" style={{ background: "rgba(255,255,255,0.06)" }} />
+            <div
+              className="absolute inset-0 rounded"
+              style={{ background: "rgba(255,255,255,0.06)" }}
+            />
           </div>
 
           {/* Ruler tick marks */}
@@ -139,7 +168,9 @@ export const PerformanceSlider = () => {
                   bottom: major ? 3 : mid ? 5 : 8,
                   width: 1,
                   height: h,
-                  background: lit ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.13)",
+                  background: lit
+                    ? "rgba(255,255,255,0.55)"
+                    : "rgba(255,255,255,0.13)",
                   transform: "translateX(-50%)",
                   borderRadius: 0.5,
                   transition: "background 0.15s",
@@ -163,7 +194,9 @@ export const PerformanceSlider = () => {
                   borderRadius: 1,
                   transform: "translateX(-50%)",
                   background: active ? "#DD3162" : "rgba(255,255,255,0.3)",
-                  boxShadow: active ? "0 0 8px 2px rgba(221,49,98,0.55)" : "none",
+                  boxShadow: active
+                    ? "0 0 8px 2px rgba(221,49,98,0.55)"
+                    : "none",
                   transition: "background 0.25s, box-shadow 0.25s",
                 }}
               />
@@ -171,10 +204,32 @@ export const PerformanceSlider = () => {
           })}
 
           {/* Thumb */}
-          <div className="absolute top-0 bottom-0 flex items-center justify-center pointer-events-none z-20" style={{ left: `${value}%`, transform: "translateX(-50%)" }}>
-            <div className="flex flex-col items-center justify-center gap-1" style={{ width: 14, height: 26, borderRadius: 4, background: "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(190,200,230,0.88) 100%)", boxShadow: "0 0 14px rgba(79,124,255,0.6), 0 3px 8px rgba(0,0,0,0.7)" }}>
+          <div
+            className="absolute top-0 bottom-0 flex items-center justify-center pointer-events-none z-20"
+            style={{ left: `${value}%`, transform: "translateX(-50%)" }}
+          >
+            <div
+              className="flex flex-col items-center justify-center gap-1"
+              style={{
+                width: 14,
+                height: 26,
+                borderRadius: 4,
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(190,200,230,0.88) 100%)",
+                boxShadow:
+                  "0 0 14px rgba(79,124,255,0.6), 0 3px 8px rgba(0,0,0,0.7)",
+              }}
+            >
               {[0, 1, 2].map((i) => (
-                <div key={i} className="rounded-sm" style={{ width: 6, height: 1, background: "rgba(0,0,0,0.28)" }} />
+                <div
+                  key={i}
+                  className="rounded-sm"
+                  style={{
+                    width: 6,
+                    height: 1,
+                    background: "rgba(0,0,0,0.28)",
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -183,7 +238,11 @@ export const PerformanceSlider = () => {
         {/* Scale labels */}
         <div className="relative mt-1" style={{ height: 14 }}>
           {SCALE_LABELS.map((v) => (
-            <span key={v} className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums" style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}>
+            <span
+              key={v}
+              className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums"
+              style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}
+            >
               {v}
             </span>
           ))}

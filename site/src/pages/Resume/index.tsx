@@ -68,16 +68,7 @@ export const Resume = memo(() => {
       </div>
 
       {/* Bottom-left controls */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto">
-        {/* Play / Pause */}
-        <button
-          onClick={handlePlayPause}
-          title={isPaused ? "Play" : "Pause"}
-          className="sim-ctrl-btn"
-        >
-          {isPaused ? <Play size={14} /> : <Pause size={14} />}
-        </button>
-
+      <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto bg-red">
         {/* Mode toggle */}
         <div className="sim-mode-toggle">
           <button
@@ -94,13 +85,23 @@ export const Resume = memo(() => {
           </button>
         </div>
 
+
+        <button
+          onClick={handlePlayPause}
+          title={isPaused ? "Play" : "Pause"}
+          className="sim-ctrl-btn"
+        >
+          {isPaused ? <Play size={14} /> : <Pause size={14} />}
+        </button>
+
         <InfoPopover
-          title="More info"
           items={[
-            ["More examples", "https://golly.sourceforge.io/webapp/golly.html"],
-            ["Useful info", "https://members.tip.net.au/~dbell/"],
+            ["Playground Golly", "https://golly.sourceforge.io/webapp/golly.html"],
+            ["✨Inspiration✨", "https://members.tip.net.au/~dbell/"],
           ]}
         />
+
+    
       </div>
     </div>
   );

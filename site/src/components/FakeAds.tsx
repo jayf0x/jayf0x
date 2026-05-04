@@ -155,6 +155,7 @@ const MatrixRain: AdComp = () => (
 
 // ── Ad: Edo Japan / js-canvas ─────────────────────────────────────────────────
 
+// TODO: transform to  real travel guide with big heading
 const IdyllicLandscape: AdComp = () => (
   <a
     href="https://github.com/jayf0x/js-canvas"
@@ -227,7 +228,7 @@ const Win98Ad: AdComp = () => (
     <div className="flex flex-col items-center justify-center gap-2 p-3 h-[calc(100%-22px)]">
       <div className="text-3xl">💾</div>
       <p className="text-center text-[13px] font-bold text-black leading-tight">
-        Visit the past!
+        Play DOOM in JS!
       </p>
       <p className="text-center text-[10px] text-[#333] leading-snug px-1">
         Human-made technology.
@@ -235,7 +236,7 @@ const Win98Ad: AdComp = () => (
         Windows 98 — in your browser.
       </p>
       <div
-        className="mt-1 px-4 py-1 text-[11px] font-bold text-black text-center"
+        className="mt-1 px-4 py-1 text-[11px] font-bold text-black text-center hover:scale-110"
         style={{
           background: "#c0c0c0",
           borderTop: "2px solid #ffffff",
@@ -251,14 +252,14 @@ const Win98Ad: AdComp = () => (
 );
 
 // ── Ad: fluidity — WebGL fluid sim ────────────────────────────────────────────
-
+// TODO: transform to NPM package commercial like this is the package of the century and free.
 const FluidityAd: AdComp = () => (
   <a
-    href="https://github.com/jayf0x/fluidity"
+    href="https://www.npmjs.com/package/@jayf0x/fluidity-js"
     target="_blank"
     rel="noreferrer"
     className="relative block size-full overflow-hidden"
-    style={{ background: "#04001a" }}
+    style={{ background: "transparent" }}
   >
     <div
       className="absolute inset-0 hue_rot"
@@ -353,7 +354,7 @@ const BAR_COLORS = [
   "#818cf8",
   "#a78bfa",
 ];
-
+// TODO: transform this to Jocko Willink style "Take ownership of your Sound". big busty heading. This not limited to Youtube, also files or anything in the browser. Recently Delay.
 const AudioBonanzaAd: AdComp = () => {
   const COUNT = 14;
   const [bars, setBars] = useState(() =>
@@ -375,7 +376,14 @@ const AudioBonanzaAd: AdComp = () => {
       className="relative block size-full overflow-hidden"
       style={{ background: "#050510" }}
     >
-      <div className="absolute bottom-0 left-0 right-0 flex items-end gap-0.5 px-1.5 h-[55%]">
+      <div className="absolute bottom-0 left-0 right-0 flex items-end gap-0.5 px-1.5 h-full pt-5"
+      
+      style={{
+          background:
+            "linear-gradient(to bottom, rgba(5,5,16,0.92) 0%, transparent 55%)",
+        }}
+        
+        >
         {bars.map((h, i) => (
           <div
             key={i}
@@ -390,11 +398,8 @@ const AudioBonanzaAd: AdComp = () => {
         ))}
       </div>
       <div
-        className="absolute inset-0 flex flex-col justify-start p-3"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(5,5,16,0.92) 0%, transparent 55%)",
-        }}
+        className="absolute inset-0 flex flex-col justify-start p-3 bg-contain"
+        
       >
         <p className="text-white font-black text-sm leading-tight">
           🎵 Your YouTube.
