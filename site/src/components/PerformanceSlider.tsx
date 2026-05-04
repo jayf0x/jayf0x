@@ -2,6 +2,7 @@ import { useRef, useCallback } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { sliderValueAtom, checkpointsAtom } from "../lib/performanceStore";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { InfoPopover } from "./InfoPopover";
 
 const TICKS = Array.from({ length: 21 }, (_, i) => i * 5);
 const SCALE_LABELS = [0, 25, 50, 75, 100];
@@ -25,21 +26,15 @@ export const PerformanceSlider = () => {
 
   if (isMobile) return null;
 
-  const fillColor = `linear-gradient(90deg, var(--accent) 0%, #8b5cf6 55%, #DD3162 100%)`;
-
   return (
-    <div
-      className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 select-none"
-      style={{ width: "clamp(320px, 38vw, 560px)" }}
-    >
+    <div className="fixed bottom-0 left-1/2 z-30 -translate-x-1/2 select-none w-[clamp(320px,38vw,560px)]">
       <div
-        className="rounded-2xl px-5 pt-3 pb-2"
+        className="rounded-2xl px-5 pt-1"
         style={{
           background: "rgba(6, 6, 8, 0.82)",
           backdropFilter: "blur(16px) saturate(1.4)",
           border: "1px solid rgba(255,255,255,0.08)",
-          boxShadow:
-            "0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
         }}
       >
         {/* Header row */}
@@ -53,18 +48,14 @@ export const PerformanceSlider = () => {
                 animation: "pulse 2s infinite",
               }}
             />
-            <span
-              className="text-[10px] font-mono tracking-[0.22em] uppercase"
-              style={{ color: "rgba(255,255,255,0.35)" }}
-            >
-              Temperature
+            <span className="text-[10px] font-mono tracking-[0.22em] uppercase text-[rgba(255,255,255,0.35)]">
+              <InfoPopover title="Temperature" items={[
+                ['What is LLM temperature', 'https://www.ibm.com/think/topics/llm-temperature']
+              ]} />
             </span>
           </div>
-          <span
-            className="text-[11px] font-mono font-bold tabular-nums"
-            style={{ color: "var(--accent)" }}
-          >
-            {String(value).padStart(3, " ")}%
+          <span className="text-[11px] font-mono font-bold tabular-nums text-[var(--accent)]">
+            {String(value).padStart(3, " ")}%
           </span>
         </div>
 
@@ -81,11 +72,7 @@ export const PerformanceSlider = () => {
                 >
                   <span
                     className="text-[8px] font-mono uppercase tracking-wider whitespace-nowrap mb-1 transition-colors duration-300"
-                    style={{
-                      color: active
-                        ? "rgba(221,49,98,0.95)"
-                        : "rgba(255,255,255,0.22)",
-                    }}
+                    style={{ color: active ? "rgba(221,49,98,0.95)" : "rgba(255,255,255,0.22)" }}
                   >
                     {cp.tag}
                   </span>
@@ -128,23 +115,13 @@ export const PerformanceSlider = () => {
           {/* Track groove */}
           <div
             className="absolute inset-x-0 overflow-hidden"
-            style={{
-              top: "50%",
-              transform: "translateY(-50%)",
-              height: 8,
-              borderRadius: 4,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.09)",
-            }}
+            style={{ top: "50%", transform: "translateY(-50%)", height: 8, borderRadius: 4 }}
           >
             <div
               className="absolute inset-y-0 left-0"
-              style={{
-                width: `${value}%`,
-                background: fillColor,
-                opacity: 0.8,
-              }}
+              style={{ width: `${value}%`, background: `linear-gradient(90deg, var(--accent) 0%, #8b5cf6 55%, #DD3162 100%)`, opacity: 0.8, boxShadow: "none", border: "1px solid rgba(255,255,255,0.09)", backgroundClip: "padding-box" }}
             />
+            <div className="absolute inset-0 rounded" style={{ background: "rgba(255,255,255,0.06)" }} />
           </div>
 
           {/* Ruler tick marks */}
@@ -155,16 +132,14 @@ export const PerformanceSlider = () => {
             const h = major ? 14 : mid ? 9 : 5;
             return (
               <div
-                key={tick}
+                key={`slider-tick-${tick}`}
                 className="absolute pointer-events-none"
                 style={{
                   left: `${tick}%`,
                   bottom: major ? 3 : mid ? 5 : 8,
                   width: 1,
                   height: h,
-                  background: lit
-                    ? "rgba(255,255,255,0.55)"
-                    : "rgba(255,255,255,0.13)",
+                  background: lit ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.13)",
                   transform: "translateX(-50%)",
                   borderRadius: 0.5,
                   transition: "background 0.15s",
@@ -196,36 +171,10 @@ export const PerformanceSlider = () => {
           })}
 
           {/* Thumb */}
-          <div
-            className="absolute top-0 bottom-0 flex items-center justify-center pointer-events-none z-20"
-            style={{ left: `${value}%`, transform: "translateX(-50%)" }}
-          >
-            <div
-              style={{
-                width: 14,
-                height: 26,
-                borderRadius: 4,
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(190,200,230,0.88) 100%)",
-                boxShadow:
-                  "0 0 14px rgba(79,124,255,0.6), 0 3px 8px rgba(0,0,0,0.7)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 3,
-              }}
-            >
+          <div className="absolute top-0 bottom-0 flex items-center justify-center pointer-events-none z-20" style={{ left: `${value}%`, transform: "translateX(-50%)" }}>
+            <div className="flex flex-col items-center justify-center gap-1" style={{ width: 14, height: 26, borderRadius: 4, background: "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(190,200,230,0.88) 100%)", boxShadow: "0 0 14px rgba(79,124,255,0.6), 0 3px 8px rgba(0,0,0,0.7)" }}>
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: 6,
-                    height: 1,
-                    background: "rgba(0,0,0,0.28)",
-                    borderRadius: 1,
-                  }}
-                />
+                <div key={i} className="rounded-sm" style={{ width: 6, height: 1, background: "rgba(0,0,0,0.28)" }} />
               ))}
             </div>
           </div>
@@ -234,11 +183,7 @@ export const PerformanceSlider = () => {
         {/* Scale labels */}
         <div className="relative mt-1" style={{ height: 14 }}>
           {SCALE_LABELS.map((v) => (
-            <span
-              key={v}
-              className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums"
-              style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}
-            >
+            <span key={v} className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums" style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}>
               {v}
             </span>
           ))}

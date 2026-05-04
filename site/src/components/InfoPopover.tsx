@@ -19,14 +19,13 @@ export const InfoPopover = ({ title, items = [] }: InfoPopoverProps) => {
       padding={8}
       reposition
       onClickOutside={() => setIsOpen(false)}
+      containerClassName="z-100"
       content={
         <div
           className="bg-white shadow-md rounded-sm p-2 text-sm max-w-xs"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
-          <div className="font-semibold">{title}</div>
-
           {items.length > 0 && (
             <>
               <hr className="my-1" />
@@ -58,7 +57,7 @@ export const InfoPopover = ({ title, items = [] }: InfoPopoverProps) => {
         onMouseLeave={() => setIsOpen(false)}
         onClick={() => setIsOpen((v) => !v)}
       >
-        <Info size={15} className="text-[var(--accent)]" />
+       {title ?  `${title} ` : ''}<Info size={15} className="text-[var(--accent)]" />
       </div>
     </Popover>
   );

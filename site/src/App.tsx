@@ -31,7 +31,7 @@ export const App = () => {
       <ChatWidget />
       {showAds && <FakeAds />}
       {showBackground && <Background />}
-      <main className="relative z-20">
+      <main className="relative z-20 pointer-events-none">
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`motion-page-${page}`}
@@ -42,7 +42,7 @@ export const App = () => {
             transition={{ duration: 0.42, ease: "anticipate" }}
           >
             <div
-              className={`flex flex-col relative bg-[#0003] ${
+              className={`flex flex-col relative bg-[#0003] pointer-events-auto isolate ${
                 isMobile
                   ? "w-full h-[120vh]"
                   : "w-[60%] m-auto h-[90vh] mt-[5vh] rounded-xl"

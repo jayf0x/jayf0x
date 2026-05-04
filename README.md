@@ -20,21 +20,31 @@
 - Maintained website, social media and handled editing workflows.
 - Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.
 
+<br/>
+
+**Dev** @Curve Fever (April 2026 - present)
+- Maintain game and help prep release for Steam
+
 
 
 ---
 ### Projects
 <table width="100%"><tr>
 <td width="50%" valign="top">
+  <a href="https://blanc.zone/pod/"><b>Podcast Tooling & Production</b></a>
+
+<p style="font-size: 0.85em; margin-top: 4px;">Maintained website, social media and handled editing workflows. Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.</p>
+</td>
+<td width="50%" valign="top">
   <a href="https://github.com/jayf0x/PIIPAYA/"><b>PIIPAYA</b></a>
 
 <p style="font-size: 0.85em; margin-top: 4px;">Local macOS app mad with Tauri, Svelte and Python that anonymizes sensitive documents while keeping the narrative intact. Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, so anonymized text stays coherent for LLM analysis or human review.</p>
-</td>
+</td></tr><tr>
 <td width="50%" valign="top">
   <a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
 
 <p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
-</td></tr><tr>
+</td>
 <td width="50%" valign="top">
   <b>Timesheet Automation</b>
 
