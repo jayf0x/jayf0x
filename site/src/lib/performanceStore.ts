@@ -7,3 +7,6 @@ export interface PerformanceCheckpoint {
 
 export const sliderValueAtom = atom<number>(100);
 export const checkpointsAtom = atom<PerformanceCheckpoint[]>([]);
+
+// null = follow slider, true = forced on, false = forced off
+export const checkpointOverridesAtom = atom<Record<string, boolean | null>>({});

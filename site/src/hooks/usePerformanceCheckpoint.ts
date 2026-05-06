@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { checkpointsAtom, sliderValueAtom } from "../lib/performanceStore";
+import { checkpointsAtom, checkpointOverridesAtom, sliderValueAtom } from "../lib/performanceStore";
 
 /**
  * Register a performance checkpoint and/or subscribe to one.
@@ -26,8 +26,11 @@ export const usePerformanceCheckpoint = (tag: string, percentage?: number) => {
     });
   }, [tag, percentage, setCheckpoints]);
 
+  const overrides = useAtomValue(checkpointOverridesAtom);
   const threshold =
     checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? 0;
 
+  const override = overrides[tag] ?? null;
+  if (override !== null) return override;
   return sliderValue >= threshold;
 };

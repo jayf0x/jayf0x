@@ -9,7 +9,7 @@ type InfoPopoverProps = {
 };
 
 export const InfoPopover = ({ title, items = [] }: InfoPopoverProps) => (
-  <div className="flex flex-row items-center sha">
+  <div className="flex flex-row items-center">
     {title && <span className="pr-1">{title}</span>}
     <Popover
       trigger="click"

@@ -312,7 +312,7 @@ export const ChatWidget = () => {
       : null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="flex flex-col items-end gap-3">
       <AnimatePresence mode="popLayout">
         {isOpen && (
           <motion.div
@@ -357,7 +357,6 @@ export const ChatWidget = () => {
                         "Hugging Face",
                         "https://huggingface.co/openai-community/openai-gpt",
                       ],
-                      ["Tanstack AI", "https://tanstack.com/ai/latest"],
                     ]}
                   />
                 </span>
