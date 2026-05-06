@@ -35,7 +35,7 @@ if [ "$1" ]; then
     # fi
 
     git add -- . ':!site'
-    git commit -m "(job: update resume) $1"
+    git commit -m "(job: update resume)"
     # redo due to precommit hook
     git add -- . ':!site'
     git push origin main
