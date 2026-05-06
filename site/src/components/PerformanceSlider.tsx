@@ -58,7 +58,11 @@ export const PerformanceSlider = () => {
                 items={[
                   [
                     "About LLM temperature",
-                    "https://www.promptingguide.ai/introduction/settings",
+                    "https://www.promptingguide.ai/introduction/settings#:~:text=Temperature",
+                  ],
+                  [
+                    "Why the link above is inaccurate",
+                    "https://dev.to/hermup299/llm-predictability-vs-determinism-2idb",
                   ],
                 ]}
               />

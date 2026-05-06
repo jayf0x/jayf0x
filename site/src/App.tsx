@@ -22,8 +22,8 @@ export const App = () => {
   const isMobile = useIsMobile();
   const pageVariants = usePageAnimation(page);
 
-  const { enabled: showBackground } = usePerformanceCheckpoint("Background", 40);
-  const { enabled: showAds } = usePerformanceCheckpoint("Ads", 70);
+  const showAds = usePerformanceCheckpoint("Ads", 70);
+  const showBackground = usePerformanceCheckpoint("Background", 40);
 
   return (
     <div className="h-screen w-screen text-[var(--text)]">

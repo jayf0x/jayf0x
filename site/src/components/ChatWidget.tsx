@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
 import { ChevronDown, Send, Square, TriangleAlert, X } from "lucide-react";
 import { useChatLLM } from "../hooks/useChatLLM";
+import { InfoPopover } from "./InfoPopover";
 
 type Message = {
   id: string;
@@ -293,7 +294,7 @@ export const ChatWidget = () => {
           () => {
             setMessages((prev) => [...prev, msg]);
           },
-          (idx) * text.length * 50,
+          idx * text.length * 50,
         );
       });
 
@@ -349,7 +350,16 @@ export const ChatWidget = () => {
                   🤖
                 </div>
                 <span className="text-sm font-semibold text-[var(--text)] tracking-tight">
-                  OpenAI GPT 1
+                  <InfoPopover
+                    title="OpenAI GPT 1"
+                    items={[
+                      [
+                        "Hugging Face",
+                        "https://huggingface.co/openai-community/openai-gpt",
+                      ],
+                      ["Tanstack AI", "https://tanstack.com/ai/latest"],
+                    ]}
+                  />
                 </span>
               </div>
               <button

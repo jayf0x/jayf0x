@@ -8,10 +8,7 @@ import { checkpointsAtom, sliderValueAtom } from "../lib/performanceStore";
  * - Providing `percentage` registers this tag in the store (first caller wins per tag).
  * - Returns `enabled = sliderValue >= threshold` so the caller can opt-out of heavy work.
  */
-export const usePerformanceCheckpoint = (
-  tag: string,
-  percentage?: number,
-): { enabled: boolean } => {
+export const usePerformanceCheckpoint = (tag: string, percentage?: number) => {
   const setCheckpoints = useSetAtom(checkpointsAtom);
   const sliderValue = useAtomValue(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
@@ -32,5 +29,5 @@ export const usePerformanceCheckpoint = (
   const threshold =
     checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? 0;
 
-  return { enabled: sliderValue >= threshold };
+  return sliderValue >= threshold;
 };
