@@ -55,14 +55,24 @@ html {
   }
 }
 
+/* CURSOR */
 * {
-  scrollbar-color: rgba(255, 255, 255, 0.668) white;
+  scrollbar-color: rgba(255, 255, 255, 0.668) transparent;
   scrollbar-width: thin;
-  /* scrollbar-color: transparent transparent; */
 }
 
-::-webkit-scrollbar-track {
+/* Chrome,Edge, Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
   background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.668);
+  border-radius: 4px;
 }
 
 /** Style HTML title - no need for custom popovers...  */

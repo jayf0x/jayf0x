@@ -4,7 +4,7 @@ import { ChevronLeft, PanelLeftOpen } from "lucide-react";
 import { GithubRepo } from "../../../utils/fetch-repository";
 
 const spring = { type: "spring" as const, stiffness: 380, damping: 36 };
-const topN = 10;
+const topN = 21;
 
 const compareFn =
   <T extends keyof GithubRepo>(key: T) =>
@@ -110,7 +110,7 @@ const SidebarSection = ({
         {title}
       </span>
       <div className="relative flex-1 min-h-0">
-        <div className="absolute inset-0 overflow-y-auto space-y-px [&::-webkit-scrollbar]:hidden">
+        <div className="absolute inset-0 overflow-y-auto space-y-px [&::-webkit-scrollbar]:hidden pb-5">
           {projects.map((repo) => (
             <SidebarItem
               key={`sidebar-item-${repo.id}`}
@@ -127,12 +127,25 @@ const SidebarSection = ({
   );
 };
 
+const timeInits: [number, string][] = [
+  [31536000, "year"],
+  [2592000, "month"],
+  [604800, "week"],
+  [86400, "day"],
+  [3600, "hour"],
+  [60, "min"],
+];
 const fmt = (iso: string) => {
-  const d = new Date(iso);
-  const sameYear = d.getFullYear() === new Date().getFullYear();
-  return sameYear
-    ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+  const timeAgo = (Date.now() - new Date(iso).getTime()) / 1000;
+  const [seconds, unit] = timeInits.find(([time]) => timeAgo / time >= 1) ?? [];
+
+  if (!seconds) {
+    return `${Math.floor(timeAgo)} sec`;
+  }
+
+  const time = Math.floor(timeAgo / seconds);
+
+  return `${time} ${unit}${time > 1 ? "s" : ""}`;
 };
 
 const SidebarItem = ({
@@ -144,16 +157,16 @@ const SidebarItem = ({
   date: string;
   onClick: () => void;
 }) => (
-  <div className="group flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors duration-100 hover:bg-[var(--surface)]">
-    <button
-      type="button"
-      onClick={onClick}
-      className="min-w-0 flex-1 truncate text-left font-mono text-[11px] text-[var(--muted)] transition-colors duration-100 hover:text-[var(--accent)]"
-    >
+  <button
+    type="button"
+    className="group flex items-center justify-between w-full gap-1 rounded-md px-1.5 py-[3px] transition-colors duration-100 hover:bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--accent)]"
+    onClick={onClick}
+  >
+    <div className="min-w-0 flex-1 truncate text-left font-mono text-[11px]">
       {repo.name}
-    </button>
-    <span className="shrink-0 font-mono text-[9px] text-[var(--muted)]/40 tabular-nums">
+    </div>
+    <div className="shrink-0 font-mono text-[9px] text-[var(--muted)]/40 tabular-nums">
       {fmt(date)}
-    </span>
-  </div>
+    </div>
+  </button>
 );
