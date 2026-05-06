@@ -820,7 +820,9 @@ const DuckAd: AdComp = () => (
             textShadow: "0 2px 12px rgba(0,0,0,0.8)",
           }}
         >
-          Do you find yourself<br />talking to Ducks?
+          Do you find yourself
+          <br />
+          talking to Ducks?
         </p>
         <p className="text-sky-200/60 text-[10px] mt-1">
           That's normal. Actually healthy.
@@ -918,12 +920,17 @@ const CliUtilsAd: AdComp = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ type: "spring", stiffness:30, duration: 0.55, ease: EXPO_OUT }}
+          transition={{
+            type: "spring",
+            stiffness: 30,
+            duration: 0.55,
+            ease: EXPO_OUT,
+          }}
           className="absolute inset-0 flex flex-col justify-between p-3"
         >
           {/* tool name */}
           <span
-          className="text-xl"
+            className="text-xl"
             style={{
               fontFamily: "monospace",
               color: `${slide.color}77`,
@@ -983,18 +990,16 @@ const CliUtilsAd: AdComp = () => {
   );
 };
 
-// ── Pool (must be defined after all ad components) ────────────────────────────
-
 const AD_POOL: AdComp[] = [
-  // MatrixRain,
-  // IdyllicLandscape,
-  // Win98Ad,
-  // FluidityAd,
-  // PiipayaAd,
-  // AudioBonanzaAd,
-  // AqtiveAd,
-  // ZippitAd,
-  // PurePasteAd,
-  // DuckAd,
+  MatrixRain,
+  IdyllicLandscape,
+  Win98Ad,
+  FluidityAd,
+  PiipayaAd,
+  AudioBonanzaAd,
+  AqtiveAd,
+  ZippitAd,
+  PurePasteAd,
+  DuckAd,
   CliUtilsAd,
 ];

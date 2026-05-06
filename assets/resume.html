@@ -67,7 +67,7 @@
       background: var(--page);
       max-width: 780px;
       margin: 40px auto;
-      padding: 64px 72px;
+      padding: 6ch 10ch;
       line-height: 1.6;
 
       box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
@@ -75,7 +75,7 @@
 
     header {
       /* margin-bottom: 2rem; */
-      padding-bottom: 2rem;
+      margin-bottom: 1rem;
       /* border-bottom: 1.5px solid var(--ink); */
       /* text-align: center; */
     }
@@ -87,7 +87,7 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       line-height: 1.1;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
       text-align: center;
     }
 
@@ -97,9 +97,8 @@
       font-weight: 400;
       font-style: italic;
       font-family: var(--serif);
-      margin-bottom: 1rem;
+      margin-bottom: -1rem;
       text-align: center;
-
     }
 
     .contact-row {
@@ -186,6 +185,12 @@
       line-height: 1.5;
     }
 
+    .rating {
+      margin-left: 2px;
+      font-size: 0.8rem;
+      color: #444;
+    }
+
     /* 
     ul li::before {
       content: "-";
@@ -237,10 +242,9 @@
     }
 
     .footnote {
-      margin-top: 32px;
-      padding-top: 16px;
+      padding-top: 1rem;
       /* border-top: 1px solid var(--rule); */
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       color: var(--soft);
       font-style: italic;
       text-align: center;
@@ -253,7 +257,7 @@
 
       body {
         margin: 0;
-        padding: 48px 60px;
+        /* padding: 48px 60px; */
         box-shadow: none;
         font-size: 1rem;
         max-width: 100%;
@@ -279,18 +283,19 @@
 
   <header>
     <h1>Jonatan Verstraete</h1>
-    <!-- <p class="tagline">Frontend Engineer</p> -->
+    <p class="tagline">Friction > Problem > Solution</p>
     <div class="contact-row">
       <div>Ghent, Belgium</div>
-    </div>
-
-    <div class="contact-row">
-      <a href="mailto:jonatanverstraete@outlook.com">jonatanverstraete@outlook.com</a>
-      <a href="https://github.com/jayf0x">github.com/jayf0x</a>
+      <a href="https://jayf0x.github.io/jayf0x/">Website</a>
     </div>
 
     <div class="contact-row">
       <a href="https://wa.me/32493024902?text=Hi+Jonatan%2C">(+32) 493 02 49 02</a>
+      <a href="https://github.com/jayf0x">github.com/jayf0x</a>
+    </div>
+    
+    <div class="contact-row">
+      <a href="mailto:jonatanverstraete@outlook.com">jonatanverstraete@outlook.com</a>
       <a href="https://linkedin.com/in/jonatan-verstraete">linkedin.com/in/jonatan-verstraete</a>
     </div>
 
@@ -306,9 +311,9 @@
       </div>
       <div class="entry-sub">Enterprise SaaS · CAD / BIM · React, TypeScript</div>
       <ul>
-        <li>Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).</li>
         <li>Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).</li>
-        <li>Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.</li>
+        <li>Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality.</li>
+        <li>Strategic support cross teams, eg. implementing form-validation, popover to Bricsys internal component library</li>
         <li><strong>Daily tasks included</strong>: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n</li>
       </ul>
     </div>
@@ -326,11 +331,12 @@
 
     <div class="entry">
       <div class="entry-header">
-        <span class="entry-title">Dev at <a href="https://info.curvefever.pro/">Curve Fever</a></span>
+        <span class="entry-title">Game Dev at <a href="https://info.curvefever.pro/">Curve Fever</a></span>
         <span class="entry-date">April 2026 - present</span>
       </div>
       <ul>
-        <li>Maintain game and help prep release for <a href="https://steamcommunity.com/app/1133700">Steam</a></li>
+        <li>Maintain game and prep release on <a href="https://steamcommunity.com/app/1133700">Steam</a></li>
+        <li>Playing since highschool, now <strong><a href="https://alexandbooks.com/archive/2017/5/8/lessons-from-the-war-of-art#:~:text=going%20pro">"going pro"</a></strong></li>
       </ul>
     </div>   
   </section>
@@ -347,17 +353,16 @@
     <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/PIIPAYA/">PIIPAYA</a></span>
       <span class="project-desc">
-        Local macOS app mad with Tauri, Svelte and Python that anonymizes sensitive documents while keeping the narrative intact. 
-        Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, 
-        so anonymized text stays coherent for LLM analysis or human review.
+        Offline Tauri/Python/Svelt PII reduction desktop app to anonymizes sensitive documents while keeping the narrative intact. 
+        So instead of NAME and DATE you get a narrative coherent James and 2nd August.
       </span>
     </div>
 
 
     <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/Pure-Paste">Pure-Paste</a></span>
-      <span class="project-desc">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any
-        copied URL. Uses merged rules from uBlock Origin and ClearURLs.</span>
+      <span class="project-desc">macOS menu-bar tool that strips tracking parameters (utm_*, fbclid, etc.) from any
+        copied URL by updating the clipboard periodically. Prevents being tracked while sharing shopping.</span>
     </div>
 
 
@@ -380,8 +385,7 @@
     <div class="project">
       <span class="project-name">Timesheet Automation</span>
       <span class="project-desc">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D
-        entries into the
-        internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</span>
+        entries into the internal Bricsys timesheets app. Turned a slow manual daily/weekly process into a quick review.</span>
     </div>
 
     <!-- <div class="project">
@@ -394,20 +398,20 @@
   <section>
     <h2>Skills</h2>
     <div class="skills-grid">
-      <span class="skill-label">Core</span>
-      <span class="skill-value">React · TypeScript · JavaScript (ESNext) · HTML · CSS/SCSS</span>
+      <span class="skill-label">Core<span class="rating">[5/5]</span></span>
+      <span class="skill-value">React · TypeScript · JavaScript (ESNext) · HTML · CSS/SCSS/Tailwind</span>
 
-      <span class="skill-label">Libraries</span>
-      <span class="skill-value">TanStack (Query, Form, Router) · Zustand · Tailwind · Node · Canvas API · p5.js · Keycloakify</span>
+      <span class="skill-label">Comfortable<span class="rating">[4/5]</span></span>
+      <span class="skill-value">NodeJS · TanStack (Query, Form, Router, Table...) · Zustand · Canvas API · Claude Code</span>
 
-      <span class="skill-label">Tooling</span>
-      <span class="skill-value">Git · Linux · Vite · Three.js · Playwright · Ollama · WhisperX · Claude Code</span>
+      <span class="skill-label">Experienced<span class="rating">[3/5]</span></span>
+      <span class="skill-value">Python · Vite · Playwright/Cypress · Ollama · WhisperX/FastWhisper · Bash · Vue 2</span>
 
-      <span class="skill-label">Other</span>
-      <span class="skill-value">Python · Svelte · Tauri · Bash · Vue 2 · PHP · Cypress · Adobe Suite</span>
+      <span class="skill-label">Honorable mentions</span>
+      <span class="skill-value">PHP · Adobe Suite · Three.js · p5.js · Keycloakify · vMLX · Blender · Svelte · Tauri · Logic Pro x · </span>
 
       <span class="skill-label">Languages</span>
-      <span class="skill-value">Dutch (native) · English (proficient)</span>
+      <span class="skill-value">Dutch (native) · English (C2) · French (B1)</span>
     </div>
   </section>
 
@@ -420,7 +424,8 @@
       </div>
       <div class="entry-sub">Artevelde University of Applied Sciences, Gent</div>
       <ul>
-        <li>Graduation project: developing route-optimization for city waste management services.</li>
+        <li>Full dev lifecycle. Concept, design (sketching -> XD), product (React/Python), marketing (Indesign)</li>
+        <li>Graduation project: developing route-optimization for city waste management services Renewi.</li>
       </ul>
     </div>
   </section>

@@ -1,6 +1,6 @@
 <h1 align="center">Hey, I'm Jonatan <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25"></h1>
 <p align="center">
-  <b></b> &nbsp;•&nbsp; Ghent, Belgium<br/>
+  <b>Friction > Problem > Solution</b> &nbsp;•&nbsp; Ghent, Belgium<br/>
   <!-- <a href="mailto:jonatanverstraete@outlook.com">Email</a> &nbsp;•&nbsp; -->
   <a href="https://linkedin.com/in/jonatan-verstraete">LinkedIn</a>
 </p>
@@ -9,9 +9,9 @@
 
 ### Experience
 **Frontend Engineer** @Bricsys 24/7 (Hexagon) (Sep 2023 - Mar 2026)
-- Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality (monorepo).
 - Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).
-- Strategic support cross teams, eg. adding form validation to internal Bricsys component library using TanStack Form.
+- Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality.
+- Strategic support cross teams, eg. implementing form-validation, popover to Bricsys internal component library
 - Daily tasks included: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n
 
 <br/>
@@ -22,8 +22,9 @@
 
 <br/>
 
-**Dev** @Curve Fever (April 2026 - present)
-- Maintain game and help prep release for Steam
+**Game Dev** @Curve Fever (April 2026 - present)
+- Maintain game and prep release on Steam
+- Playing since highschool, now "going pro"
 
 
 
@@ -38,25 +39,25 @@
 <td width="50%" valign="top">
   <a href="https://github.com/jayf0x/PIIPAYA/"><b>PIIPAYA</b></a>
 
-<p style="font-size: 0.85em; margin-top: 4px;">Local macOS app mad with Tauri, Svelte and Python that anonymizes sensitive documents while keeping the narrative intact. Replaces names, dates, emails and other PII with consistent pseudonyms using a deterministic seeding layer on top of Microsoft Presidio, so anonymized text stays coherent for LLM analysis or human review.</p>
+<p style="font-size: 0.85em; margin-top: 4px;">Offline Tauri/Python/Svelt PII reduction desktop app to anonymizes sensitive documents while keeping the narrative intact. So instead of NAME and DATE you get a narrative coherent James and 2nd August.</p>
 </td></tr><tr>
 <td width="50%" valign="top">
   <a href="https://github.com/jayf0x/Pure-Paste"><b>Pure-Paste</b></a>
 
-<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar app that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL. Uses merged rules from uBlock Origin and ClearURLs.</p>
+<p style="font-size: 0.85em; margin-top: 4px;">macOS menu-bar tool that strips tracking parameters (utm_*, fbclid, etc.) from any copied URL by updating the clipboard periodically. Prevents being tracked while sharing shopping.</p>
 </td>
 <td width="50%" valign="top">
   <b>Timesheet Automation</b>
 
 
-<p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
+<p style="font-size: 0.85em; margin-top: 4px;">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D entries into the internal Bricsys timesheets app. Turned a slow manual daily/weekly process into a quick review.</p>
 </td></tr>
 </table>
 
 ### Tech Stack  <img src="./assets/clippy.gif" width="20px" />
-**Core:** React • TypeScript • JavaScript (ESNext) • HTML • CSS/SCSS
+**Core:** React • TypeScript • JavaScript (ESNext) • HTML • CSS/SCSS/Tailwind
 
-**Libraries & Tools:** TanStack (Query, Form, Router) • Zustand • Tailwind • Node • Canvas API • p5.js • Keycloakify
+**Libraries & Tools:** NodeJS • TanStack (Query, Form, Router, Table...) • Zustand • Canvas API • Claude Code • Python • Vite • Playwright/Cypress • Ollama • WhisperX/FastWhisper • Bash • Vue 2 • PHP • Adobe Suite • Three.js • p5.js • Keycloakify • vMLX • Blender • Svelte • Tauri • Logic Pro x
 
 ---
 <p align="center">

@@ -23,203 +23,13 @@ import {
 } from "../../utils/fetch-repository";
 import { getStackMeta } from "../../lib/stackMeta";
 
-
 const OWNER = "jayf0x";
 const TWO_HOURS = 2 * 60 * 60 * 1000;
-
-// ── spring presets ────────────────────────────────────────────────────────────
 
 const spring = { type: "spring" as const, stiffness: 500, damping: 40 };
 const springGentle = { type: "spring" as const, stiffness: 320, damping: 32 };
 
-// ── stack badge ───────────────────────────────────────────────────────────────
-
-const StackBadge = ({
-  name,
-  size = "sm",
-}: {
-  name: string;
-  size?: "sm" | "xs";
-}) => {
-  const m = getStackMeta(name);
-  const px = size === "xs" ? "px-1.5 py-0" : "px-2 py-0.5";
-  const text = size === "xs" ? "text-[10px]" : "text-xs";
-  return (
-    <span
-      className={`inline-block shrink-0 rounded font-mono font-medium ${px} ${text}`}
-      style={{
-        background: m.bg === "transparent" ? "rgba(255,255,255,0.06)" : m.bg,
-        color: m.color,
-      }}
-    >
-      {m.label || name}
-    </span>
-  );
-};
-
-// ── filter chip ───────────────────────────────────────────────────────────────
-
-const FilterChip = ({
-  name,
-  active,
-  onToggle,
-}: {
-  name: string;
-  active: boolean;
-  onToggle: () => void;
-}) => {
-  const m = getStackMeta(name);
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs transition-all duration-150 ${
-        active
-          ? "border-[var(--accent)] bg-[var(--accent-glow)] text-[var(--text)]"
-          : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
-      }`}
-    >
-      {m.bg !== "transparent" && (
-        <span
-          className="inline-block h-2 w-2 rounded-sm"
-          style={{ background: m.bg }}
-        />
-      )}
-      {name}
-    </button>
-  );
-};
-
-// ── chip row ──────────────────────────────────────────────────────────────────
-
-const ChipRow = ({
-  label,
-  items,
-  filters,
-  onToggle,
-}: {
-  label: string;
-  items: string[];
-  filters: Set<string>;
-  onToggle: (v: string) => void;
-}) => (
-  <div className="flex flex-col gap-1">
-    <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">
-      {label}
-    </span>
-    <div className="flex gap-1.5 overflow-x-scroll pb-1">
-      {items.map((name) => (
-        <FilterChip
-          key={name}
-          name={name}
-          active={filters.has(name)}
-          onToggle={() => onToggle(name)}
-        />
-      ))}
-    </div>
-  </div>
-);
-
-// ── helpers ───────────────────────────────────────────────────────────────────
-
-const timeSince = (iso: string) => {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = 60_000,
-    h = 60 * m,
-    d = 24 * h;
-  if (diff < h) return `${Math.max(1, Math.floor(diff / m))}m ago`;
-  if (diff < d) return `${Math.floor(diff / h)}h ago`;
-  return `${Math.floor(diff / d)}d ago`;
-};
-
 const queryOpts = { staleTime: TWO_HOURS, gcTime: TWO_HOURS };
-
-// ── card ──────────────────────────────────────────────────────────────────────
-
-const RepoCard = ({ repo }: { repo: GithubRepo }) => {
-  const { data: languages = [] } = useQuery<string[]>({
-    queryKey: ["repo-langs", repo.name],
-    queryFn: () =>
-      withLocalStorageCache(`gh:langs:${repo.name}`, TWO_HOURS, () =>
-        fetchRepoLanguages(repo.languages_url),
-      ),
-    ...queryOpts,
-  });
-
-  return (
-    <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-150 hover:border-[var(--accent)]">
-      {/* ── left: content ── */}
-      <div className="min-w-0 flex-1 space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-sm font-semibold text-[var(--text)]">
-            {repo.name}
-          </h3>
-          {repo.archived && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0 font-mono text-[10px] text-amber-400">
-              <Archive size={9} />
-              archived
-            </span>
-          )}
-          {repo.stargazers_count > 0 && (
-            <span className="font-mono text-xs text-[var(--muted)]">
-              ★ {repo.stargazers_count}
-            </span>
-          )}
-          {repo.pushed_at && (
-            <span className="font-mono text-xs text-[var(--muted)]">
-              · {timeSince(repo.pushed_at)}
-            </span>
-          )}
-        </div>
-
-        {repo.description && (
-          <p className="text-sm leading-snug text-[var(--muted)]">
-            {repo.description}
-          </p>
-        )}
-
-        <div className="flex flex-wrap gap-1.5">
-          {languages.map((lang) => (
-            <StackBadge key={lang} name={lang} size="xs" />
-          ))}
-          {repo.topics.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-[var(--border)] px-2 py-0 font-mono text-[10px] text-[var(--muted)]"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-
-        {repo.license && (
-          <div className="flex items-center gap-1 text-[var(--muted)]">
-            <Scale size={10} />
-            <span className="font-mono text-[10px]">
-              {repo.license.spdx_id}
-            </span>
-          </div>
-        )}
-      </div>
-      <ContentLeft repo={repo} />
-    </div>
-  );
-};
-
-// ── loading skeleton ──────────────────────────────────────────────────────────
-
-const LoadingSkeleton = () => (
-  <div className="space-y-2">
-    {Array.from({ length: 4 }).map((_, i) => (
-      <div
-        key={`skeleton-${i}`}
-        className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--surface)]"
-      />
-    ))}
-  </div>
-);
-
-// ── section ───────────────────────────────────────────────────────────────────
 
 export const ProjectSection = () => {
   const [query, setQuery] = useState("");
@@ -398,6 +208,87 @@ export const ProjectSection = () => {
   );
 };
 
+const RepoCard = ({ repo }: { repo: GithubRepo }) => {
+  const { data: languages = [] } = useQuery<string[]>({
+    queryKey: ["repo-langs", repo.name],
+    queryFn: () =>
+      withLocalStorageCache(`gh:langs:${repo.name}`, TWO_HOURS, () =>
+        fetchRepoLanguages(repo.languages_url),
+      ),
+    ...queryOpts,
+  });
+
+  return (
+    <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-150 hover:border-[var(--accent)]">
+      {/* ── left: content ── */}
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-sm font-semibold text-[var(--text)]">
+            {repo.name}
+          </h3>
+          {repo.archived && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0 font-mono text-[10px] text-amber-400">
+              <Archive size={9} />
+              archived
+            </span>
+          )}
+          {repo.stargazers_count > 0 && (
+            <span className="font-mono text-xs text-[var(--muted)]">
+              ★ {repo.stargazers_count}
+            </span>
+          )}
+          {repo.pushed_at && (
+            <span className="font-mono text-xs text-[var(--muted)]">
+              · {timeSince(repo.pushed_at)}
+            </span>
+          )}
+        </div>
+
+        {repo.description && (
+          <p className="text-sm leading-snug text-[var(--muted)]">
+            {repo.description}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-1.5">
+          {languages.map((lang) => (
+            <StackBadge key={lang} name={lang} size="xs" />
+          ))}
+          {repo.topics.map((t) => (
+            <span
+              key={t}
+              className="rounded-full border border-[var(--border)] px-2 py-0 font-mono text-[10px] text-[var(--muted)]"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {repo.license && (
+          <div className="flex items-center gap-1 text-[var(--muted)]">
+            <Scale size={10} />
+            <span className="font-mono text-[10px]">
+              {repo.license.spdx_id}
+            </span>
+          </div>
+        )}
+      </div>
+      <ContentLeft repo={repo} />
+    </div>
+  );
+};
+
+const LoadingSkeleton = () => (
+  <div className="space-y-2">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <div
+        key={`skeleton-${i}`}
+        className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--surface)]"
+      />
+    ))}
+  </div>
+);
+
 const iconButtonCls =
   "rounded-full border border-[var(--accent)]/40 p-1.5 text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-glow)] flex center";
 
@@ -497,8 +388,106 @@ const LinkIcon = ({
   if (!data) return null;
 
   return (
-    <a href={data} target="_blank" rel="noreferrer" title={title} className={iconButtonCls}>
+    <a
+      href={data}
+      target="_blank"
+      rel="noreferrer"
+      title={title}
+      className={iconButtonCls}
+    >
       {children}
     </a>
   );
+};
+
+const StackBadge = ({
+  name,
+  size = "sm",
+}: {
+  name: string;
+  size?: "sm" | "xs";
+}) => {
+  const m = getStackMeta(name);
+  const px = size === "xs" ? "px-1.5 py-0" : "px-2 py-0.5";
+  const text = size === "xs" ? "text-[10px]" : "text-xs";
+  return (
+    <span
+      className={`inline-block shrink-0 rounded font-mono font-medium ${px} ${text}`}
+      style={{
+        background: m.bg === "transparent" ? "rgba(255,255,255,0.06)" : m.bg,
+        color: m.color,
+      }}
+    >
+      {m.label || name}
+    </span>
+  );
+};
+
+const FilterChip = ({
+  name,
+  active,
+  onToggle,
+}: {
+  name: string;
+  active: boolean;
+  onToggle: () => void;
+}) => {
+  const m = getStackMeta(name);
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs transition-all duration-150 ${
+        active
+          ? "border-[var(--accent)] bg-[var(--accent-glow)] text-[var(--text)]"
+          : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+      }`}
+    >
+      {m.bg !== "transparent" && (
+        <span
+          className="inline-block h-2 w-2 rounded-sm"
+          style={{ background: m.bg }}
+        />
+      )}
+      {name}
+    </button>
+  );
+};
+
+const ChipRow = ({
+  label,
+  items,
+  filters,
+  onToggle,
+}: {
+  label: string;
+  items: string[];
+  filters: Set<string>;
+  onToggle: (v: string) => void;
+}) => (
+  <div className="flex flex-col gap-1">
+    <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--muted)]">
+      {label}
+    </span>
+    <div className="flex gap-1.5 overflow-x-scroll pb-1">
+      {items.map((name) => (
+        <FilterChip
+          key={name}
+          name={name}
+          active={filters.has(name)}
+          onToggle={() => onToggle(name)}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+const timeSince = (iso: string) => {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = 60_000,
+    h = 60 * m,
+    d = 24 * h;
+  if (diff < h) return `${Math.max(1, Math.floor(diff / m))}m ago`;
+  if (diff < d) return `${Math.floor(diff / h)}h ago`;
+  return `${Math.floor(diff / d)}d ago`;
 };
