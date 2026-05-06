@@ -8,6 +8,7 @@ import { fetchUserRepos, type GithubRepo } from "../../../utils/fetch-repository
 import { RepoCard } from "./RepoCard";
 import { CACHE_INVALIDATION_TIME, OWNER } from "../../../config";
 import { FilterRow } from "./FilterRow";
+import { Sidebar } from "./Sidebar";
 
 const spring = { type: "spring" as const, stiffness: 500, damping: 40 };
 const springGentle = { type: "spring" as const, stiffness: 320, damping: 32 };
@@ -52,7 +53,9 @@ export const ProjectSection = () => {
 
   return (
     <section className="flex flex-col flex-1 min-h-0 px-6 py-4">
-      <div className="mx-auto w-full max-w-3xl flex flex-col min-h-0 gap-4">
+      <div className="mx-auto max-w-5xl flex flex-row min-h-0 gap-0 size-full">
+        <Sidebar repos={repos} onSelect={setQuery} isLoading={isLoading} />
+        <div className="flex-1 min-w-0 flex flex-col min-h-0 gap-4 pl-4">
         {/* ── Search bar ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -183,6 +186,7 @@ export const ProjectSection = () => {
               ))}
             </AnimatePresence>
           )}
+        </div>
         </div>
       </div>
     </section>

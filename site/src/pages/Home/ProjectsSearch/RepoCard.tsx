@@ -6,6 +6,7 @@ import {
   ExternalLink,
   Package,
   Download,
+  GlobeIcon,
 } from "lucide-react";
 import { PropsWithChildren } from "react";
 import { withLocalStorageCache } from "../../../lib/queryClient";
@@ -158,7 +159,7 @@ const RepoLinks = ({ repo }: { repo: GithubRepo }) => {
             title="Website"
             className={iconButtonCls}
           >
-            <ExternalLink size={15} />
+            <GlobeIcon size={15} />
           </a>
         )}
 
