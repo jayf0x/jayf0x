@@ -1,197 +1,195 @@
-<!DOCTYPE html>
+<!DoCtYpE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jonatan Verstraete — Frontend Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jonatan Verstraete — Frontend Engineer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
-    rel="stylesheet">
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  <style>
-    *,
-    *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --ink: #1a1a1a;
-      --mid: #555;
-      --soft: #888;
-      --rule: #ddd;
-      --page: #faf9f7;
-      --page: #faf9f7;
-      /* --serif: 'Libre Baskerville', Georgia, serif;
+      :root {
+        --ink: #1a1a1a;
+        --mid: #555;
+        --soft: #888;
+        --rule: #ddd;
+        --page: #faf9f7;
+        --page: #faf9f7;
+        /* --serif: 'Libre Baskerville', Georgia, serif;
     --sans: 'DM Sans', system-ui, sans-serif; */
-      /* --serif: 'Libre Baskerville', Georgia, serif; */
-      --sans: 'Inter', system-ui, sans-serif;
-      --serif: 'Inter', system-ui, sans-serif;
-      /* --link: #0066cc; */
-      --link: #363636;
+        /* --serif: 'Libre Baskerville', Georgia, serif; */
+        --sans: "Inter", system-ui, sans-serif;
+        --serif: "Inter", system-ui, sans-serif;
+        /* --link: #0066cc; */
+        --link: #363636;
 
+        font-size: 11px;
+      }
 
-      font-size: 11px;
-    }
+      html {
+        background: #363636;
+      }
 
-    html {
-      background: #363636;
-    }
+      a {
+        color: var(--link) !important;
+        border-bottom: 1px solid var(--rule);
+        text-decoration: none;
+      }
 
+      li::marker {
+        color: var(--soft);
+      }
 
-    a {
-      color: var(--link) !important;
-      border-bottom: 1px solid var(--rule);
-      text-decoration: none;
-    }
+      li {
+        list-style-type: "- ";
+      }
 
-    li::marker {
-      color: var(--soft);
-    }
+      body {
+        font-family: var(--sans);
+        font-weight: 300;
+        color: var(--ink);
+        background: var(--page);
+        max-width: 780px;
+        margin: 40px auto;
+        padding: 6ch 10ch;
+        line-height: 1.6;
 
-    li {
-      list-style-type: "- "
-    }
+        box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
+      }
 
+      header {
+        /* margin-bottom: 2rem; */
+        margin-bottom: 1rem;
+        /* border-bottom: 1.5px solid var(--ink); */
+        /* text-align: center; */
+      }
 
-    body {
-      font-family: var(--sans);
-      font-weight: 300;
-      color: var(--ink);
-      background: var(--page);
-      max-width: 780px;
-      margin: 40px auto;
-      padding: 6ch 10ch;
-      line-height: 1.6;
+      h1 {
+        font-family: var(--sans);
+        font-family: Helvetica;
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
 
-      box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
-    }
+      .tagline {
+        font-size: 1rem;
+        color: var(--mid);
+        font-weight: 400;
+        font-style: italic;
+        font-family: var(--serif);
+        margin-bottom: -1rem;
+        text-align: center;
+      }
 
-    header {
-      /* margin-bottom: 2rem; */
-      margin-bottom: 1rem;
-      /* border-bottom: 1.5px solid var(--ink); */
-      /* text-align: center; */
-    }
+      .contact-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 6px 30px;
+        font-size: 1rem;
+        color: var(--mid);
+        font-weight: 400;
+        /* padding: 0 5rem; */
+        /* padding-right: 20%; */
+      }
 
-    h1 {
-      font-family: var(--sans);
-      font-family: Helvetica;
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
-      text-align: center;
-    }
+      .contact-row a {
+        /* color: var(--soft); */
+        /* text-decoration: none; */
+        /* border-bottom: 1px solid transparent; */
+        font-weight: 500;
+      }
 
-    .tagline {
-      font-size: 1rem;
-      color: var(--mid);
-      font-weight: 400;
-      font-style: italic;
-      font-family: var(--serif);
-      margin-bottom: -1rem;
-      text-align: center;
-    }
+      .contact-row a:hover {
+        color: var(--ink);
+        border-bottom-color: var(--ink);
+      }
 
-    .contact-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 6px 30px;
-      font-size: 1rem;
-      color: var(--mid);
-      font-weight: 400;
-      /* padding: 0 5rem; */
-      /* padding-right: 20%; */
+      section {
+        margin-bottom: 30px;
+      }
 
-    }
+      h2 {
+        font-family: var(--serif);
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        color: var(--soft);
+        margin-bottom: 0.8rem;
+        /* padding-bottom: 0.5rem; */
+        border-bottom: 1px solid var(--rule);
+      }
 
-    .contact-row a {
-      /* color: var(--soft); */
-      /* text-decoration: none; */
-      /* border-bottom: 1px solid transparent; */
-      font-weight: 500;
-    }
+      .entry {
+        margin-bottom: 20px;
+      }
 
-    .contact-row a:hover {
-      color: var(--ink);
-      border-bottom-color: var(--ink);
-    }
+      .entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 2px;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
 
-    section {
-      margin-bottom: 30px;
-    }
+      .entry-title {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
 
-    h2 {
-      font-family: var(--serif);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      color: var(--soft);
-      margin-bottom: 0.8rem;
-      /* padding-bottom: 0.5rem; */
-      border-bottom: 1px solid var(--rule);
-    }
+      .entry-date {
+        color: var(--soft);
+        white-space: nowrap;
+      }
 
-    .entry {
-      margin-bottom: 20px;
-    }
+      .entry-sub {
+        color: var(--mid);
+        margin-bottom: 0.8rem;
+        font-style: italic;
+      }
 
-    .entry-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 2px;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
+      ul {
+        padding-left: 16px;
+        /* list-style: none; */
+      }
 
-    .entry-title {
-      font-family: var(--serif);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
+      ul li {
+        position: relative;
+        margin-left: 2rem;
+        margin-bottom: 5px;
+        color: #333;
+        line-height: 1.5;
+      }
 
-    .entry-date {
-      color: var(--soft);
-      white-space: nowrap;
-    }
+      .rating {
+        margin-left: 2px;
+        font-size: 0.8rem;
+        color: #444;
+      }
 
-    .entry-sub {
-      color: var(--mid);
-      margin-bottom: 0.8rem;
-      font-style: italic;
-    }
-
-    ul {
-      padding-left: 16px;
-      /* list-style: none; */
-    }
-
-    ul li {
-      position: relative;
-      margin-left: 2rem;
-      margin-bottom: 5px;
-      color: #333;
-      line-height: 1.5;
-    }
-
-    .rating {
-      margin-left: 2px;
-      font-size: 0.8rem;
-      color: #444;
-    }
-
-    /* 
+      /* 
     ul li::before {
       content: "-";
       position: absolute;
@@ -202,236 +200,311 @@
       top: 1px;
     } */
 
-    .skills-grid {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 0.5rem 1rem;
-      font-size: 0.9rem;
-    }
-
-
-    .skill-value {
-      color: var(--ink);
-      line-height: 1.5;
-      font-size: 0.9rem;
-    }
-
-    .project {
-      margin-bottom: 10px;
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 0 16px;
-      align-items: baseline;
-    }
-
-    .project-name,
-    .skill-label {
-      font-family: var(--serif);
-      /* font-size: 0.8rem; */
-      font-weight: 500;
-    }
-
-    .project-name a:hover {
-      border-bottom-color: var(--ink);
-    }
-
-    .project-desc {
-      /* font-size: 0.8rem; */
-      color: #444;
-      line-height: 1.5;
-    }
-
-    .footnote {
-      padding-top: 1rem;
-      /* border-top: 1px solid var(--rule); */
-      font-size: 0.8rem;
-      color: var(--soft);
-      font-style: italic;
-      text-align: center;
-    }
-
-    @media print {
-      html {
-        background: var(--page);
+      .skills-grid {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 0.5rem 1rem;
+        font-size: 0.9rem;
       }
 
-      body {
+      .skill-value {
+        color: var(--ink);
+        line-height: 1.5;
+        font-size: 0.9rem;
+      }
+
+      .project {
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 0 16px;
+        align-items: baseline;
+      }
+
+      .project-name,
+      .skill-label {
+        font-family: var(--serif);
+        /* font-size: 0.8rem; */
+        font-weight: 500;
+      }
+
+      .project-name a:hover {
+        border-bottom-color: var(--ink);
+      }
+
+      .project-desc {
+        /* font-size: 0.8rem; */
+        color: #444;
+        line-height: 1.5;
+      }
+
+      footer {
+        padding-top: 1rem;
+        /* border-top: 1px solid var(--rule); */
+        font-size: 0.8rem;
+        color: var(--soft);
+        font-style: italic;
+        text-align: center;
+      }
+
+      @media print {
+        html {
+          background: var(--page);
+        }
+
+        body {
+          margin: 0;
+          /* padding: 48px 60px; */
+          box-shadow: none;
+          font-size: 1rem;
+          max-width: 100%;
+        }
+
+        a {
+          color: inherit !important;
+        }
+
+        .contact-row a {
+          border-bottom: none;
+        }
+      }
+
+      @page {
         margin: 0;
-        /* padding: 48px 60px; */
-        box-shadow: none;
-        font-size: 1rem;
-        max-width: 100%;
+        size: A4;
       }
+    </style>
+  </head>
 
-      a {
-        color: inherit !important;
-      }
-
-      .contact-row a {
-        border-bottom: none;
-      }
-    }
-
-    @page {
-      margin: 0;
-      size: A4;
-    }
-  </style>
-</head>
-
-<body>
-
-  <header>
-    <h1>Jonatan Verstraete</h1>
-    <p class="tagline">Friction > Problem > Solution</p>
-    <div class="contact-row">
-      <div>Ghent, Belgium</div>
-      <a href="https://jayf0x.github.io/jayf0x/">Website</a>
-    </div>
-
-    <div class="contact-row">
-      <a href="https://wa.me/32493024902?text=Hi+Jonatan%2C">(+32) 493 02 49 02</a>
-      <a href="https://github.com/jayf0x">github.com/jayf0x</a>
-    </div>
-    
-    <div class="contact-row">
-      <a href="mailto:jonatanverstraete@outlook.com">jonatanverstraete@outlook.com</a>
-      <a href="https://linkedin.com/in/jonatan-verstraete">linkedin.com/in/jonatan-verstraete</a>
-    </div>
-
-
-  </header>
-
-  <section>
-    <h2>Experience</h2>
-    <div class="entry">
-      <div class="entry-header">
-        <span class="entry-title">Frontend Engineer — Bricsys 24/7 (Hexagon)</span>
-        <span class="entry-date">Sep 2023 - Mar 2026</span>
+  <body>
+    <header>
+      <h1>Jonatan Verstraete</h1>
+      <p class="tagline">Friction > Problem > Solution</p>
+      <div class="contact-row">
+        <div>Ghent, Belgium</div>
+        <a href="https://jayf0x.github.io/jayf0x/">Website</a>
       </div>
-      <div class="entry-sub">Enterprise SaaS · CAD / BIM · React, TypeScript</div>
-      <ul>
-        <li>Conversion of Vue 2 to React as part of a migration using Module Federation (team effort).</li>
-        <li>Built real time (NRL) projection of 3D annotations into 2D space for the browser based BIM viewer using React and CSS transforms across both 2D and 3D repos with shared functionality.</li>
-        <li>Strategic support cross teams, eg. implementing form-validation, popover to Bricsys internal component library</li>
-        <li><strong>Daily tasks included</strong>: feature design, releasing (Azure), cross team feature/bug ideation, writing documentation, component performance measuring, i18n</li>
-      </ul>
-    </div>
 
-    <div class="entry">
-      <div class="entry-header">
-        <span class="entry-title">Podcast Tooling & Production - <a href="https://blanc.zone/pod/">BLANC.zone</a></span>
-        <span class="entry-date">Jan 2022 - present</span>
+      <div class="contact-row">
+        <a href="https://wa.me/32493024902?text=Hi+Jonatan%2C"
+          >(+32) 493 02 49 02</a
+        >
+        <a href="https://github.com/jayf0x">github.com/jayf0x</a>
       </div>
-      <ul>
-        <li>Maintained website, social media and handled editing workflows.</li>
-        <li>Explored AI-assisted automation (transcription, summarization) to reduce manual editing effort.</li>
-      </ul>
-    </div>
 
-    <div class="entry">
-      <div class="entry-header">
-        <span class="entry-title">Game Dev at <a href="https://info.curvefever.pro/">Curve Fever</a></span>
-        <span class="entry-date">April 2026 - present</span>
+      <div class="contact-row">
+        <a href="mailto:jonatanverstraete@outlook.com"
+          >jonatanverstraete@outlook.com</a
+        >
+        <a href="https://linkedin.com/in/jonatan-verstraete"
+          >linkedin.com/in/jonatan-verstraete</a
+        >
       </div>
-      <ul>
-        <li>Maintain game and prep release on <a href="https://steamcommunity.com/app/1133700">Steam</a></li>
-        <li>Playing since highschool, now <strong><a href="https://alexandbooks.com/archive/2017/5/8/lessons-from-the-war-of-art#:~:text=going%20pro">"going pro"</a></strong></li>
-      </ul>
-    </div>   
-  </section>
+    </header>
 
-  <section>
-    <h2>Project Highlights</h2>
+    <section>
+      <h2>Experience</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title"
+            >Frontend Engineer — Bricsys 24/7 (Hexagon)</span
+          >
+          <span class="entry-date">Sep 2023 - Mar 2026</span>
+        </div>
+        <div class="entry-sub">
+          Enterprise SaaS · CAD / BIM · React, TypeScript
+        </div>
+        <ul>
+          <li>
+            Conversion of Vue 2 to React as part of a migration using Module
+            Federation (team effort).
+          </li>
+          <li>
+            Built real time (NRL) projection of 3D annotations into 2D space for
+            the browser based BIM viewer using React and CSS transforms across
+            both 2D and 3D repos with shared functionality.
+          </li>
+          <li>
+            Strategic support cross teams, eg. implementing form-validation,
+            popover to Bricsys internal component library
+          </li>
+          <li>
+            <strong>Daily tasks included</strong>: feature design, releasing
+            (Azure), cross team feature/bug ideation, writing documentation,
+            component performance measuring, i18n
+          </li>
+        </ul>
+      </div>
 
-    <!-- <div class="project">
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title"
+            >Podcast Tooling & Production -
+            <a href="https://blanc.zone/pod/">BLANC.zone</a></span
+          >
+          <span class="entry-date">Jan 2022 - present</span>
+        </div>
+        <ul>
+          <li>
+            Maintained website, social media and handled editing workflows.
+          </li>
+          <li>
+            Explored AI-assisted automation (transcription, summarization) to
+            reduce manual editing effort.
+          </li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title"
+            >Game Dev at
+            <a href="https://info.curvefever.pro/">Curve Fever</a></span
+          >
+          <span class="entry-date">April 2026 - present</span>
+        </div>
+        <ul>
+          <li>
+            Maintain game and prep release on
+            <a href="https://steamcommunity.com/app/1133700">Steam</a>
+          </li>
+          <li>
+            Playing since highschool, now
+            <strong
+              ><a
+                href="https://alexandbooks.com/archive/2017/5/8/lessons-from-the-war-of-art#:~:text=going%20pro"
+                >"going pro"</a
+              ></strong
+            >
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Project Highlights</h2>
+
+      <!-- <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/audio-bonanza">Audio Bonanza</a></span>
       <span class="project-desc">Chrome extension for per-tab audio control (speed, reverb, bass..) focused on YouTube, with optional Flask SSE backend for LAN-wide remote triggering from any device.</span>
     </div> -->
 
+      <div class="project">
+        <span class="project-name"
+          ><a href="https://github.com/jayf0x/PIIPAYA/">PIIPAYA</a></span
+        >
+        <span class="project-desc">
+          Offline Tauri/Python/Svelt PII reduction desktop app to anonymizes
+          sensitive documents while keeping the narrative intact. So instead of
+          NAME and DATE you get a narrative coherent James and 2nd August.
+        </span>
+      </div>
 
-    <div class="project">
-      <span class="project-name"><a href="https://github.com/jayf0x/PIIPAYA/">PIIPAYA</a></span>
-      <span class="project-desc">
-        Offline Tauri/Python/Svelt PII reduction desktop app to anonymizes sensitive documents while keeping the narrative intact. 
-        So instead of NAME and DATE you get a narrative coherent James and 2nd August.
-      </span>
-    </div>
+      <div class="project">
+        <span class="project-name"
+          ><a href="https://github.com/jayf0x/Pure-Paste">Pure-Paste</a></span
+        >
+        <span class="project-desc"
+          >macOS menu-bar tool that strips tracking parameters (utm_*, fbclid,
+          etc.) from any copied URL by updating the clipboard periodically.
+          Prevents being tracked while sharing shopping.</span
+        >
+      </div>
 
-
-    <div class="project">
-      <span class="project-name"><a href="https://github.com/jayf0x/Pure-Paste">Pure-Paste</a></span>
-      <span class="project-desc">macOS menu-bar tool that strips tracking parameters (utm_*, fbclid, etc.) from any
-        copied URL by updating the clipboard periodically. Prevents being tracked while sharing shopping.</span>
-    </div>
-
-
-    <!-- <div class="project">
+      <!-- <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/fluidity">Fluidity-js</a></span>
       <span class="project-desc">React package with customizable WebGL shader using a Web Worker.</span>
     </div> -->
-    <!-- <div class="project">
+      <!-- <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/doubledash-css-var-editor">DoubleDash
           Editor</a></span>
       <span class="project-desc">Chrome DevTools sidebar with fuzzy-search and live edit CSS vars with better workflow
         than native browser tooling.</span>
     </div> -->
 
-    <!-- <div class="project">
+      <!-- <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/pod-tooling">Podcast Tooling</a></span>
       <span class="project-desc">To assist with editing our podcast, I created a local pipeline using WhisperX and Ollama to transcribes audio, generates summaries, and outputs ready-to-post social clips.</span>
     </div> -->
 
-    <div class="project">
-      <span class="project-name">Timesheet Automation</span>
-      <span class="project-desc">Headless background process and CLI that pulls Git commits and PR data to auto-fill R&D
-        entries into the internal Bricsys timesheets app. Turned a slow manual daily/weekly process into a quick review.</span>
-    </div>
+      <div class="project">
+        <span class="project-name">Timesheet Automation</span>
+        <span class="project-desc"
+          >Headless background process and CLI that pulls Git commits and PR
+          data to auto-fill R&D entries into the internal Bricsys timesheets
+          app. Turned a slow manual daily/weekly process into a quick
+          review.</span
+        >
+      </div>
 
-    <!-- <div class="project">
+      <!-- <div class="project">
       <span class="project-name"><a href="https://github.com/jayf0x/ideaditor">Ideaditor</a></span>
       <span class="project-desc">Lightweight Markdown knowledge base bundled with Tauri, Bun for faster ideation
         compatible with Obsidian.</span>
     </div> -->
-  </section>
+    </section>
 
-  <section>
-    <h2>Skills</h2>
-    <div class="skills-grid">
-      <span class="skill-label">Core<span class="rating">[5/5]</span></span>
-      <span class="skill-value">React · TypeScript · JavaScript (ESNext) · HTML · CSS/SCSS/Tailwind</span>
+    <section>
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <span class="skill-label">Core<span class="rating">[5/5]</span></span>
+        <span class="skill-value"
+          >React · TypeScript · JavaScript (ESNext) · HTML ·
+          CSS/SCSS/Tailwind</span
+        >
 
-      <span class="skill-label">Comfortable<span class="rating">[4/5]</span></span>
-      <span class="skill-value">NodeJS · TanStack (Query, Form, Router, Table...) · Zustand · Canvas API · Claude Code</span>
+        <span class="skill-label"
+          >Comfortable<span class="rating">[4/5]</span></span
+        >
+        <span class="skill-value"
+          >NodeJS · TanStack (Query, Form, Router, Table...) · Zustand · Canvas
+          API · Claude Code</span
+        >
 
-      <span class="skill-label">Experienced<span class="rating">[3/5]</span></span>
-      <span class="skill-value">Python · Vite · Playwright/Cypress · Ollama · WhisperX/FastWhisper · Bash · Vue 2</span>
+        <span class="skill-label"
+          >Experienced<span class="rating">[3/5]</span></span
+        >
+        <span class="skill-value"
+          >Python · Vite · Playwright/Cypress · Ollama · WhisperX/FastWhisper ·
+          Bash · Vue 2</span
+        >
 
-      <span class="skill-label">Honorable mentions</span>
-      <span class="skill-value">PHP · Adobe Suite · Three.js · p5.js · Keycloakify · vMLX · Blender · Svelte · Tauri · Logic Pro x · </span>
+        <span class="skill-label">Honorable mentions</span>
+        <span class="skill-value"
+          >PHP · Adobe Suite · Three.js · p5.js · Keycloakify · vMLX · Blender ·
+          Svelte · Tauri · Logic Pro x ·
+        </span>
 
-      <span class="skill-label">Languages</span>
-      <span class="skill-value">Dutch (native) · English (C2) · French (B1)</span>
-    </div>
-  </section>
-
-  <section>
-    <h2>Education</h2>
-    <div class="entry">
-      <div class="entry-header">
-        <span class="entry-title">BA — Graphic and Digital Media</span>
-        <span class="entry-date">2019 - 2023</span>
+        <span class="skill-label">Languages</span>
+        <span class="skill-value"
+          >Dutch (native) · English (C2) · French (B1)</span
+        >
       </div>
-      <div class="entry-sub">Artevelde University of Applied Sciences, Gent</div>
-      <ul>
-        <li>Full dev lifecycle. Concept, design (sketching -> XD), product (React/Python), marketing (Indesign)</li>
-        <li>Graduation project: developing route-optimization for city waste management services Renewi.</li>
-      </ul>
-    </div>
-  </section>
+    </section>
 
-  <p class="footnote">References available on request.</p>
+    <section>
+      <h2>Education</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">BA — Graphic and Digital Media</span>
+          <span class="entry-date">2019 - 2023</span>
+        </div>
+        <div class="entry-sub">
+          Artevelde University of Applied Sciences, Gent
+        </div>
+        <ul>
+          <li>
+            Full dev lifecycle. Concept, design (sketching -> XD), product
+            (React/Python), marketing (Indesign)
+          </li>
+          <li>
+            Graduation project: developing route-optimization for city waste
+            management services Renewi.
+          </li>
+        </ul>
+      </div>
+    </section>
 
-</body>
-
+    <footer>References available on request</footer>
+  </body>
 </html>

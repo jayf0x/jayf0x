@@ -1,5 +1,5 @@
 import { HeroSection } from "./HeroSection";
-import { ProjectSection } from "./ProjectSection";
+import { ProjectSection } from "./ProjectsSearch";
 import { FooterSection } from "./FooterSection";
 
 export const Home = () => (
