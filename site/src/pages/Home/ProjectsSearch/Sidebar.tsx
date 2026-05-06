@@ -1,47 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronLeft,
-  PanelLeftOpen,
-} from "lucide-react";
+import { ChevronLeft, PanelLeftOpen } from "lucide-react";
 import { GithubRepo } from "../../../utils/fetch-repository";
 
 const spring = { type: "spring" as const, stiffness: 380, damping: 36 };
+const topN = 10;
 
-const fmt = (iso: string) => {
-  const d = new Date(iso);
-  const sameYear = d.getFullYear() === new Date().getFullYear();
-  return sameYear
-    ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
-};
+const compareFn =
+  <T extends keyof GithubRepo>(key: T) =>
+  (a: GithubRepo, b: GithubRepo): number =>
+    new Date(b[key] as string).getTime() - new Date(a[key] as string).getTime();
 
 interface SidebarProps {
   repos: GithubRepo[];
-  onSelect: (name: string) => void;
   isLoading: boolean;
+  onSelect: (name: string) => void;
 }
 
-export const Sidebar = ({ repos, onSelect, isLoading }: SidebarProps) => {
-  const [open, setOpen] = useState(true);
+export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
+  const [open, setOpen] = useState(false);
 
-  const recentlyAdded = [...repos]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    )
-    .slice(0, 30);
-
-  const recentlyUpdated = [...repos]
-    .sort(
-      (a, b) =>
-        new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime(),
-    )
-    .slice(0, 30);
+  useEffect(() => {
+    if (!isLoading && !open) {
+      setTimeout(() => {
+        setOpen(true);
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   return (
     <div className="relative flex shrink-0 self-stretch">
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {open && (
           <motion.div
             key="sidebar"
@@ -53,21 +43,36 @@ export const Sidebar = ({ repos, onSelect, isLoading }: SidebarProps) => {
             style={{ minWidth: 0 }}
           >
             <div className="flex flex-col h-full min-h-0 pr-3 gap-1">
-              <SidebarSection
-                title="Recently Added"
-                repos={recentlyAdded}
-                dateKey="created_at"
-                onSelect={onSelect}
-                isLoading={isLoading}
-              />
-              <div className="shrink-0 h-px bg-[var(--border)] my-1" />
-              <SidebarSection
-                title="Recently Updated"
-                repos={recentlyUpdated}
-                dateKey="pushed_at"
-                onSelect={onSelect}
-                isLoading={isLoading}
-              />
+              {isLoading ? (
+                <div className="flex flex-col gap-2 pt-5">
+                  {Array.from({ length: topN }).map((_, i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="mx-1 w-full h-5 animate-pulse rounded bg-[#aaa3]"
+                      style={{
+                        opacity: 1 - i * 0.12,
+                        animationDelay: String(i * 1000),
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <SidebarSection
+                    title="Recently Added"
+                    repos={repos}
+                    dateKey="created_at"
+                    onSelect={onSelect}
+                  />
+                  <div className="shrink-0 h-px bg-[var(--border)] my-1" />
+                  <SidebarSection
+                    title="Recently Updated"
+                    repos={repos}
+                    dateKey="pushed_at"
+                    onSelect={onSelect}
+                  />
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -75,17 +80,12 @@ export const Sidebar = ({ repos, onSelect, isLoading }: SidebarProps) => {
 
       {/* toggle tab */}
       <div className="relative flex flex-col justify-start pt-3">
-        <motion.button
-          type="button"
+        <div
           onClick={() => setOpen((v) => !v)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.92 }}
-          transition={spring}
-          className="flex h-6 w-4 items-center justify-center rounded-r-md border border-l-0 border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] transition-colors hover:text-[var(--accent)]"
-          title={open ? "Collapse sidebar" : "Expand sidebar"}
+          className="cursor-pointer transition-all hover:scale-150 flex h-6 w-4 items-center justify-center rounded-r-md border border-l-0 border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--accent)]"
         >
           {open ? <ChevronLeft size={10} /> : <PanelLeftOpen size={20} />}
-        </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -96,56 +96,58 @@ const SidebarSection = ({
   repos,
   dateKey,
   onSelect,
-  isLoading,
 }: {
   title: string;
   repos: GithubRepo[];
   dateKey: "created_at" | "pushed_at";
   onSelect: (name: string) => void;
-  isLoading: boolean;
-}) => (
-  <div className="flex flex-col flex-1 min-h-0">
-    <span className="mb-1.5 shrink-0 font-mono text-[10px] uppercase tracking-widest text-[var(--accent)]">
-      {title}
-    </span>
-    <div className="relative flex-1 min-h-0">
-      <div className="absolute inset-0 overflow-y-auto space-y-px [&::-webkit-scrollbar]:hidden">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="mx-1 h-6 animate-pulse rounded bg-[var(--surface)]"
-                style={{ opacity: 1 - i * 0.12 }}
-              />
-            ))
-          : repos.map((repo) => (
-              <SidebarItem
-                key={repo.id}
-                repo={repo}
-                date={repo[dateKey]}
-                onSelect={onSelect}
-              />
-            ))}
+}) => {
+  const projects = repos.slice().sort(compareFn(dateKey)).slice(0, topN);
+
+  return (
+    <div className="flex flex-col flex-1 min-h-0">
+      <span className="mb-1.5 shrink-0 font-mono text-[10px] uppercase tracking-widest text-[var(--accent)]">
+        {title}
+      </span>
+      <div className="relative flex-1 min-h-0">
+        <div className="absolute inset-0 overflow-y-auto space-y-px [&::-webkit-scrollbar]:hidden">
+          {projects.map((repo) => (
+            <SidebarItem
+              key={`sidebar-item-${repo.id}`}
+              repo={repo}
+              date={repo[dateKey]}
+              onClick={() => onSelect(repo.name)}
+            />
+          ))}
+        </div>
+        {/* fade-out overlay */}
+        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[var(--bg,#0d0d0d)] to-transparent" />
       </div>
-      {/* fade-out overlay */}
-      <div className="pointer-events-none absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-[var(--bg,#0d0d0d)] to-transparent" />
     </div>
-  </div>
-);
+  );
+};
+
+const fmt = (iso: string) => {
+  const d = new Date(iso);
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return sameYear
+    ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+};
 
 const SidebarItem = ({
   repo,
   date,
-  onSelect,
+  onClick,
 }: {
   repo: GithubRepo;
   date: string;
-  onSelect: (name: string) => void;
+  onClick: () => void;
 }) => (
   <div className="group flex items-center gap-1 rounded-md px-1.5 py-[3px] transition-colors duration-100 hover:bg-[var(--surface)]">
     <button
       type="button"
-      onClick={() => onSelect(repo.name)}
+      onClick={onClick}
       className="min-w-0 flex-1 truncate text-left font-mono text-[11px] text-[var(--muted)] transition-colors duration-100 hover:text-[var(--accent)]"
     >
       {repo.name}
@@ -153,14 +155,5 @@ const SidebarItem = ({
     <span className="shrink-0 font-mono text-[9px] text-[var(--muted)]/40 tabular-nums">
       {fmt(date)}
     </span>
-    {/* <a
-      href={repo.html_url}
-      target="_blank"
-      rel="noreferrer"
-      onClick={(e) => e.stopPropagation()}
-      className="shrink-0 text-[var(--muted)]/40 transition-colors duration-100 hover:text-[var(--accent)]"
-    >
-      <ExternalLink size={12} className="hover:scale-150" />
-    </a> */}
   </div>
 );

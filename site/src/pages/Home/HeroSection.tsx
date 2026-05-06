@@ -5,13 +5,15 @@ import { memo } from "react";
 
 const terminalLines = [
   "Frontend engineer++",
-  "Understand the relations between tech and user",
+  "Friction > Problem > Solution",
+  "Bridging users and tech",
   // "builds real-time 3D annotation projection",
-  "Stuff w buttons",
-  "solarsystem in CSS",
-  "Annoyance with outdates systems = automation",
+  "Frontend Engineering ☕",
+  // "solarsystem in CSS",
+  "Quality > Speed ",
   "Challenge me: www.chess.com/member/chaos_70b",
   "('b' + 'a' + + 'a' + 'a').toLowerCase()",
+  "Status 418 ☕",
 ].flatMap((l) => [l, 4000]);
 
 export const HeroSection = () => {
