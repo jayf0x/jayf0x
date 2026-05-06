@@ -42,7 +42,7 @@ const FilterItem = ({
     <button
       type="button"
       onClick={onToggle}
-      className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs transition-all duration-150 ${
+      className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs transition-all duration-150 hover:scale-110 origin-top-left ${
         active
           ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--text)]"
           : "border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--text)]"

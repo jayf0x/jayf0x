@@ -26,7 +26,7 @@ const queryOpts = {
 
 export const RepoCard = ({ repo }: { repo: GithubRepo }) => {
   return (
-    <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-150 hover:border-[var(--accent)]">
+    <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-150 hover:border-[var(--accent)]">
       <RepoInfo repo={repo} />
       <RepoLinks repo={repo} />
     </div>

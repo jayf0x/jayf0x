@@ -159,7 +159,7 @@ const SidebarItem = ({
 }) => (
   <button
     type="button"
-    className="group flex items-center justify-between w-full gap-1 rounded-md px-1.5 py-[3px] transition-colors duration-100 hover:bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--accent)]"
+    className="group flex items-center justify-between w-full gap-1 rounded-md px-1.5 py-[3px] transition-all origin-left duration-100 text-[var(--muted)] hover:bg-[var(--surface)] hover:scale-125 hover:text-[var(--accent)]"
     onClick={onClick}
   >
     <div className="min-w-0 flex-1 truncate text-left font-mono text-[11px]">
