@@ -1,9 +1,9 @@
 import { memo, useEffect, useRef, useState } from "react";
-import { createConwayEngine, ConwayControls } from "../../lib/conway/conway";
-import { FileHeart, Info, Pause, Play } from "lucide-react";
+import { createConwayEngine, ConwayControls } from "@/lib/conway/conway";
+import { FileHeart, Pause, Play } from "lucide-react";
 
 import "./styles.css";
-import { InfoPopover } from "../../components/InfoPopover";
+import { InfoPopover } from "@/components/InfoPopover";
 
 type SimMode = "conway" | "daynight";
 

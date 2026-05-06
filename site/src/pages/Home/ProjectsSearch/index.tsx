@@ -2,14 +2,14 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useRepoSearch } from "../../../hooks/useRepoSearch";
-import { withLocalStorageCache } from "../../../lib/queryClient";
+import { useRepoSearch } from "@/hooks/useRepoSearch";
+import { withLocalStorageCache } from "@/lib/queryClient";
 import {
   fetchUserRepos,
   type GithubRepo,
-} from "../../../utils/fetch-repository";
+} from "@/utils/fetch-repository";
 import { RepoCard } from "./RepoCard";
-import { CACHE_INVALIDATION_TIME, OWNER } from "../../../config";
+import { CACHE_INVALIDATION_TIME, OWNER } from "@/config";
 import { FilterRow } from "./FilterRow";
 import { Sidebar } from "./Sidebar";
 

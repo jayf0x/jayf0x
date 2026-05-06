@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, PanelLeftOpen } from "lucide-react";
-import { GithubRepo } from "../../../utils/fetch-repository";
+import { GithubRepo } from "@/utils/fetch-repository";
 
 const spring = { type: "spring" as const, stiffness: 380, damping: 36 };
 const topN = 21;

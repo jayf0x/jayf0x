@@ -3,22 +3,21 @@ import {
   Archive,
   Scale,
   Github,
-  ExternalLink,
   Package,
   Download,
   GlobeIcon,
 } from "lucide-react";
 import { PropsWithChildren } from "react";
-import { withLocalStorageCache } from "../../../lib/queryClient";
-import { getStackMeta } from "../../../lib/stackMeta";
+import { withLocalStorageCache } from "@/lib/queryClient";
+import { getStackMeta } from "@/lib/stackMeta";
 import {
   GithubRepo,
   fetchRepoLanguages,
   fetchPreviewUrl,
   fetchNpmUrl,
   fetchLatestDmgUrl,
-} from "../../../utils/fetch-repository";
-import { CACHE_INVALIDATION_TIME, OWNER } from "../../../config";
+} from "@/utils/fetch-repository";
+import { CACHE_INVALIDATION_TIME, OWNER } from "@/config";
 
 const queryOpts = {
   staleTime: CACHE_INVALIDATION_TIME,

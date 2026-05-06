@@ -1,5 +1,5 @@
 import { Info } from "lucide-react";
-import { ArrowContainer, Popover } from "../lib/popover";
+import { ArrowContainer, Popover } from "@/lib/popover";
 
 type InfoItem = [label: string, href?: string];
 

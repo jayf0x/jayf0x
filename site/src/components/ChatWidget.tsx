@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
 import { ChevronDown, Send, Square, TriangleAlert, X } from "lucide-react";
-import { useChatLLM } from "../hooks/useChatLLM";
+import { useChatLLM } from "@/hooks/useChatLLM";
 import { InfoPopover } from "./InfoPopover";
 
 type Message = {

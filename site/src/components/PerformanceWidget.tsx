@@ -1,13 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   sliderValueAtom,
   checkpointsAtom,
   checkpointOverridesAtom,
-} from "../lib/performanceStore";
-import { useIsMobile } from "../hooks/useIsMobile";
+} from "@/lib/performanceStore";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { InfoPopover } from "./InfoPopover";
 
 const TICKS = Array.from({ length: 21 }, (_, i) => i * 5);

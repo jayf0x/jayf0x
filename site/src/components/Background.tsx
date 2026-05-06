@@ -1,6 +1,6 @@
 import { FluidImage, FluidText } from "@jayf0x/fluidity-js";
 import { useCallback, useEffect, useRef } from "react";
-import { useIsMobile } from "../hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { checkpointsAtom, checkpointOverridesAtom, sliderValueAtom } from "../lib/performanceStore";
+import { checkpointsAtom, checkpointOverridesAtom, sliderValueAtom } from "@/lib/performanceStore";
 
 /**
  * Register a performance checkpoint and/or subscribe to one.

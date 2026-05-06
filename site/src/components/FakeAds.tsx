@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useIsMobile } from "../hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { TypeAnimation } from "react-type-animation";
 
 // ── Slot rotation ─────────────────────────────────────────────────────────────

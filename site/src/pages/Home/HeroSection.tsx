@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-import { useIsMobile } from "../../hooks/useIsMobile";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { memo } from "react";
 
 const terminalLines = [

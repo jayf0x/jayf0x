@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { GithubRepo } from "../utils/fetch-repository";
+import type { GithubRepo } from "@/utils/fetch-repository";
 
 function matches(repo: GithubRepo, q: string): boolean {
   const lower = q.toLowerCase();
