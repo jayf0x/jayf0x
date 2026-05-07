@@ -1,10 +1,23 @@
-import * as THREE from "three";
+import {
+  CanvasTexture,
+  LinearFilter,
+  Matrix4,
+  Vector3,
+  WebGLRenderer,
+  VSMShadowMap,
+  SRGBColorSpace,
+  Scene,
+  PerspectiveCamera,
+  AmbientLight,
+  DirectionalLight,
+  MeshStandardMaterial,
+  Box3,
+} from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-// ── CSS collection ─────────────────────────────────────────────────────────────
-// Inlines all document stylesheets (incl. cross-origin font sheets) into a
-// single CSS string safe for injection into an SVG foreignObject.
+// ── CSS collection ────────────────────────────────────────────────────────────
 
 async function blobToDataUri(blob) {
   return new Promise((res, rej) => {
@@ -57,8 +70,10 @@ export async function collectDocumentCss() {
   return chunks.filter(Boolean).join("\n");
 }
 
-// ── HTML → CanvasTexture ───────────────────────────────────────────────────────
-// Rasterizes an HTMLElement via SVG foreignObject → <img> → 2D canvas.
+// ── HTML → CanvasTexture ──────────────────────────────────────────────────────
+// Serialises the given element via SVG foreignObject.
+// IMPORTANT: the element must have no offscreen/invisible positioning styles —
+// those serialise verbatim and would hide content inside the SVG context.
 
 function createHtmlTexture(element, width, height, pixelRatio = 2) {
   const canvas = document.createElement("canvas");
@@ -66,10 +81,10 @@ function createHtmlTexture(element, width, height, pixelRatio = 2) {
   canvas.height = Math.floor(height * pixelRatio);
   const ctx = canvas.getContext("2d");
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  texture.minFilter = LinearFilter;
+  texture.magFilter = LinearFilter;
   texture.generateMipmaps = false;
 
   let extraCss = "";
@@ -79,13 +94,18 @@ function createHtmlTexture(element, width, height, pixelRatio = 2) {
     const styleBlock = extraCss
       ? `<style xmlns="http://www.w3.org/1999/xhtml">/*<![CDATA[*/${extraCss}/*]]>*/</style>`
       : "";
+
+    // The wrapper div is the positioning root; content elements with
+    // position:absolute resolve against it.
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-      <foreignObject width="100%" height="100%">
-        <div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;">
+      <foreignObject x="0" y="0" width="${width}" height="${height}">
+        <div xmlns="http://www.w3.org/1999/xhtml"
+             style="position:relative;width:${width}px;height:${height}px;overflow:hidden;margin:0;padding:0;">
           ${styleBlock}${serialized}
         </div>
       </foreignObject>
     </svg>`;
+
     const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
     const img = new Image();
     img.src = url;
@@ -95,27 +115,26 @@ function createHtmlTexture(element, width, height, pixelRatio = 2) {
     texture.needsUpdate = true;
   }
 
-  function setExtraCss(css) {
-    extraCss = css;
-  }
-
-  function dispose() {
-    texture.dispose();
-  }
-
-  return { texture, update, setExtraCss, dispose };
+  return {
+    texture,
+    update,
+    setExtraCss(css) {
+      extraCss = css;
+    },
+    dispose() {
+      texture.dispose();
+    },
+  };
 }
 
-// ── Projection shader ──────────────────────────────────────────────────────────
-// Patches MeshStandardMaterial via onBeforeCompile to project a texture from
-// a virtual "projector camera" onto mesh surfaces.
+// ── Projection shader ─────────────────────────────────────────────────────────
 
 function createProjector(camera, texture) {
   const uniforms = {
     projectedTexture: { value: texture },
-    projectorViewMatrix: { value: new THREE.Matrix4() },
-    projectorProjectionMatrix: { value: new THREE.Matrix4() },
-    projectorPosition: { value: new THREE.Vector3() },
+    projectorViewMatrix: { value: new Matrix4() },
+    projectorProjectionMatrix: { value: new Matrix4() },
+    projectorPosition: { value: new Vector3() },
     uLitness: { value: 0 },
   };
 
@@ -128,50 +147,50 @@ function createProjector(camera, texture) {
         .replace(
           "#include <common>",
           `#include <common>
-          uniform mat4 projectorViewMatrix;
-          uniform mat4 projectorProjectionMatrix;
-          uniform vec3 projectorPosition;
-          varying vec4 vProjectedCoord;
-          varying vec3 vProjectorDir;
-          varying vec3 vProjectorNormal;`,
+uniform mat4 projectorViewMatrix;
+uniform mat4 projectorProjectionMatrix;
+uniform vec3 projectorPosition;
+varying vec4 vProjectedCoord;
+varying vec3 vProjectorDir;
+varying vec3 vProjectorNormal;`,
         )
         .replace(
           "#include <begin_vertex>",
           `#include <begin_vertex>
-          vec4 _projWorld = modelMatrix * vec4(transformed, 1.0);
-          vProjectedCoord = projectorProjectionMatrix * projectorViewMatrix * _projWorld;
-          vProjectorDir = normalize(projectorPosition - _projWorld.xyz);
-          vProjectorNormal = normalize(mat3(modelMatrix) * normal);`,
+vec4 _projWorld   = modelMatrix * vec4( transformed, 1.0 );
+vProjectedCoord   = projectorProjectionMatrix * projectorViewMatrix * _projWorld;
+vProjectorDir     = normalize( projectorPosition - _projWorld.xyz );
+vProjectorNormal  = normalize( mat3( modelMatrix ) * normal );`,
         );
 
       shader.fragmentShader = shader.fragmentShader
         .replace(
           "#include <common>",
           `#include <common>
-          uniform sampler2D projectedTexture;
-          uniform float uLitness;
-          varying vec4 vProjectedCoord;
-          varying vec3 vProjectorDir;
-          varying vec3 vProjectorNormal;`,
+uniform sampler2D projectedTexture;
+uniform float uLitness;
+varying vec4 vProjectedCoord;
+varying vec3 vProjectorDir;
+varying vec3 vProjectorNormal;`,
         )
         .replace(
           "#include <color_fragment>",
           `#include <color_fragment>
-          vec3 _projNDC = vProjectedCoord.xyz / vProjectedCoord.w;
-          vec2 _projUV = _projNDC.xy * 0.5 + 0.5;
-          float _inFrustum = step(0.0, _projUV.x) * step(_projUV.x, 1.0)
-                           * step(0.0, _projUV.y) * step(_projUV.y, 1.0)
-                           * step(-1.0, _projNDC.z) * step(_projNDC.z, 1.0);
-          float _facing = step(0.0, dot(vProjectorNormal, vProjectorDir));
-          vec4 _projColor = texture2D(projectedTexture, _projUV);
-          float _mask = _inFrustum * _facing * _projColor.a;
-          diffuseColor.rgb = mix(diffuseColor.rgb, _projColor.rgb, _mask);
-          vec3 _flatDiffuse = diffuseColor.rgb;`,
+vec3  _projNDC   = vProjectedCoord.xyz / vProjectedCoord.w;
+vec2  _projUV    = _projNDC.xy * 0.5 + 0.5;
+float _inFrustum = step(0.0,_projUV.x) * step(_projUV.x,1.0)
+                 * step(0.0,_projUV.y) * step(_projUV.y,1.0)
+                 * step(-1.0,_projNDC.z) * step(_projNDC.z,1.0);
+float _facing    = step( 0.0, dot( vProjectorNormal, vProjectorDir ) );
+vec4  _projColor = texture2D( projectedTexture, _projUV );
+float _mask      = _inFrustum * _facing * _projColor.a;
+diffuseColor.rgb = mix( diffuseColor.rgb, _projColor.rgb, _mask );
+vec3 _flatDiffuse = diffuseColor.rgb;`,
         )
         .replace(
           "#include <opaque_fragment>",
           `#include <opaque_fragment>
-          gl_FragColor.rgb = mix(_flatDiffuse, gl_FragColor.rgb, uLitness);`,
+gl_FragColor.rgb = mix( _flatDiffuse, gl_FragColor.rgb, uLitness );`,
         );
     };
     mesh.material.needsUpdate = true;
@@ -187,66 +206,99 @@ function createProjector(camera, texture) {
   return { applyTo, update, uniforms };
 }
 
-// ── Main entry point ───────────────────────────────────────────────────────────
-// Creates a full Three.js projection scene. Appends a fixed canvas to the DOM,
-// loads the GLB model, projects pageElement as a texture onto it, and starts
-// the render loop.
+// ── Main entry point ──────────────────────────────────────────────────────────
+// All distance/size values are in js world units.
 //
-// Returns { dispose } for cleanup on unmount.
+// Model transform pipeline (applied after GLB load):
+//   1. Auto-centre the bounding box to the origin
+//   2. Uniform scale so the longest axis == modelFitSize (then × modelScale)
+//   3. Apply modelRotation (Euler XYZ, radians)
+//   4. Translate by modelPosition
+//
+// OrbitControls are attached to `container` — events pass through the
+// pointer-events:none canvas to the container element below.
 
 export async function createProjectionScene({
   pageElement,
   modelUrl,
+  container = document.body,
   cssString = null,
+  // ── model tweaks ───
+  modelScale = 2,
+  modelFitSize = 5,
+  modelPosition = { x: 0, y: 0, z: 0 },
+  modelRotation = { x: 0, y: 0, z: 0 },
+  // ── camera tweaks ──
+  cameraFov = 45,
+  cameraPosition = { x: 0, y: 0, z: 8 },
+  cameraLookAt = { x: 0, y: 0, z: 0 },
 }) {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
   const aspect = width / height;
-  const FOV = 45;
-  const POSITION = new THREE.Vector3(0, 0, 15);
-  const LOOK_AT = new THREE.Vector3(0, -1, -4);
 
-  // Renderer — transparent so the app background shows through
+  // Canvas — absolute, fills the container; pointer-events:none so orbit
+  // events fall through to the container which OrbitControls listens on.
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
-    "position:fixed;left:0;top:0;z-index:35;pointer-events:none;";
-  document.body.appendChild(canvas);
+    "position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;";
+  container.appendChild(canvas);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(width, height);
+  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(width, height, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.VSMShadowMap;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.type = VSMShadowMap;
+  renderer.outputColorSpace = SRGBColorSpace;
 
-  const scene = new THREE.Scene();
+  const scene = new Scene();
 
-  const camera = new THREE.PerspectiveCamera(FOV, aspect, 1, 100);
-  camera.position.copy(POSITION);
-  camera.lookAt(LOOK_AT);
+  const camPos = new Vector3(
+    cameraPosition.x,
+    cameraPosition.y,
+    cameraPosition.z,
+  );
+  const camTarget = new Vector3(cameraLookAt.x, cameraLookAt.y, cameraLookAt.z);
 
-  const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+  const camera = new PerspectiveCamera(cameraFov, aspect, 0.1, 200);
+  camera.position.copy(camPos);
+  camera.lookAt(camTarget);
+
+  const controls = new OrbitControls(camera, container);
+  controls.target.set(0, 0, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.enablePan = true;
+  controls.target.copy(camTarget);
+  controls.update();
+
+
+  controls.addEventListener("change", () => {
+    console.log("Camera Position:", controls.object.position);
+    console.log("Target:", controls.target);
+});
+
+  const ambient = new AmbientLight(0xffffff, 1.2);
   scene.add(ambient);
-  const key = new THREE.DirectionalLight(0xffffff, 2.6);
+  const key = new DirectionalLight(0xffffff, 2.6);
   key.position.set(5, 8, 6);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   scene.add(key);
 
-  // Build HTML texture from the source element
+  // Projector camera — frozen at the initial camera pose so the texture stays
+  // locked to the model surface as the user orbits.
+  const projectorCam = new PerspectiveCamera(cameraFov, aspect, 0.1, 200);
+  projectorCam.position.copy(camPos);
+  projectorCam.lookAt(camTarget);
+  projectorCam.updateMatrixWorld();
+
   const htmlTex = createHtmlTexture(
     pageElement,
     width,
     height,
     Math.min(window.devicePixelRatio, 2),
   );
-
-  // Projector camera mirrors the main camera (static projection)
-  const projectorCam = new THREE.PerspectiveCamera(FOV, aspect, 1, 100);
-  projectorCam.position.copy(POSITION);
-  projectorCam.lookAt(LOOK_AT);
-  projectorCam.updateMatrixWorld();
-
   const projector = createProjector(projectorCam, htmlTex.texture);
 
   // Load GLB
@@ -264,50 +316,55 @@ export async function createProjectionScene({
 
   model.traverse((c) => {
     if (!c.isMesh) return;
-    c.rotateZ(1.3);
-    c.rotateY(1.3);
-    if (c.userData.name === "bg") {
-      c.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      c.castShadow = false;
-      c.receiveShadow = true;
-    } else {
-      c.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-      c.castShadow = true;
-      c.receiveShadow = true;
-    }
+    c.material = new MeshStandardMaterial({ color: 0xffffff });
+    c.castShadow = true;
+    c.receiveShadow = true;
     meshes.push(c);
   });
 
+  // 1. Auto-centre: move bounding box centre to world origin
+  const box = new Box3().setFromObject(model);
+  const centre = box.getCenter(new Vector3());
+  model.position.sub(centre);
+
+  // 2. Uniform scale so the longest axis == modelFitSize, then apply multiplier
+  const size = box.getSize(new Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const autoScale =
+    maxDim > 0 ? (modelFitSize / maxDim) * modelScale : modelScale;
+  model.scale.setScalar(autoScale);
+
+  // 3. User rotation (Euler XYZ, radians)
+  model.rotation.set(modelRotation.x, modelRotation.y, modelRotation.z);
+
+  // 4. User position offset
+  model.position.add(
+    new Vector3(modelPosition.x, modelPosition.y, modelPosition.z),
+  );
+
   scene.add(model);
 
-  for (const mesh of meshes) {
-    projector.applyTo(mesh);
-  }
+  for (const mesh of meshes) projector.applyTo(mesh);
   projector.update();
 
-  // Rasterize after fonts are ready
+  // Rasterise HTML once fonts are ready
   if (document.fonts?.ready) await document.fonts.ready;
-  if (cssString !== null) {
-    htmlTex.setExtraCss(cssString);
-  } else {
-    htmlTex.setExtraCss(await collectDocumentCss());
-  }
+  htmlTex.setExtraCss(
+    cssString !== null ? cssString : await collectDocumentCss(),
+  );
   await htmlTex.update();
 
-  // Render loop — gentle model rotation
+  // Render loop
   let animId;
-  const clock = new THREE.Clock();
-
   (function tick() {
     animId = requestAnimationFrame(tick);
-    const elapsed = clock.getElapsedTime();
-    model.rotation.y = elapsed * 0.25;
+    controls.update();
     renderer.render(scene, camera);
   })();
 
-  // Dispose everything
   function dispose() {
     cancelAnimationFrame(animId);
+    controls.dispose();
     renderer.dispose();
     htmlTex.dispose();
     dracoLoader.dispose();
