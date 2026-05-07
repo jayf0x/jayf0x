@@ -1,8 +1,6 @@
 @import "./lib/sloppy-cursor.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 html,
 body,
