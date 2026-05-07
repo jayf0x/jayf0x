@@ -1,11 +1,13 @@
-import { FluidImage, FluidText } from "@jayf0x/fluidity-js";
+import { FluidText } from "@jayf0x/fluidity-js";
 import { useCallback, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
 
 export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);
 
   const isMobile = useIsMobile();
+  const showBackground = usePerformanceCheckpoint("Background Fluid", 40);
 
   const splat = useCallback(
     (x: number, y: number) => {
@@ -49,12 +51,12 @@ export const Background = () => {
         
       /> */}
 
-      {
+      {showBackground && (
         <div
           className="absolute inset-0 opacity-100"
           title="Ever seen a chicken "
         >
-            {/* <FluidImage
+          {/* <FluidImage
             isWorkerEnabled={true}
             isMouseEnabled={false}
             ref={fluidRef}
@@ -99,7 +101,7 @@ export const Background = () => {
             }}
           />
         </div>
-      }
+      )}
 
       {/* 
       {
@@ -131,7 +133,7 @@ export const Background = () => {
           </div>
         )
       } */}
-{/* 
+      {/* 
       <div className="absolute inset-0 opacity-[0.16]">
         <svg
           className="h-full w-full"

@@ -7,7 +7,6 @@ import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { FakeAds } from "./components/FakeAds";
 import { PerformanceWidget } from "./components/PerformanceWidget";
-import { usePerformanceCheckpoint } from "./hooks/usePerformanceCheckpoint";
 
 type Page = "home" | "resume";
 
@@ -22,17 +21,14 @@ export const App = () => {
   const isMobile = useIsMobile();
   const pageVariants = usePageAnimation(page);
 
-  const showAds = usePerformanceCheckpoint("Ads", 70);
-  const showBackground = usePerformanceCheckpoint("Background", 40);
-
   return (
     <div className="h-screen w-screen text-[var(--text)]">
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
         <PerformanceWidget />
         <ChatWidget />
       </div>
-      {showAds && <FakeAds />}
-      {showBackground && <Background />}
+      <FakeAds />
+      <Background />
       <main className="relative z-20 pointer-events-none">
         <AnimatePresence mode="popLayout">
           <motion.div

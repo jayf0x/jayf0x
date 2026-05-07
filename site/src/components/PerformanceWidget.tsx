@@ -131,14 +131,17 @@ export const PerformanceWidget = () => {
               {/* Checkpoint labels above slider */}
               {checkpoints.length > 0 && (
                 <div className="relative h-7 mb-0.5">
-                  {checkpoints.map((cp) => {
+                  {checkpoints.map((cp, idx) => {
                     const overridden = (overrides[cp.tag] ?? null) !== null;
                     const active = value >= cp.percentage;
                     return (
                       <div
-                        key={cp.tag}
-                        className="absolute bottom-0 flex flex-col items-center -translate-x-1/2"
-                        style={{ left: `${cp.percentage}%` }}
+                        key={`checkpoint-tag-${cp.tag}`}
+                        className="absolute bottom-0 flex flex-col items-center"
+                        style={{
+                          left: `${cp.percentage}%`,
+                          transform: `translate(-50%, ${getLabelOffset(idx)}px)`,
+                        }}
                       >
                         <span
                           className="text-[8px] font-mono uppercase tracking-wider whitespace-nowrap mb-1 transition-colors duration-300"
@@ -247,20 +250,22 @@ export const PerformanceWidget = () => {
                 })}
 
                 {/* Checkpoint track marks */}
-                {checkpoints.map((cp) => {
+                {checkpoints.map((cp, idx) => {
                   const overridden = (overrides[cp.tag] ?? null) !== null;
                   const active = value >= cp.percentage;
+                  const indexOffset = getLabelOffset(idx);
                   return (
                     <div
-                      key={cp.tag}
+                      key={`tag-line-${cp.tag}`}
                       className="absolute pointer-events-none z-10"
                       style={{
                         left: `${cp.percentage}%`,
                         top: 2,
                         bottom: 2,
+                        height: 25 + Math.abs(indexOffset),
                         width: 2,
                         borderRadius: 1,
-                        transform: "translateX(-50%)",
+                        transform: `translate(-50%, ${indexOffset}px)`,
                         background: overridden
                           ? "rgba(255,255,255,0.15)"
                           : active
@@ -295,7 +300,7 @@ export const PerformanceWidget = () => {
                   >
                     {[0, 1, 2].map((i) => (
                       <div
-                        key={i}
+                        key={`thumb-line-${i}`}
                         className="rounded-sm"
                         style={{
                           width: 6,
@@ -312,7 +317,7 @@ export const PerformanceWidget = () => {
               <div className="relative mt-1" style={{ height: 14 }}>
                 {SCALE_LABELS.map((v) => (
                   <span
-                    key={v}
+                    key={`scale-label-${v}`}
                     className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums"
                     style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}
                   >
@@ -330,11 +335,12 @@ export const PerformanceWidget = () => {
                   {checkpoints.map((cp) => {
                     const override = overrides[cp.tag] ?? null;
                     const sliderActive = value >= cp.percentage;
-                    const effective = override !== null ? override : sliderActive;
+                    const effective =
+                      override !== null ? override : sliderActive;
 
                     return (
                       <div
-                        key={cp.tag}
+                        key={`override-checkpoint-tag-${cp.tag}`}
                         className="flex items-center justify-between gap-3 py-1"
                       >
                         {/* Tag + effective state dot */}
@@ -447,9 +453,7 @@ export const PerformanceWidget = () => {
         transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
         className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
         style={{
-          background: isOpen
-            ? "rgba(245,158,11,0.15)"
-            : "rgba(10,10,14,0.88)",
+          background: isOpen ? "rgba(245,158,11,0.15)" : "rgba(10,10,14,0.88)",
           backdropFilter: "blur(14px)",
           border: `1px solid ${isOpen ? AMBER_MID : AMBER_DIM}`,
           boxShadow: isOpen
@@ -473,3 +477,6 @@ export const PerformanceWidget = () => {
     </div>
   );
 };
+
+const getLabelOffset = (index: number, max = 25, stable = 1) =>
+  Math.abs(Math.sin(index / stable) * max) - max / stable;

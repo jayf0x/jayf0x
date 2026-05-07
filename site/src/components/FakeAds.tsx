@@ -8,6 +8,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TypeAnimation } from "react-type-animation";
+import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
 
 // ── Slot rotation ─────────────────────────────────────────────────────────────
 
@@ -67,6 +68,28 @@ const FloatingPanel = ({
 
 export const FakeAds = () => {
   const isMobile = useIsMobile();
+  const showMainAds = usePerformanceCheckpoint("Ads Random", 70);
+  const showSecondaryAds = usePerformanceCheckpoint("Ads Projects", 80);
+
+  const AD_POOL = useMemo(
+    () =>
+      showMainAds
+        ? [
+            showSecondaryAds && MatrixRain,
+            showSecondaryAds && DuckAd,
+            showSecondaryAds && Win98Ad,
+            showSecondaryAds && IdyllicLandscape,
+            FluidityAd,
+            PiipayaAd,
+            AudioBonanzaAd,
+            AqtiveAd,
+            ZippitAd,
+            PurePasteAd,
+            CliUtilsAd,
+          ].filter((i): i is AdComp => Boolean(i))
+        : [],
+    [showMainAds, showSecondaryAds],
+  );
 
   const [slots, setSlots] = useState<Slot[]>(() => {
     const shuffled = [...AD_POOL].sort(() => Math.random() - 0.5);
@@ -75,14 +98,24 @@ export const FakeAds = () => {
 
   const activeCount = isMobile ? 3 : 4;
 
-  const rotateSlot = useCallback((slotIdx: number) => {
-    setSlots((prev) => {
-      const othersAds = prev.filter((_, i) => i !== slotIdx).map((s) => s.Ad);
-      const available = AD_POOL.filter((a) => !othersAds.includes(a));
-      const next = available[Math.floor(Math.random() * available.length)];
-      return prev.map((s, i) => (i === slotIdx ? { Ad: next, v: s.v + 1 } : s));
-    });
-  }, []);
+  const rotateSlot = useCallback(
+    (slotIdx: number) => {
+      setSlots((prev) => {
+        const othersAds = prev.filter((_, i) => i !== slotIdx).map((s) => s.Ad);
+        const available = AD_POOL.filter((a) => !othersAds.includes(a));
+        const next = available[Math.floor(Math.random() * available.length)];
+        return prev.map((s, i) =>
+          i === slotIdx ? { Ad: next, v: s.v + 1 } : s,
+        );
+      });
+    },
+    [AD_POOL],
+  );
+
+  useEffect(() => {
+    const shuffled = [...AD_POOL].sort(() => Math.random() - 0.5);
+    setSlots(shuffled.slice(0, 4).map((Ad, i) => ({ Ad, v: i })));
+  }, [AD_POOL]);
 
   useEffect(() => {
     const timers = SLOT_INTERVALS.slice(0, activeCount).map((ms, i) =>
@@ -989,17 +1022,3 @@ const CliUtilsAd: AdComp = () => {
     </a>
   );
 };
-
-const AD_POOL: AdComp[] = [
-  MatrixRain,
-  IdyllicLandscape,
-  Win98Ad,
-  FluidityAd,
-  PiipayaAd,
-  AudioBonanzaAd,
-  AqtiveAd,
-  ZippitAd,
-  PurePasteAd,
-  DuckAd,
-  CliUtilsAd,
-];

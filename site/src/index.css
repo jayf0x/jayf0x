@@ -1,4 +1,4 @@
-@import './lib/sloppy-cursor.css';
+@import "./lib/sloppy-cursor.css";
 
 @tailwind base;
 @tailwind components;
@@ -155,8 +155,6 @@ html {
 }
 
 /* fun stuff */
-
-
 
 h1 {
   text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #4c91f943;
