@@ -7,9 +7,9 @@ export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);
 
   const isMobile = useIsMobile();
-  const showBackground = usePerformanceCheckpoint("Fluid", 40);
+  const showBackground = usePerformanceCheckpoint("Fluid", 50);
   const showVoid = usePerformanceCheckpoint("Void", 0, true);
-  const showChickenEgg = usePerformanceCheckpoint("🐔🥚", 50);
+  const showChickenEgg = usePerformanceCheckpoint("🐔🥚", 60);
 
   const splat = useCallback(
     (x: number, y: number) => {

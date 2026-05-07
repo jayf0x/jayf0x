@@ -8,12 +8,14 @@ import { useIsMobile } from "./hooks/useIsMobile";
 import { FakeAds } from "./components/FakeAds";
 import { PerformanceWidget } from "./components/PerformanceWidget";
 import { usePerformanceCheckpointValue } from "./hooks/usePerformanceCheckpoint";
+import { Info } from "./pages/Info";
 
-type Page = "home" | "resume";
+type Page = "home" | "resume" | "info";
 
 const pages: [string, Page][] = [
   ["127.0.0.1", "home"],
   ["Résumé", "resume"],
+  ["Info", "info"],
 ];
 
 export const App = () => {
@@ -76,8 +78,21 @@ export const App = () => {
                 </div>
               </nav>
 
-              {/* Content */}
-              {page === "home" ? <Home /> : <Resume />}
+              {
+                // so cursed but love it
+                (() => {
+                  switch (page) {
+                    case "home":
+                      return <Home />;
+                    case "resume":
+                      return <Resume />;
+                    case "info":
+                      return <Info />;
+                    default:
+                      return <p>You are the anomaly</p>;
+                  }
+                })()
+              }
             </div>
           </motion.div>
         </AnimatePresence>
@@ -86,12 +101,12 @@ export const App = () => {
   );
 };
 
-// prevents effect changing mid-transition
 let timeoutID = 0;
 const usePageAnimation = (page: Page) => {
   const [debounced, setDebounced] = useState(page);
 
   useEffect(() => {
+    // prevents effect changing mid-transition
     clearTimeout(timeoutID);
     timeoutID = setTimeout(() => {
       setDebounced(page);
