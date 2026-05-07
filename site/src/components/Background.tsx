@@ -1,4 +1,4 @@
-import { FluidText } from "@jayf0x/fluidity-js";
+import { FluidImage, FluidText } from "@jayf0x/fluidity-js";
 import { useCallback, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
@@ -8,6 +8,7 @@ export const Background = () => {
 
   const isMobile = useIsMobile();
   const showBackground = usePerformanceCheckpoint("Background Fluid", 40);
+  const showVoid = usePerformanceCheckpoint("Void", 0, true);
 
   const splat = useCallback(
     (x: number, y: number) => {
@@ -22,12 +23,12 @@ export const Background = () => {
 
   useEffect(() => {
     const onMouseMove = (event: MouseEvent) => {
-      const x = -event.clientX / window.innerWidth;
-      const y = -event.clientY / window.innerHeight;
-      document.documentElement.style.setProperty("--mx", x.toFixed(2));
-      document.documentElement.style.setProperty("--my", y.toFixed(2));
-
       requestAnimationFrame(() => {
+        const x = -event.clientX / window.innerWidth;
+        const y = -event.clientY / window.innerHeight;
+        document.documentElement.style.setProperty("--mx", x.toFixed(2));
+        document.documentElement.style.setProperty("--my", y.toFixed(2));
+
         splat(event.clientX, event.clientY);
       });
     };
@@ -40,21 +41,15 @@ export const Background = () => {
   const fluidTextSpace = " ".repeat(Math.floor(window.innerWidth / 100));
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* <img
-        className="absolute inset-0 w-full h-full object-cover opacity-100"
-        // src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ODg5b3B2ZXF0YjkyM3NlcnpjM2g1bGpham9ic21idGl5MTd1eTlnOCZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/sCIIl5TVOzdfmRfMI0/giphy.gif"
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHY5NXR6MDVsbmZ4OHdjYzd3enpvcGV1NjF2eWpicjBhd25nN2R6ZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/hFhygTRHt4jvGQo52q/giphy.gif"
-        // src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3ZWppdWE5YWlmb3RqdWFjcHN1cmZycDUyN2VtdWR3dnFtbWJxcWx3MCZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/9QnnIp6RTb7YpcVko6/giphy.gif"
-        src="https://imgs.search.brave.com/3l_2KEk1pPWi7rPFvX5y43ksxKouA0ym2ZICphc15lM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvd2lu/ZG93cy1oaWxsLWJh/Y2tncm91bmQtajcz/M2k2MzB4ZzV4OWZo/eS5qcGc"
-
-        
-      /> */}
+    <div
+      className={`fixed inset-0 overflow-hidden ${showVoid ? "z-10" : "-z-10"}`}
+    >
+      {showVoid && <Void />}
 
       {showBackground && (
         <div
           className="absolute inset-0 opacity-100"
-          title="Ever seen a chicken "
+          // title="Ever seen a chicken "
         >
           {/* <FluidImage
             isWorkerEnabled={true}
@@ -196,6 +191,66 @@ export const Background = () => {
 
       <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6] opacity-[0.1] blur-3xl" />
       <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-[#4f7cff] to-[#8b5cf6] opacity-[0.1] blur-3xl [animation-delay:3s]" />
+    </div>
+  );
+};
+
+const Void = () => {
+  const fluidRef = useRef<FluidHandle>(null);
+
+  return (
+    <div className="w-full h-full flex justify-center items-center relative">
+      <div className="absolute py-[10vw] z-10 pointer-events-none *:pointer-events-auto">
+        <h2
+          className="text-[5rem] font-black"
+          style={{ fontFamily: "Courier New" }}
+        >
+          <a href="https://en.wikipedia.org/wiki/Pale_Blue_Dot">
+            {/* Pale Blue Dot */}
+          </a>
+        </h2>
+      </div>
+      <div
+        className="rounded-[100%] lg:size-[60vw] sm:size-full overflow-hidden relative"
+        style={{
+          background: "radial-gradient(circle at 100%, #000a, #fff0 50%)",
+        }}
+      >
+        <FluidText
+        ref={fluidRef}
+          text="💡"
+          // text="𓃠"
+          // isMouseEnabled={false}
+          fontSize={200}
+          config={{
+            densityDissipation: 1,
+            velocityDissipation: 0.9,
+            // waterColor: [0, 0, 0],
+            waterColor: [0.1, 0.1, 0.1],
+            glowColor: [0.5, 0.5, 0.5],
+            curl: 0.9,
+            shine: 0.05,
+            splatRadius: 0.001,
+            specularExp: 0.5,
+            refraction: 0,
+          }}
+          backgroundColor="radial-gradient(circle at 100%, #000a, #fff0 50%)"
+          // algorithm="aurora"
+          style={{
+            // filter: "blur(1px)",
+            filter: "grayscale(1)",
+            // width: "50vw",
+            opacity: 0.9,
+            // zIndex:9999
+          }}
+        />
+        <div
+          className="absolute z-10 w-full h-full inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, #fff0,  #000 50%, #000 100%)",
+          }}
+        ></div>
+      </div>
     </div>
   );
 };

@@ -57,7 +57,7 @@ html {
   }
 }
 
-/* CURSOR */
+/* scrollbar */
 * {
   scrollbar-color: rgba(255, 255, 255, 0.668) transparent;
   scrollbar-width: thin;
@@ -173,3 +173,6 @@ h1 {
     filter: hue-rotate(360deg);
   }
 }
+
+
+

@@ -7,6 +7,7 @@ import { Resume } from "./pages/Resume";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { FakeAds } from "./components/FakeAds";
 import { PerformanceWidget } from "./components/PerformanceWidget";
+import { usePerformanceCheckpointValue } from "./hooks/usePerformanceCheckpoint";
 
 type Page = "home" | "resume";
 
@@ -20,6 +21,7 @@ export const App = () => {
 
   const isMobile = useIsMobile();
   const pageVariants = usePageAnimation(page);
+  const isVoid = usePerformanceCheckpointValue('Void', true)
 
   return (
     <div className="h-screen w-screen text-[var(--text)]">
@@ -29,7 +31,9 @@ export const App = () => {
       </div>
       <FakeAds />
       <Background />
-      <main className="relative z-20 pointer-events-none">
+      <main className="relative z-20 pointer-events-none" style={{
+        display: isVoid ? 'none' : ''
+      }}>
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`motion-page-${page}`}

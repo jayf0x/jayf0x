@@ -68,7 +68,7 @@ export const PerformanceWidget = () => {
     [setOverrides],
   );
 
-  if (isMobile) return null;
+  // if (isMobile) return null;
 
   return (
     <div className="flex flex-col items-end gap-2">
@@ -81,7 +81,7 @@ export const PerformanceWidget = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-[380px] select-none"
+            className="relative max-w-[90vw] w-[450px] select-none"
             style={{ transformOrigin: "bottom right" }}
           >
             <div
@@ -113,7 +113,7 @@ export const PerformanceWidget = () => {
                           "https://www.promptingguide.ai/introduction/settings#:~:text=Temperature",
                         ],
                         [
-                          "Why the link above is inaccurate",
+                          "Common misunderstandings about temperature",
                           "https://dev.to/hermup299/llm-predictability-vs-determinism-2idb",
                         ],
                       ]}

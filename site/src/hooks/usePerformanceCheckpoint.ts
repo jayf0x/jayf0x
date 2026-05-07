@@ -12,7 +12,11 @@ import {
  * - Providing `percentage` registers this tag in the store (first caller wins per tag).
  * - Returns `enabled = sliderValue >= threshold` so the caller can opt-out of heavy work.
  */
-export const usePerformanceCheckpoint = (tag: string, percentage: number) => {
+export const usePerformanceCheckpoint = (
+  tag: string,
+  percentage: number,
+  invert = false,
+) => {
   const setCheckpoints = useSetAtom(checkpointsAtom);
   const sliderValue = useAtomValue(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
@@ -35,5 +39,18 @@ export const usePerformanceCheckpoint = (tag: string, percentage: number) => {
 
   const override = overrides[tag] ?? null;
   if (override !== null) return override;
-  return sliderValue >= threshold;
+  return invert ? sliderValue <= threshold : sliderValue >= threshold;
+};
+
+// only subscribe to value, never overwrite
+export const usePerformanceCheckpointValue = (tag: Capitalize<string>, invert = false) => {
+  const sliderValue = useAtomValue(sliderValueAtom);
+  const checkpoints = useAtomValue(checkpointsAtom);
+
+  const overrides = useAtomValue(checkpointOverridesAtom);
+  const threshold = checkpoints.find((c) => c.tag === tag)?.percentage ?? 0;
+
+  const override = overrides[tag] ?? null;
+  if (override !== null) return override;
+  return invert ? sliderValue <= threshold : sliderValue >= threshold;
 };
