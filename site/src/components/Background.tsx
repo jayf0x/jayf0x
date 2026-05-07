@@ -7,8 +7,9 @@ export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);
 
   const isMobile = useIsMobile();
-  const showBackground = usePerformanceCheckpoint("Background Fluid", 40);
+  const showBackground = usePerformanceCheckpoint("Fluid", 40);
   const showVoid = usePerformanceCheckpoint("Void", 0, true);
+  const showChickenEgg = usePerformanceCheckpoint("🐔🥚", 50);
 
   const splat = useCallback(
     (x: number, y: number) => {
@@ -43,14 +44,12 @@ export const Background = () => {
   return (
     <div
       className={`fixed inset-0 overflow-hidden ${showVoid ? "z-10" : "-z-10"}`}
+      title="bun add @jayf0x/fluidity-js"
     >
       {showVoid && <Void />}
 
       {showBackground && (
-        <div
-          className="absolute inset-0 opacity-100"
-          // title="Ever seen a chicken "
-        >
+        <div className="absolute inset-0 opacity-100">
           {/* <FluidImage
             isWorkerEnabled={true}
             isMouseEnabled={false}
@@ -77,7 +76,7 @@ export const Background = () => {
             isWorkerEnabled={true}
             isMouseEnabled={false}
             ref={fluidRef}
-            text={`🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚`}
+            text={showChickenEgg ? `🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚` : ''}
             config={{
               densityDissipation: 0.99,
               // waterColor: [0.8, 0.3, 0.5],

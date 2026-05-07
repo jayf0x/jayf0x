@@ -4,6 +4,7 @@ import { FileHeart, Pause, Play } from "lucide-react";
 
 import "./styles.css";
 import { InfoPopover } from "@/components/InfoPopover";
+import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
 
 type SimMode = "conway" | "daynight";
 
@@ -13,8 +14,16 @@ export const Resume = memo(() => {
   const [simMode, setSimMode] = useState<SimMode>("conway");
   const [isPaused, setIsPaused] = useState(false);
 
+  const showRedButton = usePerformanceCheckpoint("Red Button", 30);
+
+  const showConway = usePerformanceCheckpoint("Conway", 20);
+  const showConwayInvert = usePerformanceCheckpoint("Conway?", 15, true);
+  const showConwayCertain = usePerformanceCheckpoint("Conway!", 10);
+
+  const isConwayVisible = showConwayCertain && (showConway || showConwayInvert);
+
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !isConwayVisible) return;
     // Full reinit on mode change — clean slate
     const engine = createConwayEngine(
       canvasRef.current,
@@ -26,7 +35,7 @@ export const Resume = memo(() => {
       engine.destroy();
       engineRef.current = null;
     };
-  }, [simMode]);
+  }, [simMode, isConwayVisible]);
 
   const handleModeToggle = (next: SimMode) => {
     if (next === simMode) return;
@@ -47,25 +56,27 @@ export const Resume = memo(() => {
       <canvas ref={canvasRef} className="absolute inset-0 size-full block" />
 
       {/* Center overlay — resume download */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
-        <span className="text-[#9994] text-sm uppercase">Download PDF</span>
-        <div className="ad-float pointer-events-auto">
-          <a
-            href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf"
-            download
-            className="no-underline"
-          >
-            <div
-              id="red-button"
-              className="flex size-full center"
-              aria-label="Download resume"
-              title="Doubt everything. Find your own light. - Buddha"
+      {showRedButton && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
+          <span className="text-[#9994] text-sm uppercase">Download PDF</span>
+          <div className="animate-bounce pointer-events-auto">
+            <a
+              href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf"
+              download
+              className="no-underline"
             >
-              <FileHeart size={42} className="m-auto opacity-60" />
-            </div>
-          </a>
+              <div
+                id="red-button"
+                className="flex size-full center"
+                aria-label="Download resume"
+                title="Doubt everything. Find your own light. - Buddha"
+              >
+                <FileHeart size={42} className="m-auto opacity-60" />
+              </div>
+            </a>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom-left controls */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto bg-red">
@@ -85,7 +96,6 @@ export const Resume = memo(() => {
           </button>
         </div>
 
-
         <button
           onClick={handlePlayPause}
           title={isPaused ? "Play" : "Pause"}
@@ -96,12 +106,13 @@ export const Resume = memo(() => {
 
         <InfoPopover
           items={[
-            ["Playground Golly", "https://golly.sourceforge.io/webapp/golly.html"],
+            [
+              "Playground Golly",
+              "https://golly.sourceforge.io/webapp/golly.html",
+            ],
             ["✨Inspiration✨", "https://members.tip.net.au/~dbell/"],
           ]}
         />
-
-    
       </div>
     </div>
   );
