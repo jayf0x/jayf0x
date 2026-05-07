@@ -26,13 +26,17 @@ export async function withLocalStorageCache<T>(
       const { data, ts } = JSON.parse(raw) as { data: T; ts: number }
       if (Date.now() - ts < ttl) return data
     }
-  } catch {}
+  } catch(e) {
+    console.warn(e)
+  }
 
   const data = await fn()
 
   try {
     localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }))
-  } catch {}
+  } catch(e){
+    console.warn(e)
+  }
 
   return data
 }

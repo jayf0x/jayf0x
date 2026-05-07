@@ -4,6 +4,7 @@ import {
   checkpointsAtom,
   checkpointOverridesAtom,
   sliderValueAtom,
+  resolveOverride,
 } from "@/lib/performanceStore";
 
 /**
@@ -35,22 +36,23 @@ export const usePerformanceCheckpoint = (
 
   const overrides = useAtomValue(checkpointOverridesAtom);
   const threshold =
-    checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? 0;
+    checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? NaN;
 
-  const override = overrides[tag] ?? null;
-  if (override !== null) return override;
-  return invert ? sliderValue <= threshold : sliderValue >= threshold;
+  const override = overrides[tag] ?? "auto";
+  return resolveOverride(override, invert ? sliderValue <= threshold : sliderValue >= threshold);
 };
 
 // only subscribe to value, never overwrite
-export const usePerformanceCheckpointValue = (tag: Capitalize<string>, invert = false) => {
+export const usePerformanceCheckpointValue = (
+  tag: Capitalize<string>,
+  invert = false,
+) => {
   const sliderValue = useAtomValue(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
 
   const overrides = useAtomValue(checkpointOverridesAtom);
-  const threshold = checkpoints.find((c) => c.tag === tag)?.percentage ?? 0;
+  const threshold = checkpoints.find((c) => c.tag === tag)?.percentage ?? NaN;
 
-  const override = overrides[tag] ?? null;
-  if (override !== null) return override;
-  return invert ? sliderValue <= threshold : sliderValue >= threshold;
+  const override = overrides[tag] ?? "auto";
+  return resolveOverride(override, invert ? sliderValue <= threshold : sliderValue >= threshold);
 };

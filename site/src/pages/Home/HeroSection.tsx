@@ -14,6 +14,7 @@ const terminalLines = [
   "Challenge me: www.chess.com/member/chaos_70b",
   "('b' + 'a' + + 'a' + 'a').toLowerCase()",
   "Status 418 ☕",
+  "2B||!2B",
 ].flatMap((l) => [l, 4000]);
 
 export const HeroSection = () => {

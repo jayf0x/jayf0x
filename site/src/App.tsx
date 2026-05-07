@@ -21,7 +21,7 @@ export const App = () => {
 
   const isMobile = useIsMobile();
   const pageVariants = usePageAnimation(page);
-  const isVoid = usePerformanceCheckpointValue('Void', true)
+  const isVoid = usePerformanceCheckpointValue("Void", true);
 
   return (
     <div className="h-screen w-screen text-[var(--text)]">
@@ -31,9 +31,12 @@ export const App = () => {
       </div>
       <FakeAds />
       <Background />
-      <main className="relative z-20 pointer-events-none" style={{
-        display: isVoid ? 'none' : ''
-      }}>
+      <main
+        className="relative z-20 pointer-events-none"
+        style={{
+          display: isVoid ? "none" : "",
+        }}
+      >
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`motion-page-${page}`}

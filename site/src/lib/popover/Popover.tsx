@@ -335,9 +335,7 @@ const Popover = forwardRef<HTMLElement, PopoverProps>((props, ref) => {
   return <PopoverInternal {...props} ref={ref} />;
 });
 
-const useMemoizedArray = <T extends number | string>(
-  externalArray: T[],
-) => {
+const useMemoizedArray = <T extends number | string>(externalArray: T[]) => {
   const prevArrayRef = useRef(externalArray);
   const array = useMemo(() => {
     if (prevArrayRef.current === externalArray) return prevArrayRef.current;
@@ -359,6 +357,5 @@ const useMemoizedArray = <T extends number | string>(
 
   return array;
 };
-
 
 export { usePopover, Popover };

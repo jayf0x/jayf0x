@@ -200,16 +200,16 @@ const Void = () => {
 
   return (
     <div className="w-full h-full flex justify-center items-center relative">
-      <div className="absolute py-[10vw] z-10 pointer-events-none *:pointer-events-auto">
+      {/* <div className="absolute py-[10vw] z-10 pointer-events-none *:pointer-events-auto">
         <h2
           className="text-[5rem] font-black"
           style={{ fontFamily: "Courier New" }}
         >
           <a href="https://en.wikipedia.org/wiki/Pale_Blue_Dot">
-            {/* Pale Blue Dot */}
+            Pale Blue Dot
           </a>
         </h2>
-      </div>
+      </div> */}
       <div
         className="rounded-[100%] lg:size-[60vw] sm:size-full overflow-hidden relative"
         style={{
@@ -217,20 +217,21 @@ const Void = () => {
         }}
       >
         <FluidText
-        ref={fluidRef}
-          text="💡"
+          ref={fluidRef}
+          text="{}"
           // text="𓃠"
           // isMouseEnabled={false}
           fontSize={200}
           config={{
             densityDissipation: 1,
-            velocityDissipation: 0.9,
+            velocityDissipation: 0.98,
             // waterColor: [0, 0, 0],
             waterColor: [0.1, 0.1, 0.1],
             glowColor: [0.5, 0.5, 0.5],
-            curl: 0.9,
+            curl: 0.98,
             shine: 0.05,
             splatRadius: 0.001,
+            splatForce: 3,
             specularExp: 0.5,
             refraction: 0,
           }}
@@ -238,7 +239,7 @@ const Void = () => {
           // algorithm="aurora"
           style={{
             // filter: "blur(1px)",
-            filter: "grayscale(1)",
+            filter: "grayscale(0.4)",
             // width: "50vw",
             opacity: 0.9,
             // zIndex:9999

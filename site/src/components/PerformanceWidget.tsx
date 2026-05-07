@@ -6,8 +6,9 @@ import {
   sliderValueAtom,
   checkpointsAtom,
   checkpointOverridesAtom,
+  OverrideState,
+  resolveOverride,
 } from "@/lib/performanceStore";
-import { useIsMobile } from "@/hooks/useIsMobile";
 import { InfoPopover } from "./InfoPopover";
 
 const TICKS = Array.from({ length: 21 }, (_, i) => i * 5);
@@ -18,22 +19,16 @@ const AMBER_DIM = "rgba(245,158,11,0.18)";
 const AMBER_MID = "rgba(245,158,11,0.4)";
 const AMBER_GLOW = "rgba(245,158,11,0.08)";
 
-type OverrideState = boolean | null;
 
 function cycleOverride(current: OverrideState): OverrideState {
-  if (current === null) return true;
-  if (current === true) return false;
-  return null;
+  if (current === 'auto') return 'off';
+  if (current === 'off') return 'on';
+  if (current === 'on') return 'auto';
+  return 'off';
 }
 
-const OVERRIDE_LABEL: Record<string, string> = {
-  true: "on",
-  false: "off",
-  null: "auto",
-};
-
 export const PerformanceWidget = () => {
-  const isMobile = useIsMobile();
+  // const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useAtom(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
@@ -57,8 +52,8 @@ export const PerformanceWidget = () => {
   const toggleOverride = useCallback(
     (tag: string) => {
       setOverrides((prev) => {
-        const next = cycleOverride(prev[tag] ?? null);
-        if (next === null) {
+        const next = cycleOverride(prev[tag]);
+        if (next === 'auto') {
           const { [tag]: _, ...rest } = prev;
           return rest;
         }
@@ -132,7 +127,7 @@ export const PerformanceWidget = () => {
               {checkpoints.length > 0 && (
                 <div className="relative h-7 mb-0.5">
                   {checkpoints.map((cp, idx) => {
-                    const overridden = (overrides[cp.tag] ?? null) !== null;
+                    const overridden = (overrides[cp.tag] ?? 'auto') !== 'auto';
                     const active = value >= cp.percentage;
                     return (
                       <div
@@ -251,7 +246,7 @@ export const PerformanceWidget = () => {
 
                 {/* Checkpoint track marks */}
                 {checkpoints.map((cp, idx) => {
-                  const overridden = (overrides[cp.tag] ?? null) !== null;
+                  const overridden = (overrides[cp.tag] ?? 'auto') !== 'auto';
                   const active = value >= cp.percentage;
                   const indexOffset = getLabelOffset(idx);
                   return (
@@ -333,10 +328,9 @@ export const PerformanceWidget = () => {
                   style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
                 >
                   {checkpoints.map((cp) => {
-                    const override = overrides[cp.tag] ?? null;
+                    const override = overrides[cp.tag] ?? 'auto';
                     const sliderActive = value >= cp.percentage;
-                    const effective =
-                      override !== null ? override : sliderActive;
+                    const effective = resolveOverride(override, sliderActive);
 
                     return (
                       <div
@@ -349,12 +343,12 @@ export const PerformanceWidget = () => {
                             className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors duration-300"
                             style={{
                               background: effective
-                                ? override !== null
+                                ? override !== 'auto'
                                   ? "#34d399"
                                   : AMBER
                                 : "rgba(255,255,255,0.15)",
                               boxShadow: effective
-                                ? override !== null
+                                ? override !== 'auto'
                                   ? "0 0 5px rgba(52,211,153,0.6)"
                                   : `0 0 5px rgba(245,158,11,0.5)`
                                 : "none",
@@ -364,7 +358,7 @@ export const PerformanceWidget = () => {
                             className="text-[11px] font-mono uppercase tracking-wider truncate transition-colors duration-200"
                             style={{
                               color:
-                                override !== null
+                                override !== 'auto'
                                   ? "rgba(255,255,255,0.7)"
                                   : "rgba(255,255,255,0.35)",
                             }}
@@ -386,21 +380,21 @@ export const PerformanceWidget = () => {
                           className="flex items-center gap-1.5 px-2 py-0.5 rounded-md flex-shrink-0 transition-all duration-150"
                           style={{
                             background:
-                              override === true
+                              override === 'on'
                                 ? "rgba(52,211,153,0.12)"
-                                : override === false
+                                : override === 'off'
                                   ? "rgba(248,113,113,0.1)"
                                   : "rgba(255,255,255,0.04)",
                             border:
-                              override === true
+                              override === 'on'
                                 ? "1px solid rgba(52,211,153,0.3)"
-                                : override === false
+                                : override === 'off'
                                   ? "1px solid rgba(248,113,113,0.25)"
                                   : "1px solid rgba(255,255,255,0.07)",
                             color:
-                              override === true
+                              override === 'on'
                                 ? "#34d399"
-                                : override === false
+                                : override === 'off'
                                   ? "#f87171"
                                   : "rgba(255,255,255,0.28)",
                           }}
@@ -409,15 +403,15 @@ export const PerformanceWidget = () => {
                             className="w-1 h-1 rounded-full flex-shrink-0"
                             style={{
                               background:
-                                override === true
+                                override === "on"
                                   ? "#34d399"
-                                  : override === false
+                                  : override === "off"
                                     ? "#f87171"
                                     : "rgba(255,255,255,0.25)",
                             }}
                           />
                           <span className="text-[9px] font-mono uppercase tracking-wider">
-                            {OVERRIDE_LABEL[String(override)]}
+                            {override ?? 'auto'}
                           </span>
                         </button>
                       </div>
