@@ -66,7 +66,7 @@ export const useChatLLM = () => {
   const sendMessage = async (text: string) => {
     if (isPending || !text.trim()) return;
 
-    init(); // idempotent — no-op after first call
+    init();
 
     setIsPending(true);
     setResponse(null);

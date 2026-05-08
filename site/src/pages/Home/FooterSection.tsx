@@ -26,10 +26,7 @@ export const FooterSection = () => (
           <Linkedin size={14} />
           Linkedin
         </a>
-        {/* <a href="mailto:jonatan.vons@gmail.com" className="inline-flex items-center gap-1 hover:text-(--text)">
-          <Mail size={14} />
-          Email
-        </a> */}
+
       </div>
     </div>
   </footer>

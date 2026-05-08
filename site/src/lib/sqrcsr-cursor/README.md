@@ -1,1 +1,0 @@
-0-dependency implementation of: https://github.com/codrops/GooeyCursor/

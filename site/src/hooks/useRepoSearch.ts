@@ -19,9 +19,7 @@ export function useRepoSearch(
   const allStacks = useMemo(
     () =>
       [
-        ...new Set(
-          repos.map((r) => r.language).filter(Boolean) as string[],
-        ),
+        ...new Set(repos.map((r) => r.language).filter(Boolean) as string[]),
       ].sort(),
     [repos],
   );

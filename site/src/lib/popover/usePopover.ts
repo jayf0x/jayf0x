@@ -15,7 +15,6 @@ import {
   getNudgedPopoverRect,
 } from "./util";
 
-// Inlined from useElementRef — only ever used here.
 const usePopoverElement = ({
   containerClassName,
   containerStyle,
@@ -32,11 +31,6 @@ const usePopoverElement = ({
   return ref;
 };
 
-// CSS custom properties drive the transform, enabling CSS transitions on the container:
-//   .react-tiny-popover-container { transition: transform 0.2s ease; }
-//
-// z-index, background, shadow, and border-radius are sensible defaults that users
-// can override via the `containerStyle` prop.
 const POPOVER_STYLE: Partial<CSSStyleDeclaration> = {
   position: "fixed",
   top: "0px",
@@ -61,7 +55,6 @@ const SCOUT_STYLE: Partial<CSSStyleDeclaration> = {
 };
 
 export const usePopover = (props: UsePopoverProps): UsePopoverResult => {
-  // propsRef keeps positionPopover stable. Observers only rebuilt on open/close.
   const propsRef = useRef(props);
   propsRef.current = props;
 
@@ -258,7 +251,6 @@ export const usePopover = (props: UsePopoverProps): UsePopoverResult => {
 
       onPositionPopover(popoverState);
     },
-    // Stable: all dynamic values read from propsRef. Only recreates if DOM refs change.
     [scoutRef, popoverRef],
   );
 

@@ -49,7 +49,6 @@ export const createContainer = ({
   return container;
 };
 
-/** Walk up the DOM tree and collect all elements that are scrollable. */
 export const getScrollableAncestors = (
   element: Element | null | undefined,
 ): Element[] => {

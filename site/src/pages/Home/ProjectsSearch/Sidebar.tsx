@@ -26,7 +26,6 @@ export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
         setOpen(true);
       }, 500);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   return (
@@ -78,7 +77,6 @@ export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
         )}
       </AnimatePresence>
 
-      {/* toggle tab */}
       <div className="relative flex flex-col justify-start pt-3">
         <div
           onClick={() => setOpen((v) => !v)}
@@ -120,7 +118,6 @@ const SidebarSection = ({
             />
           ))}
         </div>
-        {/* fade-out overlay */}
         <div className="pointer-events-none absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[var(--bg,#0d0d0d)] to-transparent" />
       </div>
     </div>

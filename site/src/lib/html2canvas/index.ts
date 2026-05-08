@@ -1,6 +1,3 @@
-/**
- * A simpler TS version of https://github.com/cullenwebber/three-html-to-canvas
- */
 import {
   CanvasTexture,
   LinearFilter,
@@ -32,8 +29,6 @@ import {
   ProjectionScene,
 } from "./types";
 import { devLog } from "@/utils/logger";
-
-// ── CSS collection ────────────────────────────────────────────────────────────
 
 async function blobToDataUri(blob: Blob): Promise<string> {
   return new Promise((res, rej) => {
@@ -88,11 +83,6 @@ export async function collectDocumentCss() {
   return chunks.filter(Boolean).join("\n");
 }
 
-// ── HTML → CanvasTexture ──────────────────────────────────────────────────────
-// Serialises the given element via SVG foreignObject.
-// IMPORTANT: the element must have no offscreen/invisible positioning styles —
-// those serialise verbatim and would hide content inside the SVG context.
-
 function createHtmlTexture(
   element: HTMLElement,
   width: number,
@@ -118,8 +108,6 @@ function createHtmlTexture(
       ? `<style xmlns="http://www.w3.org/1999/xhtml">/*<![CDATA[*/${extraCss}/*]]>*/</style>`
       : "";
 
-    // The wrapper div is the positioning root; content elements with
-    // position:absolute resolve against it.
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
       <foreignObject x="0" y="0" width="${width}" height="${height}">
         <div xmlns="http://www.w3.org/1999/xhtml"
@@ -149,8 +137,6 @@ function createHtmlTexture(
     },
   };
 }
-
-// ── Projection shader ─────────────────────────────────────────────────────────
 
 function createProjector(camera: PerspectiveCamera, texture: Texture) {
   const uniforms = {
@@ -230,28 +216,15 @@ gl_FragColor.rgb = mix( _flatDiffuse, gl_FragColor.rgb, uLitness );`,
   return { applyTo, update, uniforms };
 }
 
-// ── Main entry point ──────────────────────────────────────────────────────────
-// All distance/size values are in js world units.
-//
-// Model transform pipeline (applied after GLB load):
-//   1. Auto-centre the bounding box to the origin
-//   2. Uniform scale so the longest axis == modelFitSize (then × modelScale)
-//   3. Apply modelRotation (Euler XYZ, radians)
-//   4. Translate by modelPosition
-//
-// OrbitControls are attached to `container` — events pass through the
-// pointer-events:none canvas to the container element below.
 export async function createProjectionScene({
   pageElement,
   modelUrl,
   container = document.body,
   cssString = null,
-  // ── model tweaks ───
   modelScale = 2,
   modelFitSize = 5,
   modelPosition = { x: 0, y: 0, z: 0 },
   modelRotation = { x: 0, y: 0, z: 0 },
-  // ── camera tweaks ──
   cameraFov = 45,
   cameraPosition = { x: 0, y: 0, z: 8 },
   cameraLookAt = { x: 0, y: 0, z: 0 },
@@ -260,8 +233,6 @@ export async function createProjectionScene({
   const height = container.clientHeight;
   const aspect = width / height;
 
-  // Canvas — absolute, fills the container; pointer-events:none so orbit
-  // events fall through to the container which OrbitControls listens on.
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
     "position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;";
@@ -302,8 +273,6 @@ export async function createProjectionScene({
   key.shadow.mapSize.set(2048, 2048);
   scene.add(key);
 
-  // Projector camera — frozen at the initial camera pose so the texture stays
-  // locked to the model surface as the user orbits.
   const projectorCam = new PerspectiveCamera(cameraFov, aspect, 0.1, 200);
   projectorCam.position.copy(camPos);
   projectorCam.lookAt(camTarget);
@@ -317,7 +286,6 @@ export async function createProjectionScene({
   );
   const projector = createProjector(projectorCam, htmlTex.texture);
 
-  // Load GLB
   const dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
   const gltfLoader = new GLTFLoader();
@@ -338,22 +306,18 @@ export async function createProjectionScene({
     meshes.push(c);
   });
 
-  // 1. Auto-centre: move bounding box centre to world origin
   const box = new Box3().setFromObject(model);
   const centre = box.getCenter(new Vector3());
   model.position.sub(centre);
 
-  // 2. Uniform scale so the longest axis == modelFitSize, then apply multiplier
   const size = box.getSize(new Vector3());
   const maxDim = Math.max(size.x, size.y, size.z);
   const autoScale =
     maxDim > 0 ? (modelFitSize / maxDim) * modelScale : modelScale;
   model.scale.setScalar(autoScale);
 
-  // 3. User rotation (Euler XYZ, radians)
   model.rotation.set(modelRotation.x, modelRotation.y, modelRotation.z);
 
-  // 4. User position offset
   model.position.add(
     new Vector3(modelPosition.x, modelPosition.y, modelPosition.z),
   );
@@ -363,26 +327,20 @@ export async function createProjectionScene({
   for (const mesh of meshes) projector.applyTo(mesh);
   projector.update();
 
-  // Rasterise HTML once fonts are ready
   if (document.fonts?.ready) await document.fonts.ready;
   htmlTex.setExtraCss(
     cssString !== null ? cssString : await collectDocumentCss(),
   );
   await htmlTex.update();
 
-  // Shared cursor state — mutate from outside to drive tilt.
   const cursorState: ProjectionScene["cursorState"] = { x: 0, y: 0, z: 0 };
 
-  // Authoritative base rotation for the model (radians).
-  // Tick adds cursor offset on top; callers should update this instead of
-  // model.rotation directly so the offset is applied correctly each frame.
   const modelBaseRotation = {
     x: modelRotation.x,
     y: modelRotation.y,
     z: modelRotation.z,
   };
 
-  // Render loop
   let animId: number;
   (function tick() {
     animId = requestAnimationFrame(tick);

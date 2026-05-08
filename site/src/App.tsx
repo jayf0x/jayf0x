@@ -18,14 +18,11 @@ const pages: [string, Page][] = [
   ["Info", "info"],
 ];
 
-
-
 export const App = () => {
   const isMobile = useIsMobile();
   const [page, setPage] = useState<Page>("home");
   const pageVariants = usePageAnimation(page);
   const isVoid = usePerformanceCheckpointValue("Void", true);
-
 
   return (
     <div className="h-screen w-screen text-(--text)">
@@ -60,7 +57,7 @@ export const App = () => {
                 backdropFilter: "blur(15px) brightness(0.2)",
               }}
             >
-              {/* Navigation */}
+              
               <nav className="items-center justify-end px-12 pt-8 mb-2 w-full flex">
                 <div className="flex items-center gap-6">
                   {pages.map(([label, p]) => (
@@ -81,7 +78,6 @@ export const App = () => {
               </nav>
 
               {
-                // so cursed but love it
                 (() => {
                   switch (page) {
                     case "home":
@@ -107,16 +103,13 @@ const usePageAnimation = (page: Page) => {
   const prevRef = useRef<Page>(page);
 
   const prev = prevRef.current;
-  // eslint-disable-next-line react-hooks/refs
   const prevIndex = pages.findIndex(([_, i]) => i === prev);
   const nextIndex = pages.findIndex(([_, i]) => i === page);
 
-  // forward = new page has larger index -> enter from right (positive x)
   const dir = prevIndex < nextIndex ? 1 : -1;
   const w = typeof window !== "undefined" ? window.innerWidth * dir : 0;
 
   useEffect(() => {
-    // commit the new page after we've calculated direction for this render
     prevRef.current = page;
   }, [page]);
 

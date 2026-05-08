@@ -40,7 +40,6 @@ export const ProjectSection = () => {
   const toggleFilter = (value: string) =>
     setFilters((prev) => {
       const next = new Set(prev);
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(value) ? next.delete(value) : next.add(value);
       return next;
     });
@@ -59,7 +58,6 @@ export const ProjectSection = () => {
       <div className="mx-auto max-w-5xl flex flex-row min-h-0 gap-0 size-full">
         <Sidebar repos={repos} onSelect={setQuery} isLoading={isLoading} />
         <div className="flex-1 min-w-0 flex flex-col min-h-0 gap-4 pl-4">
-          {/* ── Search bar ── */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -90,7 +88,6 @@ export const ProjectSection = () => {
             </div>
           </motion.div>
 
-          {/* ── Filter chips ── */}
           {!isLoading && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -117,7 +114,6 @@ export const ProjectSection = () => {
             </motion.div>
           )}
 
-          {/* ── Meta row: count + clear ── */}
           <AnimatePresence>
             {hasInput && (
               <motion.div
@@ -144,7 +140,6 @@ export const ProjectSection = () => {
             )}
           </AnimatePresence>
 
-          {/* ── Results ── */}
           <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
             {isLoading ? (
               <LoadingSkeleton />

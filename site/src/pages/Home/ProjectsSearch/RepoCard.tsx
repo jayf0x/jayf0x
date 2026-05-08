@@ -171,7 +171,6 @@ const RepoLinks = ({ repo }: { repo: GithubRepo }) => {
         </LinkIcon>
       </div>
 
-      {/* preview image */}
       {previewLoading ? (
         <div className="mt-1 h-14 w-24 animate-pulse rounded-lg bg-(--border)" />
       ) : previewUrl ? (

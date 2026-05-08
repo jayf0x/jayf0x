@@ -41,7 +41,6 @@ const PopoverInternal = forwardRef(
     }: PopoverProps,
     externalRef: Ref<HTMLElement>,
   ) => {
-    // Uncontrolled: manage open state internally. Controlled: use externalIsOpen.
     const [managedOpen, setManagedOpen] = useState(defaultOpen);
     const isControlled = externalIsOpen !== undefined;
     const isOpen = isControlled ? externalIsOpen : managedOpen;
@@ -62,7 +61,6 @@ const PopoverInternal = forwardRef(
 
     const childRef = useRef<HTMLElement>();
     const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
-    // Keeps the current isOpen value accessible inside stable callbacks.
     const isOpenRef = useRef(isOpen);
     isOpenRef.current = isOpen;
 
@@ -102,9 +100,6 @@ const PopoverInternal = forwardRef(
       onPositionPopover,
     });
 
-    // ─── Positioning ────────────────────────────────────────────────────────────
-
-    // Reposition synchronously when positioning props change or popover opens.
     useLayoutEffect(() => {
       if (!isOpen) return;
       positionPopover();
@@ -121,8 +116,6 @@ const PopoverInternal = forwardRef(
       transform,
     ]);
 
-    // Set up event-driven observers once per open/close cycle.
-    // positionPopover is stable (propsRef pattern), so this only re-runs on isOpen toggle.
     useLayoutEffect(() => {
       if (!isOpen) return;
 
@@ -153,12 +146,6 @@ const PopoverInternal = forwardRef(
       };
     }, [isOpen, positionPopover, popoverRef]);
 
-    // ─── Visibility ─────────────────────────────────────────────────────────────
-
-    // The portal is always mounted so the container element is always in the DOM.
-    // We toggle opacity + pointer-events to show/hide with a CSS fade transition.
-    // Opacity is deferred one frame after opening so the browser sees the positioned
-    // element before starting the transition (prevents "fly in" from 0,0).
     useLayoutEffect(() => {
       const el = popoverRef.current;
       if (!el) return;
@@ -176,9 +163,6 @@ const PopoverInternal = forwardRef(
       }
     }, [isOpen, popoverRef]);
 
-    // ─── containerStyle ─────────────────────────────────────────────────────────
-
-    // Diff-apply to avoid unnecessary DOM writes.
     const appliedStyleKeysRef = useRef<Set<string>>(new Set());
     useEffect(() => {
       const el = popoverRef.current;
@@ -192,8 +176,6 @@ const PopoverInternal = forwardRef(
       appliedStyleKeysRef.current = newKeys;
     }, [containerStyle, popoverRef]);
 
-    // ─── Trigger / hover mode ───────────────────────────────────────────────────
-
     const scheduleClose = useCallback(() => {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = setTimeout(() => updateOpen(false), 80);
@@ -204,7 +186,6 @@ const PopoverInternal = forwardRef(
       [],
     );
 
-    // Wire popover container mouse events when trigger="hover"
     useEffect(() => {
       if (trigger !== "hover" || isControlled) return;
       const el = popoverRef.current;
@@ -221,10 +202,7 @@ const PopoverInternal = forwardRef(
       };
     }, [trigger, isControlled, popoverRef, cancelClose, scheduleClose]);
 
-    // Cleanup hover timeout on unmount
     useEffect(() => () => clearTimeout(hoverTimeoutRef.current), []);
-
-    // ─── Click outside ──────────────────────────────────────────────────────────
 
     const handleClickOutside = useCallback(
       (e: MouseEvent) => {
@@ -273,8 +251,6 @@ const PopoverInternal = forwardRef(
       parentElement,
     ]);
 
-    // ─── Ref merge ──────────────────────────────────────────────────────────────
-
     const handleRef = useCallback(
       (node: HTMLElement) => {
         childRef.current = node;
@@ -285,8 +261,6 @@ const PopoverInternal = forwardRef(
       },
       [externalRef],
     );
-
-    // ─── Trigger props injected into child ─────────────────────────────────────
 
     const triggerProps: Record<string, unknown> = {};
     if (!isControlled && trigger) {
@@ -310,14 +284,10 @@ const PopoverInternal = forwardRef(
       }
     }
 
-    // ─── Render ─────────────────────────────────────────────────────────────────
-
     return (
       <>
         {cloneElement(children, { ref: handleRef, ...triggerProps })}
-        {/* Portal is always mounted — the container div stays in the DOM.
-            Visibility is controlled via opacity + inert, not mount/unmount,
-            which enables CSS fade transitions and prevents the hover-to-content bug. */}
+        
         <PopoverPortal
           element={popoverRef.current}
           scoutElement={scoutRef.current}

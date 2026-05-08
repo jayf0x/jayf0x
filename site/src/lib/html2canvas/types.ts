@@ -13,9 +13,9 @@ export interface ProjectionScene {
   camera: PerspectiveCamera;
   scene: Scene<Object3DEventMap>;
   gltf: GLTFResult;
-  /** Mutate this from outside to drive cursor-based tilt in the render loop. */
-  cursorState: { x: number; y: number, z: number };
-  /** Base model rotation (radians). Tick adds cursor offset on top; update this instead of model.rotation directly. */
+
+  cursorState: { x: number; y: number; z: number };
+
   modelBaseRotation: { x: number; y: number; z: number };
 }
 
@@ -30,12 +30,10 @@ export interface CreateProjectionSceneOptions {
   modelUrl: string;
   container?: HTMLElement;
   cssString?: string | null;
-  // model transform
   modelScale?: number;
   modelFitSize?: number;
   modelPosition?: Vec3;
   modelRotation?: Vec3;
-  // camera
   cameraFov?: number;
   cameraPosition?: Vec3;
   cameraLookAt?: Vec3;

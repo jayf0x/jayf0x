@@ -7,9 +7,7 @@ const terminalLines = [
   "Frontend engineer++",
   "Friction > Problem > Solution",
   "Bridging users and tech",
-  // "builds real-time 3D annotation projection",
   "Frontend Engineering ☕",
-  // "solarsystem in CSS",
   "Quality > Speed ",
   "Challenge me: www.chess.com/member/chaos_70b",
   "('b' + 'a' + + 'a' + 'a').toLowerCase()",
@@ -46,7 +44,6 @@ export const HeroSection = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          {/* <span>~/code</span> <span className="text-(--accent)">❯</span> */}
           <div className="mt-2 min-h-[2rem] text-(--accent)">
             <TypeAnimation
               sequence={terminalLines}

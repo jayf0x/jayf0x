@@ -7,12 +7,6 @@ import {
   resolveOverride,
 } from "@/lib/performanceStore";
 
-/**
- * Register a performance checkpoint and/or subscribe to one.
- *
- * - Providing `percentage` registers this tag in the store (first caller wins per tag).
- * - Returns `enabled = sliderValue >= threshold` so the caller can opt-out of heavy work.
- */
 export const usePerformanceCheckpoint = (
   tag: string,
   percentage: number,
@@ -39,10 +33,12 @@ export const usePerformanceCheckpoint = (
     checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? NaN;
 
   const override = overrides[tag] ?? "auto";
-  return resolveOverride(override, invert ? sliderValue <= threshold : sliderValue >= threshold);
+  return resolveOverride(
+    override,
+    invert ? sliderValue <= threshold : sliderValue >= threshold,
+  );
 };
 
-// only subscribe to value, never overwrite
 export const usePerformanceCheckpointValue = (
   tag: Capitalize<string>,
   invert = false,
@@ -54,5 +50,8 @@ export const usePerformanceCheckpointValue = (
   const threshold = checkpoints.find((c) => c.tag === tag)?.percentage ?? NaN;
 
   const override = overrides[tag] ?? "auto";
-  return resolveOverride(override, invert ? sliderValue <= threshold : sliderValue >= threshold);
+  return resolveOverride(
+    override,
+    invert ? sliderValue <= threshold : sliderValue >= threshold,
+  );
 };

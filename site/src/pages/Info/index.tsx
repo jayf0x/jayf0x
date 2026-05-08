@@ -19,7 +19,6 @@ const CONFIG = {
   },
 } as const;
 
-// ── QA test pattern ───────────────────────────────────────────────────────────
 function TestPattern({ width, height }: { width: number; height: number }) {
   const half = "50%";
   const label = (top: string, left: string): React.CSSProperties => ({

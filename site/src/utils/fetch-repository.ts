@@ -49,7 +49,9 @@ export async function fetchUserRepos(owner: string): Promise<GithubRepo[]> {
   return response.data.filter((r) => !r.fork && r.size > 0);
 }
 
-export async function fetchRepoLanguages(languagesUrl: string): Promise<string[]> {
+export async function fetchRepoLanguages(
+  languagesUrl: string,
+): Promise<string[]> {
   const response = await axios.get<Record<string, number>>(languagesUrl, {
     headers: HEADERS,
   });

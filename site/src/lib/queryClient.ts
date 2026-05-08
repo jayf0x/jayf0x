@@ -14,8 +14,6 @@ export const queryClient = new QueryClient({
   },
 });
 
-/** Thin localStorage cache layer around any async fetch.
- *  Falls back gracefully if localStorage is unavailable. */
 export async function withLocalStorageCache<T>(
   key: string,
   ttl: number,

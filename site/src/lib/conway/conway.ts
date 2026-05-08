@@ -1,8 +1,3 @@
-// Hyper optimized with the goal for true perfection!
-
-// CPU:  flat Uint8Array grid, Canvas 2D direct rendering (no OffscreenCanvas)
-// GPU:  WebGPU compute (no readback) + render pipeline on sibling canvas overlay
-
 export interface ConwayConfig {
   targetCols?: number;
   stepMs?: number;
@@ -26,19 +21,18 @@ const COLORS_CSS_CONWAY = [
 ];
 
 const COLORS_CSS_DAYNIGHT = [
-  "rgb(255,245,220)", // 0 neighbors – bright edge/isolated
-  "rgb(255,215,150)", // 1
-  "rgb(255,180,70)",  // 2
-  "rgb(245,135,25)",  // 3 – birth threshold
-  "rgb(218,90,8)",    // 4
-  "rgb(185,55,4)",    // 5
-  "rgb(150,28,2)",    // 6
-  "rgb(115,10,1)",    // 7
-  "rgb(78,3,1)",      // 8 – deep interior, darkest
+  "rgb(255,245,220)",
+  "rgb(255,215,150)",
+  "rgb(255,180,70)",
+  "rgb(245,135,25)",
+  "rgb(218,90,8)",
+  "rgb(185,55,4)",
+  "rgb(150,28,2)",
+  "rgb(115,10,1)",
+  "rgb(78,3,1)",
 ];
 
-// ── WGSL: compute (one generation step) ─────────────────────────────────────
-const buildComputeWGSL = (isConway: boolean) => /* wgsl */ `
+const buildComputeWGSL = (isConway: boolean) => `
   @group(0) @binding(0) var<storage, read>       cur  : array<u32>;
   @group(0) @binding(1) var<storage, read_write> nxt  : array<u32>;
   @group(0) @binding(2) var<storage, read_write> cnt  : array<u32>;
@@ -81,9 +75,7 @@ ${
   }
 `;
 
-// ── WGSL: render (fullscreen triangle, colors cells by neighbor count) ───────
-// Uses premultiplied alpha: (r*a, g*a, b*a, a)
-const buildRenderWGSL = (isConway: boolean) => /* wgsl */ `
+const buildRenderWGSL = (isConway: boolean) => `
   const CELL_COLORS: array<vec3f, 9> = array<vec3f, 9>(
 ${
   isConway
@@ -134,7 +126,6 @@ ${
     let cx = px / p.cell; let cy = py / p.cell;
     if (cx >= p.cols || cy >= p.rows) { return vec4f(0.0); }
 
-    // 1px gap on each side (matches fillRect cell+1, size cell-2)
     let lx = px % p.cell; let ly = py % p.cell;
     if (lx == 0u || lx >= p.cell - 1u || ly == 0u || ly >= p.cell - 1u) {
       return vec4f(0.0);
@@ -144,47 +135,58 @@ ${
 
     if (grid[i] == 0u) {
       if (i32(cx) == p.hx && i32(cy) == p.hy) {
-        // hover highlight, premultiplied: rgb * 0.12
         return vec4f(0.094, 0.104, 0.12, 0.12);
       }
       return vec4f(0.0);
     }
 
     let c = CELL_COLORS[min(cnt[i], 8u)] / 255.0;
-    return vec4f(c, 1.0);  // alpha=1, no premul needed
+    return vec4f(c, 1.0);
   }
 `;
 
-// ── Known patterns ────────────────────────────────────────────────────────────
-// '.' = dead, 'O' = alive  (ASCII art from Conway.txt / DayNight.txt)
 const CONWAY_PATTERNS: string[][] = [
-  // Glider (diagonal c/4, period 4)
   [".O.", "O..", "OOO"],
-  // LWSS (c/2, period 4)
   [".O..O", "O....", "O...O", "OOOO."],
-  // MWSS (c/2, period 4)
   ["...O..", ".O...O", "O.....", "O....O", "OOOOO."],
-  // HWSS (c/2, period 4)
   ["...OO..", ".O....O", "O......", "O.....O", "OOOOOO."],
-  // Schick engine tagalong (c/2, period 12) — two LWSS needed to drive it,
-  // but placed solo it evolves interestingly
-  ["OOOO.....", "O...O....", "O........", ".O..O..OO", "......OOO",
-   ".O..O..OO", "O........", "O...O....", "OOOO....."],
+  [
+    "OOOO.....",
+    "O...O....",
+    "O........",
+    ".O..O..OO",
+    "......OOO",
+    ".O..O..OO",
+    "O........",
+    "O...O....",
+    "OOOO.....",
+  ],
 ];
 
 const DAYNIGHT_PATTERNS: string[][] = [
-  // Rocket predecessor — spontaneously generates the period-40 rocket (Fig 3)
   [".OO.....", "O.OO....", "OOOOOOOO", "O.OO....", ".OO....."],
-  // Two-rockets predecessor — generates two rockets in opposite directions (Fig 4)
   ["..O...", ".OOOOO", "OOOOO.", ".OOOOO", "..O..."],
-  // Period-32 c/2 spaceship (Fig 9)
-  ["...O....", ".OOO....", "O.OOO.O.", "OOOOO.OO", "O.OOO.O.", ".OOO....", "...O...."],
-  // Snail — period-14 c/7 spaceship (Fig 11)
+  [
+    "...O....",
+    ".OOO....",
+    "O.OOO.O.",
+    "OOOOO.OO",
+    "O.OOO.O.",
+    ".OOO....",
+    "...O....",
+  ],
   ["..O..", "O.OO.", "OOOOO", "O.OO.", "..O.."],
-  // Butterfly — diagonal period-3 c/3 spaceship (Fig 10)
   [".OOO.", "O.OOO", "OO...", "OO...", ".O..."],
-  // Period-2 even-symmetry c/2 spaceship (Fig 5)
-  ["....OOO..", "..O.OO...", ".OOOOOO.O", "OOOOOOOO.", "OOOOOOOO.", ".OOOOOO.O", "..O.OO...", "....OOO.."],
+  [
+    "....OOO..",
+    "..O.OO...",
+    ".OOOOOO.O",
+    "OOOOOOOO.",
+    "OOOOOOOO.",
+    ".OOOOOO.O",
+    "..O.OO...",
+    "....OOO..",
+  ],
 ];
 
 export function createConwayEngine(
@@ -198,7 +200,6 @@ export function createConwayEngine(
   const WGSL_COMPUTE = buildComputeWGSL(isConway);
   const WGSL_RENDER = buildRenderWGSL(isConway);
 
-  // ── shared grid state ─────────────────────────────────────────────────────
   let cols = 0,
     rows = 0,
     cell = 0,
@@ -227,7 +228,8 @@ export function createConwayEngine(
     for (let r = 0; r < pattern.length; r++) {
       for (let c = 0; c < pattern[r].length; c++) {
         if (pattern[r][c] === "O") {
-          const gx = ox + c, gy = oy + r;
+          const gx = ox + c,
+            gy = oy + r;
           if (gx >= 0 && gx < cols && gy >= 0 && gy < rows)
             current[gy * cols + gx] = 1;
         }
@@ -239,7 +241,6 @@ export function createConwayEngine(
     current.fill(0);
     const patterns = isConway ? CONWAY_PATTERNS : DAYNIGHT_PATTERNS;
     const margin = 5;
-    // Scale count to grid area, minimum 6
     const count = Math.max(6, Math.round((cols * rows) / 350));
     for (let i = 0; i < count; i++) {
       const p = patterns[i % patterns.length];
@@ -254,7 +255,6 @@ export function createConwayEngine(
     }
   };
 
-  // ── CPU step ──────────────────────────────────────────────────────────────
   const cpuStep = () => {
     counts.fill(0);
     for (let y = 0; y < rows; y++) {
@@ -305,7 +305,6 @@ export function createConwayEngine(
     scratch = tmp;
   };
 
-  // ── CPU render ────────────────────────────────────────────────────────────
   const ctx2d = canvas.getContext("2d", { willReadFrequently: false })!;
   ctx2d.imageSmoothingEnabled = false;
   const buckets: number[][] = Array.from({ length: 9 }, () => []);
@@ -358,15 +357,14 @@ export function createConwayEngine(
     raf = requestAnimationFrame(cpuLoop);
   };
 
-  // ── WebGPU ────────────────────────────────────────────────────────────────
   let gpuDevice: GPUDevice | null = null;
   let gpuCanvas: HTMLCanvasElement | null = null;
   let gpuCtx: GPUCanvasContext | null = null;
   let gpuFormat: GPUTextureFormat = "bgra8unorm";
 
-  let gpuBufA: GPUBuffer | null = null; // grid state A (ping)
-  let gpuBufB: GPUBuffer | null = null; // grid state B (pong)
-  let gpuBufCnt: GPUBuffer | null = null; // neighbor counts
+  let gpuBufA: GPUBuffer | null = null;
+  let gpuBufB: GPUBuffer | null = null;
+  let gpuBufCnt: GPUBuffer | null = null;
   let gpuBufDims: GPUBuffer | null = null;
   let gpuBufParams: GPUBuffer | null = null;
 
@@ -376,9 +374,8 @@ export function createConwayEngine(
   let computeBG_BA: GPUBindGroup | null = null;
   let renderBG_A: GPUBindGroup | null = null;
   let renderBG_B: GPUBindGroup | null = null;
-  let gpuFlip = false; // false=A is current, true=B is current
+  let gpuFlip = false;
 
-  // Reused render-params buffer: cols, rows, cell, hoverX, hoverY + 3× padding
   const rpBuf = new ArrayBuffer(32);
   const rpU32 = new Uint32Array(rpBuf);
   const rpI32 = new Int32Array(rpBuf);
@@ -408,7 +405,6 @@ export function createConwayEngine(
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
-    // Upload dims and initial state
     gpuDevice.queue.writeBuffer(gpuBufDims, 0, new Uint32Array([cols, rows]));
     const u32 = new Uint32Array(current);
     gpuDevice.queue.writeBuffer(gpuBufA, 0, u32);
@@ -464,13 +460,11 @@ export function createConwayEngine(
       }
       gpuFormat = navigator.gpu.getPreferredCanvasFormat();
 
-      // Overlay canvas — pointer-events:none so mouse falls through to CPU canvas
       gpuCanvas = document.createElement("canvas");
       gpuCanvas.style.cssText =
         "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none";
       gpuCanvas.width = canvas.width;
       gpuCanvas.height = canvas.height;
-      // Insert after CPU canvas but before button overlay (DOM order = z-order)
       canvas.parentElement!.insertBefore(gpuCanvas, canvas.nextSibling);
 
       gpuCtx = gpuCanvas.getContext("webgpu") as GPUCanvasContext | null;
@@ -499,7 +493,7 @@ export function createConwayEngine(
       initGPUBuffers();
 
       cancelAnimationFrame(raf);
-      ctx2d.clearRect(0, 0, canvas.width, canvas.height); // CPU canvas stays visible for events; clearRect = transparent
+      ctx2d.clearRect(0, 0, canvas.width, canvas.height);
       gpuCanvas.style.display = "block";
       mode = "gpu";
       lastStep = performance.now();
@@ -532,7 +526,6 @@ export function createConwayEngine(
     const shouldStep = !paused && now - lastStep > stepMs;
     if (shouldStep) lastStep = now;
 
-    // Update hover uniform
     rpU32[0] = cols;
     rpU32[1] = rows;
     rpU32[2] = cell;
@@ -551,7 +544,6 @@ export function createConwayEngine(
       gpuFlip = !gpuFlip;
     }
 
-    // Render: read from current buffer (A when flip=false, B when flip=true)
     const renderBG = gpuFlip ? renderBG_B : renderBG_A;
     const renderPass = enc.beginRenderPass({
       colorAttachments: [
@@ -572,7 +564,6 @@ export function createConwayEngine(
     raf = requestAnimationFrame(gpuLoop);
   };
 
-  // ── resize ────────────────────────────────────────────────────────────────
   const onResize = (w = canvas.clientWidth, h = canvas.clientHeight) => {
     const width = w || window.innerWidth;
     const height = h || window.innerHeight;
@@ -593,7 +584,6 @@ export function createConwayEngine(
     if (r) onResize(r.width, r.height);
   });
 
-  // ── events ────────────────────────────────────────────────────────────────
   const onKey = (e: KeyboardEvent) => {
     if (e.code === "Space") {
       e.preventDefault();
@@ -619,16 +609,14 @@ export function createConwayEngine(
       y = Math.floor(e.offsetY / cell);
     if (x < 0 || x >= cols || y < 0 || y >= rows) return;
     const i = y * cols + x;
-    current[i] = 1; // keep CPU array consistent (used on resize re-seed)
+    current[i] = 1;
     if (gpuDevice) {
-      // Write single cell directly to current GPU buffer — no full upload needed
       const curBuf = gpuFlip ? gpuBufB : gpuBufA;
       if (curBuf)
         gpuDevice.queue.writeBuffer(curBuf, i * 4, new Uint32Array([1]));
     }
   };
 
-  // ── init ──────────────────────────────────────────────────────────────────
   onResize();
   ro.observe(canvas);
   window.addEventListener("keydown", onKey);
@@ -636,7 +624,7 @@ export function createConwayEngine(
   canvas.addEventListener("mousemove", onMove);
   canvas.addEventListener("mouseleave", onLeave);
   raf = requestAnimationFrame(cpuLoop);
-  initGPU(); // async — switches to GPU loop when ready
+  initGPU();
 
   const destroy = () => {
     destroyed = true;
@@ -657,6 +645,8 @@ export function createConwayEngine(
 
   return {
     destroy,
-    setPaused: (p: boolean) => { paused = p; },
+    setPaused: (p: boolean) => {
+      paused = p;
+    },
   };
 }

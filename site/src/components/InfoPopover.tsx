@@ -45,10 +45,10 @@ const PopoverContent = ({ items }: { items: InfoPopoverProps["items"] }) => (
       boxShadow: "0 24px 64px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03) inset",
     }}
   >
-    {/* Traveling snake highlight on the border */}
+    
     <div className="ip-snake" aria-hidden />
 
-    {/* Glass panel — sits above the snake */}
+    
     <div className="relative z-10 backdrop-blur-[28px] backdrop-saturate-200 rounded-[14.5px] overflow-hidden min-w-[196px] max-w-[276px] bg-(--ip-glass)">
       {items.map(([label, href], i) => (
         <motion.div

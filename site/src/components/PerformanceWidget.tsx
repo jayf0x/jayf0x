@@ -19,7 +19,6 @@ const AMBER_DIM = "rgba(245,158,11,0.18)";
 const AMBER_MID = "rgba(245,158,11,0.4)";
 const AMBER_GLOW = "rgba(245,158,11,0.08)";
 
-
 function cycleOverride(current: OverrideState): OverrideState {
   if (current === 'auto') return 'off';
   if (current === 'off') return 'on';
@@ -28,7 +27,6 @@ function cycleOverride(current: OverrideState): OverrideState {
 }
 
 export const PerformanceWidget = () => {
-  // const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useAtom(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
@@ -63,11 +61,8 @@ export const PerformanceWidget = () => {
     [setOverrides],
   );
 
-  // if (isMobile) return null;
-
   return (
     <div className="flex flex-col items-end gap-2">
-      {/* Expandable speech bubble panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -88,7 +83,6 @@ export const PerformanceWidget = () => {
                 boxShadow: `0 8px 40px rgba(0,0,0,0.65), 0 0 0 1px ${AMBER_GLOW} inset, 0 0 32px ${AMBER_GLOW}`,
               }}
             >
-              {/* Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span
@@ -123,7 +117,6 @@ export const PerformanceWidget = () => {
                 </span>
               </div>
 
-              {/* Checkpoint labels above slider */}
               {checkpoints.length > 0 && (
                 <div className="relative h-7 mb-0.5">
                   {checkpoints.map((cp, idx) => {
@@ -172,7 +165,6 @@ export const PerformanceWidget = () => {
                 </div>
               )}
 
-              {/* Draggable track */}
               <div
                 ref={trackRef}
                 className="relative cursor-ew-resize"
@@ -192,7 +184,6 @@ export const PerformanceWidget = () => {
                   dragging.current = false;
                 }}
               >
-                {/* Track groove */}
                 <div
                   className="absolute inset-x-0 overflow-hidden"
                   style={{
@@ -218,7 +209,6 @@ export const PerformanceWidget = () => {
                   />
                 </div>
 
-                {/* Ruler ticks */}
                 {TICKS.map((tick) => {
                   const major = tick % 25 === 0;
                   const mid = tick % 10 === 0;
@@ -244,7 +234,6 @@ export const PerformanceWidget = () => {
                   );
                 })}
 
-                {/* Checkpoint track marks */}
                 {checkpoints.map((cp, idx) => {
                   const overridden = (overrides[cp.tag] ?? 'auto') !== 'auto';
                   const active = value >= cp.percentage;
@@ -276,7 +265,6 @@ export const PerformanceWidget = () => {
                   );
                 })}
 
-                {/* Thumb */}
                 <div
                   className="absolute top-0 bottom-0 flex items-center justify-center pointer-events-none z-20"
                   style={{ left: `${value}%`, transform: "translateX(-50%)" }}
@@ -308,7 +296,6 @@ export const PerformanceWidget = () => {
                 </div>
               </div>
 
-              {/* Scale labels */}
               <div className="relative mt-1" style={{ height: 14 }}>
                 {SCALE_LABELS.map((v) => (
                   <span
@@ -321,7 +308,6 @@ export const PerformanceWidget = () => {
                 ))}
               </div>
 
-              {/* Per-checkpoint override list */}
               {checkpoints.length > 0 && (
                 <div
                   className="mt-4 pt-3 space-y-1"
@@ -337,7 +323,6 @@ export const PerformanceWidget = () => {
                         key={`override-checkpoint-tag-${cp.tag}`}
                         className="flex items-center justify-between gap-3 py-1"
                       >
-                        {/* Tag + effective state dot */}
                         <div className="flex items-center gap-2 min-w-0">
                           <span
                             className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300"
@@ -373,7 +358,6 @@ export const PerformanceWidget = () => {
                           </span>
                         </div>
 
-                        {/* Override toggle */}
                         <button
                           type="button"
                           onClick={() => toggleOverride(cp.tag)}
@@ -421,7 +405,6 @@ export const PerformanceWidget = () => {
               )}
             </div>
 
-            {/* Speech bubble tail */}
             <div
               className="absolute -bottom-[5px] right-[19px]"
               style={{
@@ -438,7 +421,6 @@ export const PerformanceWidget = () => {
         )}
       </AnimatePresence>
 
-      {/* Trigger button — always visible, matches ChatWidget FAB size */}
       <motion.button
         type="button"
         onClick={() => setIsOpen((v) => !v)}

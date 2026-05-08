@@ -10,8 +10,6 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { TypeAnimation } from "react-type-animation";
 import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
 
-// ── Slot rotation ─────────────────────────────────────────────────────────────
-
 type AdComp = React.FC;
 
 const SLOT_INTERVALS = [14000, 21000, 11000, 27000];
@@ -31,8 +29,6 @@ const SLOT_SIZES = [
 ];
 
 type Slot = { Ad: AdComp; v: number };
-
-// ── Shell ─────────────────────────────────────────────────────────────────────
 
 const FloatingPanel = ({
   children,
@@ -63,8 +59,6 @@ const FloatingPanel = ({
     </div>
   );
 };
-
-// ── Main ──────────────────────────────────────────────────────────────────────
 
 export const FakeAds = () => {
   const isMobile = useIsMobile();
@@ -155,8 +149,6 @@ export const FakeAds = () => {
   );
 };
 
-// ── Ad: Matrix / Crypto ───────────────────────────────────────────────────────
-
 const MatrixRain: AdComp = () => (
   <div className="relative size-full bg-black overflow-hidden">
     <img
@@ -204,8 +196,6 @@ const MatrixRain: AdComp = () => (
   </div>
 );
 
-// ── Ad: Edo Japan / js-canvas ─────────────────────────────────────────────────
-
 const IdyllicLandscape: AdComp = () => (
   <a
     href="https://github.com/jayf0x/js-canvas"
@@ -217,7 +207,7 @@ const IdyllicLandscape: AdComp = () => (
       className="absolute inset-0 w-full h-full object-cover scale-110"
       src="https://raw.githubusercontent.com/jayf0x/js-canvas/main/previews/trees.gif"
     />
-    {/* vintage sepia crush */}
+    
     <div
       className="absolute inset-0"
       style={{
@@ -225,7 +215,7 @@ const IdyllicLandscape: AdComp = () => (
           "linear-gradient(to bottom, rgba(50,18,0,0.5) 0%, rgba(10,4,0,0.97) 65%)",
       }}
     />
-    {/* paper grain */}
+    
     <div
       className="absolute inset-0 pointer-events-none"
       style={{
@@ -234,7 +224,7 @@ const IdyllicLandscape: AdComp = () => (
       }}
     />
     <div className="absolute inset-0 flex flex-col justify-between p-3">
-      {/* official stamp */}
+      
       <div className="flex items-center">
         <span
           className="text-[7px] font-bold px-1.5 py-0.5 tracking-widest uppercase"
@@ -248,7 +238,7 @@ const IdyllicLandscape: AdComp = () => (
           ✈ TOURISM BOARD OF EDO — EST. 1600
         </span>
       </div>
-      {/* hero text */}
+      
       <div>
         <p
           className="font-black leading-none uppercase"
@@ -292,8 +282,6 @@ const IdyllicLandscape: AdComp = () => (
     </div>
   </a>
 );
-
-// ── Ad: Windows 98 ────────────────────────────────────────────────────────────
 
 const Win98Ad: AdComp = () => (
   <a
@@ -365,8 +353,6 @@ const Win98Ad: AdComp = () => (
   </a>
 );
 
-// ── Ad: fluidity — WebGL fluid sim ────────────────────────────────────────────
-
 const FluidityAd: AdComp = () => (
   <a
     href="https://www.npmjs.com/package/@jayf0x/fluidity-js"
@@ -431,8 +417,6 @@ const FluidityAd: AdComp = () => (
   </a>
 );
 
-// ── Ad: PIIPAYA — PII anonymizer ──────────────────────────────────────────────
-
 const Redact = ({ w }: { w: number }) => (
   <span
     className="inline-block rounded-sm align-middle mx-0.5"
@@ -492,8 +476,6 @@ const PiipayaAd: AdComp = () => (
   </a>
 );
 
-// ── Ad: audio-bonanza — military sound poster ─────────────────────────────────
-
 const RED_BAR_COLORS = [
   "#4d0000",
   "#660000",
@@ -532,7 +514,7 @@ const AudioBonanzaAd: AdComp = () => {
       className="relative block size-full overflow-hidden"
       style={{ background: "#000" }}
     >
-      {/* scanlines */}
+      
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
@@ -540,7 +522,7 @@ const AudioBonanzaAd: AdComp = () => {
             "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,0,0,0.04) 3px, rgba(255,0,0,0.04) 4px)",
         }}
       />
-      {/* red bars */}
+      
       <div
         className="absolute bottom-0 left-0 right-0 flex items-end gap-px px-1"
         style={{ height: "45%" }}
@@ -558,7 +540,7 @@ const AudioBonanzaAd: AdComp = () => {
           />
         ))}
       </div>
-      {/* dark fade over bars */}
+      
       <div
         className="absolute inset-0"
         style={{
@@ -566,7 +548,7 @@ const AudioBonanzaAd: AdComp = () => {
             "linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%)",
         }}
       />
-      {/* text */}
+      
       <div className="absolute inset-0 flex flex-col items-center justify-start pt-3 px-2 text-center z-10">
         <span
           className="text-[7px] font-bold tracking-widest uppercase mb-2"
@@ -602,8 +584,6 @@ const AudioBonanzaAd: AdComp = () => {
   );
 };
 
-// ── Ad: Aqtive — keep Mac awake ───────────────────────────────────────────────
-
 const AqtiveAd: AdComp = () => (
   <a
     href="https://github.com/jayf0x/Aqtive"
@@ -612,7 +592,7 @@ const AqtiveAd: AdComp = () => (
     className="relative block size-full overflow-hidden"
     style={{ background: "#010d01" }}
   >
-    {/* pulsing green glow */}
+    
     <div
       className="absolute inset-0 animate-pulse"
       style={{
@@ -660,8 +640,6 @@ const AqtiveAd: AdComp = () => (
     </div>
   </a>
 );
-
-// ── Ad: zippit — AES-256 encryption ──────────────────────────────────────────
 
 const ZIPPIT_LINES = [
   { text: "$ zippit seal ./secrets", color: "#fff" },
@@ -723,8 +701,6 @@ const ZippitAd: AdComp = () => {
     </a>
   );
 };
-
-// ── Ad: Pure-Paste — URL cleaner ──────────────────────────────────────────────
 
 const DIRTY = "shop.com/item?id=42&utm_source=fb&fbclid=abc&ref=feed";
 const CLEAN = "shop.com/item?id=42";
@@ -803,8 +779,6 @@ const PurePasteAd: AdComp = () => {
   );
 };
 
-// ── Ad: Duck Test — self-care PSA ────────────────────────────────────────────
-
 const DuckAd: AdComp = () => (
   <a
     href="https://en.wikipedia.org/wiki/Duck_test"
@@ -817,7 +791,7 @@ const DuckAd: AdComp = () => (
       style={{ filter: "contrast(1.3) saturate(0.7) brightness(0.85)" }}
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXd1M2N2bnNqdGVydTU3cDcyaXM1ZjhubjNoZnJsam14enRiNTFseSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1gQuJbdCaihTIqu2lB/giphy.gif"
     />
-    {/* dramatic vignette */}
+    
     <div
       className="absolute inset-0"
       style={{
@@ -825,7 +799,7 @@ const DuckAd: AdComp = () => (
           "radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(0,0,0,0.75) 100%)",
       }}
     />
-    {/* clinical teal tint */}
+    
     <div
       className="absolute inset-0"
       style={{
@@ -874,8 +848,6 @@ const DuckAd: AdComp = () => (
   </a>
 );
 
-// ── Ad: cli-utils — full-screen carousel ─────────────────────────────────────
-
 const CLI_SLIDES = [
   {
     name: ":git-nuke()",
@@ -920,7 +892,6 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? "-40%" : "40%", opacity: 0 }),
 };
 
-// expo-out: blazing fast start → hard decelerate to stop (slot machine feel)
 const EXPO_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const CliUtilsAd: AdComp = () => {
@@ -961,7 +932,7 @@ const CliUtilsAd: AdComp = () => {
           }}
           className="absolute inset-0 flex flex-col justify-between p-3"
         >
-          {/* tool name */}
+          
           <span
             className="text-xl"
             style={{
@@ -972,7 +943,7 @@ const CliUtilsAd: AdComp = () => {
           >
             $ {slide.name}
           </span>
-          {/* headline */}
+          
           <div>
             <p
               className="font-black leading-none uppercase whitespace-pre-line"
@@ -992,7 +963,7 @@ const CliUtilsAd: AdComp = () => {
               {slide.tagline}
             </p>
           </div>
-          {/* progress dots */}
+          
           <div className="flex items-center gap-1.5">
             {CLI_SLIDES.map((_, i) => (
               <div

@@ -23,10 +23,8 @@ const STATUS_MESSAGES = [
   "Reading ancient weights",
 ];
 
-// Module-level set so animation state survives open/close without replaying
 const animatedIds = new Set<string>(["init"]);
 
-// Strip all " chars and blank lines from raw model output
 const cleanResponse = (raw: string): string =>
   raw
     .split("\n")
@@ -34,7 +32,6 @@ const cleanResponse = (raw: string): string =>
     .filter((l) => l.length > 0)
     .join("\n");
 
-// Find where repetition begins, return unique prefix + repeated suffix
 const splitAtRepeat = (text: string): { unique: string; repeated: string } => {
   const lines = text.split("\n").filter((l) => l.length > 0);
   const counts = new Map<string, number>();
@@ -56,7 +53,6 @@ const splitAtRepeat = (text: string): { unique: string; repeated: string } => {
   };
 };
 
-// ── Bot message bubble with repeat detection + Show more ──────────────────
 const BotMessage = ({
   id,
   content,
@@ -98,7 +94,6 @@ const BotMessage = ({
         <span className="whitespace-pre-wrap">{unique}</span>
       )}
 
-      {/* Expanded repeated block */}
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div
@@ -122,7 +117,6 @@ const BotMessage = ({
         )}
       </AnimatePresence>
 
-      {/* Show more / less toggle */}
       {hasRepeat && typed && (
         <motion.button
           initial={{ opacity: 0, y: 3 }}
@@ -148,8 +142,6 @@ const BotMessage = ({
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -169,7 +161,6 @@ export const ChatWidget = () => {
   const elapsedTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prevResponseRef = useRef<string | null>(null);
 
-  // Init connection on first open
   useEffect(() => {
     if (isOpen) {
       init();
@@ -178,7 +169,6 @@ export const ChatWidget = () => {
     }
   }, [isOpen, init]);
 
-  // Append bot response when it arrives
   useEffect(() => {
     if (response !== null && response !== prevResponseRef.current) {
       prevResponseRef.current = response;
@@ -190,7 +180,6 @@ export const ChatWidget = () => {
     }
   }, [response]);
 
-  // Countdown from first ETA received
   useEffect(() => {
     if (isPending && eta !== null && initialEtaRef.current === null) {
       initialEtaRef.current = eta;
@@ -208,7 +197,6 @@ export const ChatWidget = () => {
     return () => {};
   }, [isPending, eta]);
 
-  // Elapsed stopwatch
   useEffect(() => {
     if (isPending) {
       setElapsed(0);
@@ -225,7 +213,6 @@ export const ChatWidget = () => {
     };
   }, [isPending]);
 
-  // Cycle status messages while pending
   useEffect(() => {
     if (!isPending) return;
     const id = setInterval(
@@ -240,7 +227,6 @@ export const ChatWidget = () => {
     return () => clearInterval(id);
   }, [isPending]);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isPending]);
@@ -330,7 +316,6 @@ export const ChatWidget = () => {
               height: "520px",
             }}
           >
-            {/* ── Header ── */}
             <div
               className="flex items-center justify-between px-4 py-3 shrink-0"
               style={{
@@ -369,7 +354,6 @@ export const ChatWidget = () => {
               </button>
             </div>
 
-            {/* ── Messages ── */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-0">
               {messages.map((msg) => {
                 const shouldAnimate = !!msg.animate && !animatedIds.has(msg.id);
@@ -428,7 +412,6 @@ export const ChatWidget = () => {
                 );
               })}
 
-              {/* ── Pending dots ── */}
               <AnimatePresence>
                 {isPending && (
                   <motion.div
@@ -473,7 +456,6 @@ export const ChatWidget = () => {
                 )}
               </AnimatePresence>
 
-              {/* ── Error ── */}
               <AnimatePresence>
                 {error && (
                   <motion.div
@@ -500,7 +482,6 @@ export const ChatWidget = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* ── Status bar (slides in above input while pending) ── */}
             <AnimatePresence>
               {isPending && (
                 <motion.div
@@ -511,7 +492,6 @@ export const ChatWidget = () => {
                   style={{ borderTop: "1px solid rgba(255,255,255,0.055)" }}
                 >
                   <div className="px-4 pt-2.5 pb-3">
-                    {/* Controls row: elapsed · countdown · cancel */}
                     <div className="flex items-center justify-between mb-2">
                       <span
                         className="text-[11px] tabular-nums"
@@ -544,7 +524,6 @@ export const ChatWidget = () => {
                       </div>
                     </div>
 
-                    {/* Status label floating above progress bar */}
                     <div className="relative">
                       <div className="mb-1.5 h-4 flex items-center">
                         <AnimatePresence mode="wait">
@@ -562,7 +541,6 @@ export const ChatWidget = () => {
                         </AnimatePresence>
                       </div>
 
-                      {/* Full-width progress bar */}
                       <div
                         className="h-[3px] rounded-full overflow-hidden w-full"
                         style={{ background: "rgba(255,255,255,0.06)" }}
@@ -589,7 +567,6 @@ export const ChatWidget = () => {
               )}
             </AnimatePresence>
 
-            {/* ── Input area ── */}
             <div
               className="px-3 py-3 shrink-0"
               style={{
@@ -639,7 +616,6 @@ export const ChatWidget = () => {
         )}
       </AnimatePresence>
 
-      {/* ── FAB — hides when chat is open ── */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button

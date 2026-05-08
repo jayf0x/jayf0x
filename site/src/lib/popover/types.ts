@@ -68,7 +68,7 @@ export type BasePopoverProps = {
   parentElement?: HTMLElement;
   boundaryElement?: HTMLElement;
   boundaryInset?: number;
-  containerClassName?: React.HTMLAttributes<HTMLElement>['className'];
+  containerClassName?: React.HTMLAttributes<HTMLElement>["className"];
   transform?: PositionTransform;
   transformMode?: "relative" | "absolute";
 };
@@ -88,13 +88,13 @@ export type PopoverProps = BasePopoverProps & {
   containerStyle?: Partial<CSSStyleDeclaration>;
   onClickOutside?: (e: MouseEvent) => void;
   clickOutsideCapture?: boolean;
-  /** Controlled open state. If provided, the component is fully controlled. */
+
   isOpen?: boolean;
-  /** Uncontrolled: manages open state based on user interaction. */
+
   trigger?: PopoverTrigger;
-  /** Initial open state for uncontrolled mode. */
+
   defaultOpen?: boolean;
-  /** Called when open state changes in uncontrolled mode. */
+
   onOpenChange?: (open: boolean) => void;
 };
 
