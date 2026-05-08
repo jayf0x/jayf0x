@@ -1,0 +1,52 @@
+:root {
+  --ip-glass: rgba(7, 7, 11, 0.97);
+}
+
+/* Animate the conic-gradient start angle as a typed property */
+@property --snake-a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/*
+  Single snake that travels around the popover border.
+  Technique: conic-gradient (for the snake light) + mask punch-out (to show only
+  the border ring, hiding the center).
+*/
+.ip-snake {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+
+  background: conic-gradient(
+    from var(--snake-a),
+    transparent        0%,
+    transparent        72%,
+    rgba(79,124,255,0.03) 77%,
+    rgba(79,124,255,0.12) 83%,
+    rgba(79,124,255,0.32) 88%,
+    rgba(79,124,255,0.60) 92%,
+    rgba(79,124,255,0.82) 95%,
+    rgba(79,124,255,0.95) 97%,
+    rgba(79,124,255,0.50) 98%,
+    rgba(79,124,255,0.15) 99%,
+    transparent        100%
+  );
+
+  /* Punch out the center — only the 1.5 px border ring remains visible */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  padding: 1.5px;
+
+  animation: ip-snake 6s linear infinite;
+}
+
+@keyframes ip-snake {
+  to { --snake-a: 360deg; }
+}

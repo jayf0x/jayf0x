@@ -12,6 +12,7 @@ export interface ProjectionScene {
   dispose: () => void;
   camera: PerspectiveCamera;
   scene: Scene<Object3DEventMap>;
+  gltf: GLTFResult
 }
 
 interface Vec3 {

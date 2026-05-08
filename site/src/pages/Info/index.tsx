@@ -3,6 +3,7 @@ import { createProjectionScene } from "@/lib/html2canvas";
 import { ProjectionScene } from "@/lib/html2canvas/types";
 import { useMotionValue, useSpring } from "framer-motion";
 import { devLog } from "@/utils/logger";
+import { Vector3 } from "three";
 
 const degRad = (i: number) => i * (Math.PI / 180);
 
@@ -11,21 +12,23 @@ const CFG = {
   modelFitSize: 5,
   modelPosition: { x: 0, y: 0, z: 0 },
   // modelRotation: { x: 0, y: 0, z: 0 },
-  modelRotation: { x: 0, y: degRad(90), z: 0 },
+  modelRotation: { x: 0, y: 0, z: degRad(45) },
 
   cameraFov: 45,
   // cameraPosition: { x: 0, y: 0, z: 8 },
-  cameraPosition: {
-    x: -0.3093573213067368,
-    y: -16.592985856922276,
-    z: -10.08697472836774,
-  },
+  // cameraPosition: {
+  //   // x: -0.3093573213067368,
+  //   // y: -16.592985856922276,
+  //   // z: -10.08697472836774,
+
+  //    x: 3.943741794926122, y: -16.57785902234177, z: -14.259455895336746
+  // },
   // cameraLookAt: { x: 0, y: 0, z: 0 },
-  cameraLookAt: {
-    x: -0.30935845005601864,
-    y: -8.770618930884208,
-    z: -10.08698247272932,
-  },
+  // cameraLookAt: {
+  //   x: -0.30935845005601864,
+  //   y: -8.770618930884208,
+  //   z: -10.08698247272932,
+  // },
 };
 
 // ── QA test pattern ───────────────────────────────────────────────────────────
@@ -277,6 +280,7 @@ const useSceneRotation = (scene: ProjectionScene | null) => {
   useEffect(() => {
     let frameId: number;
 
+    
     let i = 0
     const loop = () => {
       if (scene) {
@@ -285,8 +289,10 @@ const useSceneRotation = (scene: ProjectionScene | null) => {
         const y = smoothCursorY.get();
         // scene.camera.rotation.z = x * 0.15;
         // scene.camera.rotation.y = y * 0.15;
+        const rot = new Vector3(x, y, 0)
+        // scene.scene.setRotationFromAxisAngle(rot, 0) // (degRad(x))
+        // window.scene = scene
 
-        scene.scene.rotateZ(degRad(x))
 
         // scene.camera.rotation.z = x;
         // scene.camera.rotation.y = y;
@@ -295,7 +301,7 @@ const useSceneRotation = (scene: ProjectionScene | null) => {
       frameId = requestAnimationFrame(loop);
     };
 
-    loop();
+    // loop();
 
     return () => cancelAnimationFrame(frameId);
   }, [scene, smoothCursorX, smoothCursorY]);

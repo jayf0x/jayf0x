@@ -26,7 +26,7 @@ import {
 } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { CreateProjectionSceneOptions, GLTFResult } from "./types";
+import { CreateProjectionSceneOptions, GLTFResult, ProjectionScene } from "./types";
 import { devLog } from "@/utils/logger";
 
 // ── CSS collection ────────────────────────────────────────────────────────────
@@ -251,7 +251,7 @@ export async function createProjectionScene({
   cameraFov = 45,
   cameraPosition = { x: 0, y: 0, z: 8 },
   cameraLookAt = { x: 0, y: 0, z: 0 },
-}: CreateProjectionSceneOptions) {
+}: CreateProjectionSceneOptions): Promise<ProjectionScene> {
   const width = container.clientWidth;
   const height = container.clientHeight;
   const aspect = width / height;
@@ -389,5 +389,5 @@ export async function createProjectionScene({
     canvas.remove();
   }
 
-  return { dispose, camera, scene };
+  return { dispose, camera, scene, gltf };
 }
