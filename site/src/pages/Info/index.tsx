@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createProjectionScene } from "@/lib/html2canvas";
 import { ProjectionScene } from "@/lib/html2canvas/types";
-import {  useMotionValue, useSpring } from "framer-motion";
+import { useMotionValue, useSpring } from "framer-motion";
 import { devLog } from "@/utils/logger";
-
 
 const degRad = (i: number) => i * (Math.PI / 180);
 
@@ -170,7 +169,7 @@ export const Info = () => {
   useEffect(() => {
     const container = containerRef.current;
     const page = pageRef.current;
-    if (!container || !page) return;
+    if (!container || !page || !dims.w) return;
 
     let mounted = true;
     let _scene: typeof scene = null;
@@ -182,14 +181,14 @@ export const Info = () => {
       cssString: "", // test pattern uses only inline styles — skip CSS collection
       ...CFG,
     })
-      .catch((err) => {
-        devLog("Projection scene failed:", err);
-        return null;
-      })
-      ?.then((res) => {
+      .then((res) => {
         if (!mounted) return;
         setScene(res);
         _scene = res;
+      })
+      .catch((err) => {
+        devLog("Projection scene failed:", err);
+        return null;
       });
 
     return () => {
@@ -198,7 +197,7 @@ export const Info = () => {
       _scene?.dispose?.();
       setScene(null);
     };
-  }, []);
+  }, [dims]);
 
   const isLoading = !scene;
 
@@ -255,14 +254,41 @@ const useSceneRotation = (scene: ProjectionScene | null) => {
     };
   }, [cursorX, cursorY]);
 
+  // useEffect(() => {
+  //   let frameId: number;
+
+  //   let i = 0;
+  //   const loop = () => {
+  //     if (scene) {
+  //       i++;
+  //       // scene.camera.rotation.z = degRad(i/10);
+  //       // scene.camera.rotation.y = i;
+  //       // scene.scene.rotateY(degRad(Math.sin(i / 1000) * 10))
+  //     }
+
+  //     frameId = requestAnimationFrame(loop);
+  //   };
+
+  //   loop();
+
+  //   return () => cancelAnimationFrame(frameId);
+  // }, [scene]);
+
   useEffect(() => {
     let frameId: number;
 
-    let i = 0;
+    let i = 0
     const loop = () => {
       if (scene) {
-        i++;
-        scene.camera.rotation.z += degRad(i);
+        i++
+        const x = smoothCursorX.get();
+        const y = smoothCursorY.get();
+        // scene.camera.rotation.z = x * 0.15;
+        // scene.camera.rotation.y = y * 0.15;
+
+        scene.scene.rotateZ(degRad(x))
+
+        // scene.camera.rotation.z = x;
         // scene.camera.rotation.y = y;
       }
 
@@ -272,29 +298,5 @@ const useSceneRotation = (scene: ProjectionScene | null) => {
     loop();
 
     return () => cancelAnimationFrame(frameId);
-  }, [scene]);
-
-  // useEffect(() => {
-  //   let frameId: number;
-
-  //   let i = 0
-  //   const loop = () => {
-  //     if (scene) {
-  //       i++
-  //       const x = smoothCursorX.get();
-  //       const y = smoothCursorY.get();
-  //       // scene.camera.rotation.z = x * 0.15;
-  //       // scene.camera.rotation.y = y * 0.15;
-
-  //       scene.camera.rotation.z = x;
-  //       scene.camera.rotation.y = y;
-  //     }
-
-  //     frameId = requestAnimationFrame(loop);
-  //   };
-
-  //   loop();
-
-  //   return () => cancelAnimationFrame(frameId);
-  // }, [scene, smoothCursorX, smoothCursorY]);
+  }, [scene, smoothCursorX, smoothCursorY]);
 };

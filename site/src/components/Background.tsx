@@ -56,12 +56,14 @@ export const Background = () => {
   return (
     <div
       className={`fixed inset-0 overflow-hidden ${showVoid ? "z-10" : "-z-10"}`}
-      title="bun add @jayf0x/fluidity-js"
     >
       {showVoid && <Void />}
 
       {showBackground && (
-        <div className="absolute inset-0 opacity-100">
+        <div
+          className="absolute inset-0 opacity-100"
+          title="bun add @jayf0x/fluidity-js"
+        >
           {/* <FluidImage
             isWorkerEnabled={true}
             isMouseEnabled={false}
@@ -224,7 +226,7 @@ const Void = () => {
         </h2>
       </div> */}
       <div
-        className="rounded-[100%] lg:size-[60vw] sm:size-full overflow-hidden relative"
+        className="rounded-[100%] lg:size-[70vw] sm:size-full overflow-hidden relative"
         style={{
           background: "radial-gradient(circle at 100%, #000a, #fff0 50%)",
         }}
