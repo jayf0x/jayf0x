@@ -107,7 +107,7 @@ const BotMessage = ({
             <div
               className="mt-2 pt-2 whitespace-pre-wrap"
               style={{
-                borderTop: "1px solid rgba(255,176,0,0.15)",
+                borderTop: "1px solid var(--gold-dim)",
                 opacity: 0.55,
               }}
             >
@@ -124,7 +124,7 @@ const BotMessage = ({
           type="button"
           onClick={() => setExpanded((v) => !v)}
           className="mt-2 flex items-center gap-1 text-[11px] transition-opacity hover:opacity-100"
-          style={{ color: "rgba(255,176,0,0.5)" }}
+          style={{ color: "color-mix(in srgb, var(--gold) 50%, transparent)" }}
         >
           <motion.span
             animate={{ rotate: expanded ? 180 : 0 }}
@@ -308,26 +308,26 @@ export const ChatWidget = () => {
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="w-95 rounded-2xl overflow-hidden flex flex-col"
             style={{
-              background: "rgba(8, 8, 12, 0.97)",
-              border: "1px solid rgba(255,255,255,0.07)",
+              background: "var(--glass)",
+              border: "1px solid var(--border)",
               backdropFilter: "blur(24px)",
               boxShadow:
-                "0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset",
+                "0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px var(--overlay-xs) inset",
               height: "520px",
             }}
           >
             <div
               className="flex items-center justify-between px-4 py-3 shrink-0"
               style={{
-                background: "rgba(255,255,255,0.025)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                background: "var(--overlay-xs)",
+                borderBottom: "1px solid var(--overlay-sm)",
               }}
             >
               <div className="flex items-center gap-2.5">
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-base select-none"
                   style={{
-                    background: "rgba(79,124,255,0.12)",
+                    background: "var(--accent-dim)",
                     border: "1px solid rgba(79,124,255,0.25)",
                   }}
                 >
@@ -371,7 +371,7 @@ export const ChatWidget = () => {
                       <div
                         className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                         style={{
-                          background: "rgba(79,124,255,0.12)",
+                          background: "var(--accent-dim)",
                           border: "1px solid rgba(79,124,255,0.2)",
                         }}
                       >
@@ -379,7 +379,7 @@ export const ChatWidget = () => {
                       </div>
                     )}
                     <div
-                      className={`max-w-[76%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed break-words ${
+                      className={`max-w-[76%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed wrap-break-words ${
                         msg.role === "user"
                           ? "rounded-br-sm"
                           : "rounded-bl-sm font-mono text-[13px]"
@@ -392,9 +392,9 @@ export const ChatWidget = () => {
                               color: "#c8d8ff",
                             }
                           : {
-                              background: "rgba(255, 176, 0, 0.06)",
-                              border: "1px solid rgba(255, 176, 0, 0.12)",
-                              color: "#e2d090",
+                              background: "var(--gold-dim)",
+                              border: "1px solid var(--gold-dim)",
+                              color: "var(--gold-text)",
                             }
                       }
                     >
@@ -423,7 +423,7 @@ export const ChatWidget = () => {
                     <div
                       className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                       style={{
-                        background: "rgba(79,124,255,0.12)",
+                        background: "var(--accent-dim)",
                         border: "1px solid rgba(79,124,255,0.2)",
                       }}
                     >
@@ -432,8 +432,8 @@ export const ChatWidget = () => {
                     <div
                       className="rounded-2xl rounded-bl-sm px-3.5 py-2.5"
                       style={{
-                        background: "rgba(255, 176, 0, 0.06)",
-                        border: "1px solid rgba(255, 176, 0, 0.12)",
+                        background: "var(--gold-dim)",
+                        border: "1px solid var(--gold-dim)",
                       }}
                     >
                       <div className="flex gap-1">
@@ -441,7 +441,7 @@ export const ChatWidget = () => {
                           <motion.span
                             key={i}
                             className="w-1.5 h-1.5 rounded-full"
-                            style={{ background: "#e2d090" }}
+                            style={{ background: "var(--gold-text)" }}
                             animate={{ opacity: [0.3, 1, 0.3] }}
                             transition={{
                               duration: 1.2,
@@ -467,9 +467,9 @@ export const ChatWidget = () => {
                     <div
                       className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl"
                       style={{
-                        background: "rgba(255, 60, 60, 0.07)",
-                        border: "1px solid rgba(255, 60, 60, 0.18)",
-                        color: "#ff7575",
+                        background: "color-mix(in srgb, var(--red) 7%, transparent)",
+                        border: "1px solid color-mix(in srgb, var(--red) 18%, transparent)",
+                        color: "var(--red)",
                       }}
                     >
                       <TriangleAlert size={12} />
@@ -489,7 +489,7 @@ export const ChatWidget = () => {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   className="shrink-0 overflow-hidden"
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.055)" }}
+                  style={{ borderTop: "1px solid var(--overlay-sm)" }}
                 >
                   <div className="px-4 pt-2.5 pb-3">
                     <div className="flex items-center justify-between mb-2">
@@ -503,7 +503,7 @@ export const ChatWidget = () => {
                         {countdown !== null && (
                           <span
                             className="text-[11px] tabular-nums font-mono"
-                            style={{ color: "rgba(255,176,0,0.5)" }}
+                            style={{ color: "color-mix(in srgb, var(--gold) 50%, transparent)" }}
                           >
                             ~{countdown}s
                           </span>
@@ -513,8 +513,8 @@ export const ChatWidget = () => {
                           onClick={handleCancel}
                           className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md transition-colors hover:bg-white/5"
                           style={{
-                            background: "rgba(255,255,255,0.05)",
-                            border: "1px solid rgba(255,255,255,0.08)",
+                            background: "var(--overlay-sm)",
+                            border: "1px solid var(--border)",
                             color: "rgba(255,255,255,0.45)",
                           }}
                         >
@@ -534,7 +534,7 @@ export const ChatWidget = () => {
                             exit={{ opacity: 0, y: -3 }}
                             transition={{ duration: 0.18 }}
                             className="text-[11px] font-mono"
-                            style={{ color: "rgba(226,208,144,0.7)" }}
+                            style={{ color: "color-mix(in srgb, var(--gold-text) 70%, transparent)" }}
                           >
                             {statusMessage}…
                           </motion.span>
@@ -543,13 +543,13 @@ export const ChatWidget = () => {
 
                       <div
                         className="h-[3px] rounded-full overflow-hidden w-full"
-                        style={{ background: "rgba(255,255,255,0.06)" }}
+                        style={{ background: "var(--overlay-sm)" }}
                       >
                         <motion.div
                           className="h-full rounded-full"
                           style={{
                             background:
-                              "linear-gradient(90deg, rgba(255,176,0,0.45), rgba(255,214,80,0.85))",
+                              "linear-gradient(90deg, color-mix(in srgb, var(--gold) 45%, transparent), rgba(255,214,80,0.85))",
                           }}
                           initial={{ width: "0%" }}
                           animate={{
@@ -572,14 +572,14 @@ export const ChatWidget = () => {
               style={{
                 borderTop: isPending
                   ? "none"
-                  : "1px solid rgba(255,255,255,0.055)",
+                  : "1px solid var(--overlay-sm)",
               }}
             >
               <div
                 className="flex items-center gap-2 rounded-xl px-3 py-2.5"
                 style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.07)",
+                  background: "var(--overlay-xs)",
+                  border: "1px solid var(--border)",
                 }}
               >
                 <input
@@ -599,15 +599,14 @@ export const ChatWidget = () => {
                   type="button"
                   onClick={handleSend}
                   disabled={isPending || !input.trim()}
-                  className="shrink-0 transition-opacity disabled:opacity-25 disabled:cursor-not-allowed"
-                  style={{ color: "var(--accent)" }}
+                  className="shrink-0 transition-opacity disabled:opacity-25 disabled:cursor-not-allowed text-(--accent)"
                 >
                   <Send size={15} />
                 </button>
               </div>
               <p
                 className="text-center text-[10px] mt-2 select-none"
-                style={{ color: "rgba(255,255,255,0.18)" }}
+                style={{ color: "var(--overlay-lg)" }}
               >
                 GPT-1 · 2018 OpenAI · historically inaccurate by design
               </p>
@@ -630,10 +629,10 @@ export const ChatWidget = () => {
             transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
             className="w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-xl select-none relative"
             style={{
-              background: "linear-gradient(135deg, #4f7cff 0%, #7c4fff 100%)",
+              background: "linear-gradient(135deg, var(--accent) 0%, #7c4fff 100%)",
               boxShadow:
-                "0 4px 24px rgba(79, 124, 255, 0.35), 0 1px 0 rgba(255,255,255,0.15) inset",
-              border: "1px solid rgba(255,255,255,0.12)",
+                "0 4px 24px color-mix(in srgb, var(--accent) 35%, transparent), 0 1px 0 rgba(255,255,255,0.15) inset",
+              border: "1px solid var(--overlay-md)",
             }}
           >
             🤖
@@ -649,7 +648,7 @@ export const ChatWidget = () => {
                 }}
                 style={{
                   background:
-                    "linear-gradient(135deg, #4f7cff 0%, #7c4fff 100%)",
+                    "linear-gradient(135deg, var(--accent) 0%, #7c4fff 100%)",
                 }}
               />
             )}
@@ -659,8 +658,8 @@ export const ChatWidget = () => {
                 animate={{ scale: 1 }}
                 className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center"
                 style={{
-                  background: "#ffb800",
-                  borderColor: "rgba(8,8,12,0.97)",
+                  background: "var(--gold)",
+                  borderColor: "var(--glass)",
                 }}
               >
                 <motion.span

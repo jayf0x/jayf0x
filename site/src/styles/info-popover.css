@@ -1,7 +1,3 @@
-:root {
-  --ip-glass: rgba(7, 7, 11, 0.97);
-}
-
 /* Animate the conic-gradient start angle as a typed property */
 @property --snake-a {
   syntax: "<angle>";
@@ -23,17 +19,17 @@
 
   background: conic-gradient(
     from var(--snake-a),
-    transparent        0%,
-    transparent        72%,
-    rgba(79,124,255,0.03) 77%,
-    rgba(79,124,255,0.12) 83%,
-    rgba(79,124,255,0.32) 88%,
-    rgba(79,124,255,0.60) 92%,
-    rgba(79,124,255,0.82) 95%,
-    rgba(79,124,255,0.95) 97%,
-    rgba(79,124,255,0.50) 98%,
-    rgba(79,124,255,0.15) 99%,
-    transparent        100%
+    transparent                          0%,
+    transparent                          72%,
+    color-mix(in srgb, var(--accent)  3%, transparent) 77%,
+    var(--accent-dim)                    83%,
+    color-mix(in srgb, var(--accent) 32%, transparent) 88%,
+    color-mix(in srgb, var(--accent) 60%, transparent) 92%,
+    color-mix(in srgb, var(--accent) 82%, transparent) 95%,
+    color-mix(in srgb, var(--accent) 95%, transparent) 97%,
+    color-mix(in srgb, var(--accent) 50%, transparent) 98%,
+    var(--accent-glow)                   99%,
+    transparent                          100%
   );
 
   /* Punch out the center — only the 1.5 px border ring remains visible */

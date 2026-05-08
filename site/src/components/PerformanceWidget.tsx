@@ -14,10 +14,10 @@ import { InfoPopover } from "./InfoPopover";
 const TICKS = Array.from({ length: 21 }, (_, i) => i * 5);
 const SCALE_LABELS = [0, 25, 50, 75, 100];
 
-const AMBER = "#f59e0b";
-const AMBER_DIM = "rgba(245,158,11,0.18)";
-const AMBER_MID = "rgba(245,158,11,0.4)";
-const AMBER_GLOW = "rgba(245,158,11,0.08)";
+const AMBER = "var(--amber)";
+const AMBER_DIM = "color-mix(in srgb, var(--amber) 18%, transparent)";
+const AMBER_MID = "color-mix(in srgb, var(--amber) 40%, transparent)";
+const AMBER_GLOW = "var(--amber-glow)";
 
 function cycleOverride(current: OverrideState): OverrideState {
   if (current === 'auto') return 'off';
@@ -77,7 +77,7 @@ export const PerformanceWidget = () => {
             <div
               className="rounded-2xl px-5 pt-4 pb-4"
               style={{
-                background: "rgba(6, 6, 8, 0.94)",
+                background: "var(--glass)",
                 backdropFilter: "blur(20px) saturate(1.5)",
                 border: `1px solid ${AMBER_DIM}`,
                 boxShadow: `0 8px 40px rgba(0,0,0,0.65), 0 0 0 1px ${AMBER_GLOW} inset, 0 0 32px ${AMBER_GLOW}`,
@@ -93,7 +93,7 @@ export const PerformanceWidget = () => {
                       animation: "pulse 2s infinite",
                     }}
                   />
-                  <span className="text-[10px] font-mono tracking-[0.22em] uppercase text-[rgba(255,255,255,0.35)]">
+                  <span className="text-[10px] font-mono tracking-[0.22em] uppercase text-white/35">
                     <InfoPopover
                       title="Temperature"
                       items={[
@@ -135,9 +135,9 @@ export const PerformanceWidget = () => {
                           className="text-[8px] font-mono uppercase tracking-wider whitespace-nowrap mb-1 transition-colors duration-300"
                           style={{
                             color: overridden
-                              ? "rgba(255,255,255,0.18)"
+                              ? "var(--overlay-lg)"
                               : active
-                                ? "rgba(245,158,11,0.95)"
+                                ? "color-mix(in srgb, var(--amber) 95%, transparent)"
                                 : "rgba(255,255,255,0.22)",
                           }}
                         >
@@ -152,10 +152,10 @@ export const PerformanceWidget = () => {
                             borderRight: "3px solid transparent",
                             borderTop: `5px solid ${
                               overridden
-                                ? "rgba(255,255,255,0.1)"
+                                ? "var(--overlay-md)"
                                 : active
-                                  ? "rgba(245,158,11,0.9)"
-                                  : "rgba(255,255,255,0.18)"
+                                  ? "color-mix(in srgb, var(--amber) 90%, transparent)"
+                                  : "var(--overlay-lg)"
                             }`,
                           }}
                         />
@@ -197,15 +197,15 @@ export const PerformanceWidget = () => {
                     className="absolute inset-y-0 left-0"
                     style={{
                       width: `${value}%`,
-                      background: `linear-gradient(90deg, #f59e0b 0%, #ef4444 60%, #DD3162 100%)`,
+                      background: `linear-gradient(90deg, var(--amber) 0%, #ef4444 60%, #DD3162 100%)`,
                       opacity: 0.85,
-                      border: "1px solid rgba(255,255,255,0.09)",
+                      border: "1px solid var(--border)",
                       backgroundClip: "padding-box",
                     }}
                   />
                   <div
                     className="absolute inset-0 rounded"
-                    style={{ background: "rgba(255,255,255,0.06)" }}
+                    style={{ background: "var(--overlay-sm)" }}
                   />
                 </div>
 
@@ -225,7 +225,7 @@ export const PerformanceWidget = () => {
                         height: h,
                         background: lit
                           ? "rgba(255,255,255,0.55)"
-                          : "rgba(255,255,255,0.13)",
+                          : "rgba(255,255,255,0.13)", /* tick mark */
                         transform: "translateX(-50%)",
                         borderRadius: 0.5,
                         transition: "background 0.15s",
@@ -251,13 +251,13 @@ export const PerformanceWidget = () => {
                         borderRadius: 1,
                         transform: `translate(-50%, ${indexOffset}px)`,
                         background: overridden
-                          ? "rgba(255,255,255,0.15)"
+                          ? "var(--overlay-md)"
                           : active
                             ? AMBER
                             : "rgba(255,255,255,0.3)",
                         boxShadow:
                           !overridden && active
-                            ? "0 0 8px 2px rgba(245,158,11,0.55)"
+                            ? "0 0 8px 2px color-mix(in srgb, var(--amber) 55%, transparent)"
                             : "none",
                         transition: "background 0.25s, box-shadow 0.25s",
                       }}
@@ -278,7 +278,7 @@ export const PerformanceWidget = () => {
                       background:
                         "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,220,150,0.9) 100%)",
                       boxShadow:
-                        "0 0 14px rgba(245,158,11,0.5), 0 3px 8px rgba(0,0,0,0.7)",
+                        "0 0 14px color-mix(in srgb, var(--amber) 50%, transparent), 0 3px 8px rgba(0,0,0,0.7)",
                     }}
                   >
                     {[0, 1, 2].map((i) => (
@@ -301,7 +301,7 @@ export const PerformanceWidget = () => {
                   <span
                     key={`scale-label-${v}`}
                     className="absolute text-[8px] font-mono -translate-x-1/2 tabular-nums"
-                    style={{ left: `${v}%`, color: "rgba(255,255,255,0.18)" }}
+                    style={{ left: `${v}%`, color: "var(--overlay-lg)" }}
                   >
                     {v}
                   </span>
@@ -311,7 +311,7 @@ export const PerformanceWidget = () => {
               {checkpoints.length > 0 && (
                 <div
                   className="mt-4 pt-3 space-y-1"
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                  style={{ borderTop: "1px solid var(--overlay-sm)" }}
                 >
                   {checkpoints.map((cp) => {
                     const override = overrides[cp.tag] ?? 'auto';
@@ -329,13 +329,13 @@ export const PerformanceWidget = () => {
                             style={{
                               background: effective
                                 ? override !== 'auto'
-                                  ? "#34d399"
+                                  ? "var(--green)"
                                   : AMBER
-                                : "rgba(255,255,255,0.15)",
+                                : "var(--overlay-md)",
                               boxShadow: effective
                                 ? override !== 'auto'
-                                  ? "0 0 5px rgba(52,211,153,0.6)"
-                                  : `0 0 5px rgba(245,158,11,0.5)`
+                                  ? "0 0 5px color-mix(in srgb, var(--green) 60%, transparent)"
+                                  : `0 0 5px color-mix(in srgb, var(--amber) 50%, transparent)`
                                 : "none",
                             }}
                           />
@@ -365,21 +365,21 @@ export const PerformanceWidget = () => {
                           style={{
                             background:
                               override === 'on'
-                                ? "rgba(52,211,153,0.12)"
+                                ? "color-mix(in srgb, var(--green) 12%, transparent)"
                                 : override === 'off'
-                                  ? "rgba(248,113,113,0.1)"
-                                  : "rgba(255,255,255,0.04)",
+                                  ? "color-mix(in srgb, var(--red) 10%, transparent)"
+                                  : "var(--overlay-xs)",
                             border:
                               override === 'on'
-                                ? "1px solid rgba(52,211,153,0.3)"
+                                ? "1px solid color-mix(in srgb, var(--green) 30%, transparent)"
                                 : override === 'off'
-                                  ? "1px solid rgba(248,113,113,0.25)"
-                                  : "1px solid rgba(255,255,255,0.07)",
+                                  ? "1px solid color-mix(in srgb, var(--red) 25%, transparent)"
+                                  : "1px solid var(--border)",
                             color:
                               override === 'on'
-                                ? "#34d399"
+                                ? "var(--green)"
                                 : override === 'off'
-                                  ? "#f87171"
+                                  ? "var(--red)"
                                   : "rgba(255,255,255,0.28)",
                           }}
                         >
@@ -388,9 +388,9 @@ export const PerformanceWidget = () => {
                             style={{
                               background:
                                 override === "on"
-                                  ? "#34d399"
+                                  ? "var(--green)"
                                   : override === "off"
-                                    ? "#f87171"
+                                    ? "var(--red)"
                                     : "rgba(255,255,255,0.25)",
                             }}
                           />
@@ -410,7 +410,7 @@ export const PerformanceWidget = () => {
               style={{
                 width: 10,
                 height: 10,
-                background: "rgba(6,6,8,0.94)",
+                background: "var(--glass)",
                 border: `1px solid ${AMBER_DIM}`,
                 borderTop: "none",
                 borderLeft: "none",
@@ -429,12 +429,12 @@ export const PerformanceWidget = () => {
         transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
         className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
         style={{
-          background: isOpen ? "rgba(245,158,11,0.15)" : "rgba(10,10,14,0.88)",
+          background: isOpen ? AMBER_GLOW : "rgba(10,10,14,0.88)",
           backdropFilter: "blur(14px)",
           border: `1px solid ${isOpen ? AMBER_MID : AMBER_DIM}`,
           boxShadow: isOpen
-            ? `0 0 28px rgba(245,158,11,0.2), 0 4px 20px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.06) inset`
-            : "0 4px 20px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset",
+            ? `0 0 28px color-mix(in srgb, var(--amber) 20%, transparent), 0 4px 20px rgba(0,0,0,0.5), 0 1px 0 var(--overlay-sm) inset`
+            : `0 4px 20px rgba(0,0,0,0.45), 0 1px 0 var(--overlay-sm) inset`,
           color: AMBER,
         }}
       >
@@ -446,7 +446,7 @@ export const PerformanceWidget = () => {
           transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
           style={{
             border: `1px solid ${AMBER_DIM}`,
-            background: "rgba(245,158,11,0.05)",
+            background: "color-mix(in srgb, var(--amber) 5%, transparent)",
           }}
         />
       </motion.button>

@@ -93,8 +93,8 @@ export const Background = () => {
       
       
 
-      <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6] opacity-[0.1] blur-3xl" />
-      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-[#4f7cff] to-[#8b5cf6] opacity-[0.1] blur-3xl [animation-delay:3s]" />
+      <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-(--accent) to-[#8b5cf6] opacity-[0.1] blur-3xl" />
+      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-(--accent) to-[#8b5cf6] opacity-[0.1] blur-3xl [animation-delay:3s]" />
     </div>
   );
 };

@@ -24,15 +24,63 @@ body {
   color: var(--text);
 }
 
-html {
+:root {
+  /* Backgrounds */
   --bg: #060608;
   --surface: #0f0f12;
   --surface-2: #1a1a1f;
-  --border: rgba(255, 255, 255, 0.07);
+  --glass: rgba(8, 8, 12, 0.97);
+
+  /* Text */
   --text: #e8e8ea;
   --muted: #5a5a6a;
+
+  /* Accent (primary blue) */
   --accent: #4f7cff;
   --accent-glow: rgba(79, 124, 255, 0.15);
+  --accent-dim: rgba(79, 124, 255, 0.12);
+
+  /* Borders & overlays (white alpha) */
+  --border: rgba(255, 255, 255, 0.07);
+  --overlay-xs: rgba(255, 255, 255, 0.04);
+  --overlay-sm: rgba(255, 255, 255, 0.06);
+  --overlay-md: rgba(255, 255, 255, 0.10);
+  --overlay-lg: rgba(255, 255, 255, 0.18);
+
+  /* Status */
+  --amber: #f59e0b;
+  --amber-glow: rgba(245, 158, 11, 0.08);
+  --green: #34d399;
+  --red: #f87171;
+
+  /* GPT-1 chat warm gold */
+  --gold: #ffb800;
+  --gold-dim: rgba(255, 176, 0, 0.09);
+  --gold-text: #e2d090;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-glass: var(--glass);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-dim: var(--accent-dim);
+  --color-border: var(--border);
+  --color-overlay-xs: var(--overlay-xs);
+  --color-overlay-sm: var(--overlay-sm);
+  --color-overlay-md: var(--overlay-md);
+  --color-overlay-lg: var(--overlay-lg);
+  --color-amber: var(--amber);
+  --color-amber-glow: var(--amber-glow);
+  --color-green: var(--green);
+  --color-red: var(--red);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--gold-dim);
+  --color-gold-text: var(--gold-text);
 }
 
 .blob {
@@ -155,7 +203,7 @@ html {
 /* fun stuff */
 
 h1 {
-  text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px #4c91f943;
+  text-shadow: calc(var(--mx) * 5px) calc(var(--my) * -5px) 3px color-mix(in srgb, var(--accent) 26%, transparent);
 }
 
 .hue_rot {

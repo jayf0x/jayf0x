@@ -1,31 +1,7 @@
-import plugin from "tailwindcss/plugin";
-
-const darkTheme = {
-  "--background": "#09090b",
-  "--foreground": "#f1f1f3",
-  "--primary": "#3b82f6",
-  "--primary-hover": "#60a5fa",
-  "--muted": "#9ca3af",
-  "--surface": "rgba(255,255,255,0.04)",
-  "--border": "rgba(255,255,255,0.08)",
-};
-
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: "class",
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        primary: {
-          DEFAULT: "var(--primary)",
-          hover: "var(--primary-hover)",
-        },
-        muted: "var(--muted)",
-        surface: "var(--surface)",
-        border: "var(--border)",
-      },
       animation: {
         blink: "blink 1s step-start infinite",
         typing: "typing 0.8s steps(40, end)",
@@ -58,12 +34,4 @@ export default {
       },
     },
   },
-  plugins: [
-    plugin(({ addBase }) => {
-      addBase({
-        ":root": darkTheme,
-        ".dark": darkTheme,
-      });
-    }),
-  ],
 };

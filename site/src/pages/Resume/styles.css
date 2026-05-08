@@ -39,7 +39,7 @@
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--overlay-md);
   background: rgba(10, 12, 20, 0.6);
   color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
@@ -56,7 +56,7 @@
 .sim-mode-toggle {
   display: flex;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--overlay-md);
   background: rgba(10, 12, 20, 0.6);
   backdrop-filter: blur(6px);
   overflow: hidden;
@@ -76,17 +76,17 @@
 }
 
 .sim-mode-toggle button:not(:last-child) {
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid var(--overlay-md);
 }
 
 .sim-mode-toggle button:hover {
   color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--overlay-sm);
 }
 
 .sim-mode-toggle button.active {
   color: rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--overlay-md);
 }
 
 #red-button:active {

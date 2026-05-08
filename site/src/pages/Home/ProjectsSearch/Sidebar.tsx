@@ -47,7 +47,7 @@ export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
                   {Array.from({ length: topN }).map((_, i) => (
                     <div
                       key={`skeleton-${i}`}
-                      className="mx-1 w-full h-5 animate-pulse rounded bg-[#aaa3]"
+                      className="mx-1 w-full h-5 animate-pulse rounded bg-white/20"
                       style={{
                         opacity: 1 - i * 0.12,
                         animationDelay: String(i * 1000),
@@ -118,7 +118,7 @@ const SidebarSection = ({
             />
           ))}
         </div>
-        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[var(--bg,#0d0d0d)] to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-(--bg) to-transparent" />
       </div>
     </div>
   );
