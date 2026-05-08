@@ -26,7 +26,11 @@ import {
 } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { CreateProjectionSceneOptions, GLTFResult, ProjectionScene } from "./types";
+import {
+  CreateProjectionSceneOptions,
+  GLTFResult,
+  ProjectionScene,
+} from "./types";
 import { devLog } from "@/utils/logger";
 
 // ── CSS collection ────────────────────────────────────────────────────────────
@@ -366,11 +370,31 @@ export async function createProjectionScene({
   );
   await htmlTex.update();
 
+  // Shared cursor state — mutate from outside to drive tilt.
+  const cursorState: ProjectionScene["cursorState"] = { x: 0, y: 0, z: 0 };
+
+  // Authoritative base rotation for the model (radians).
+  // Tick adds cursor offset on top; callers should update this instead of
+  // model.rotation directly so the offset is applied correctly each frame.
+  const modelBaseRotation = {
+    x: modelRotation.x,
+    y: modelRotation.y,
+    z: modelRotation.z,
+  };
+
   // Render loop
   let animId: number;
   (function tick() {
     animId = requestAnimationFrame(tick);
     controls.update();
+
+    model.rotation.x = modelBaseRotation.x;
+    model.rotation.y = modelBaseRotation.y;
+    model.rotation.z = modelBaseRotation.z;
+
+    camera.position.setX(cursorState.x);
+
+    projector.update();
     renderer.render(scene, camera);
   })();
 
@@ -389,5 +413,5 @@ export async function createProjectionScene({
     canvas.remove();
   }
 
-  return { dispose, camera, scene, gltf };
+  return { dispose, camera, scene, gltf, cursorState, modelBaseRotation };
 }

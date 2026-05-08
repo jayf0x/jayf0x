@@ -12,7 +12,11 @@ export interface ProjectionScene {
   dispose: () => void;
   camera: PerspectiveCamera;
   scene: Scene<Object3DEventMap>;
-  gltf: GLTFResult
+  gltf: GLTFResult;
+  /** Mutate this from outside to drive cursor-based tilt in the render loop. */
+  cursorState: { x: number; y: number, z: number };
+  /** Base model rotation (radians). Tick adds cursor offset on top; update this instead of model.rotation directly. */
+  modelBaseRotation: { x: number; y: number; z: number };
 }
 
 interface Vec3 {

@@ -13,6 +13,6 @@ export function resolveOverride(override: OverrideState, fallback: boolean): boo
   return fallback;
 }
 
-export const sliderValueAtom = atom<number>(100);
+export const sliderValueAtom = atom<number>(50);
 export const checkpointsAtom = atom<PerformanceCheckpoint[]>([]);
 export const checkpointOverridesAtom = atom<Record<string, OverrideState>>({});

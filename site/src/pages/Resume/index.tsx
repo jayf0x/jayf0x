@@ -24,7 +24,6 @@ export const Resume = memo(() => {
 
   useEffect(() => {
     if (!canvasRef.current || !isConwayVisible) return;
-    // Full reinit on mode change — clean slate
     const engine = createConwayEngine(
       canvasRef.current,
       simMode === "conway",
@@ -54,12 +53,10 @@ export const Resume = memo(() => {
   return (
     <div className="size-full relative overflow-hidden">
       <canvas ref={canvasRef} className="absolute inset-0 size-full block" />
-
-      {/* Center overlay — resume download */}
       {showRedButton && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
           <span className="text-[#9994] text-sm uppercase">Download PDF</span>
-          <div className="animate-bounce pointer-events-auto">
+          <div className="pointer-events-auto">
             <a
               href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf"
               download
@@ -77,10 +74,7 @@ export const Resume = memo(() => {
           </div>
         </div>
       )}
-
-      {/* Bottom-left controls */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto bg-red">
-        {/* Mode toggle */}
         <div className="sim-mode-toggle">
           <button
             onClick={() => handleModeToggle("conway")}
@@ -95,7 +89,6 @@ export const Resume = memo(() => {
             Day &amp; Night
           </button>
         </div>
-
         <button
           onClick={handlePlayPause}
           title={isPaused ? "Play" : "Pause"}
