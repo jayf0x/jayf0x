@@ -34,27 +34,27 @@ export const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           {!isMobile && (
-            <div className="lg:text-5xl sm:text-xl font-black tracking-tighter text-[var(--text)]">
+            <div className="lg:text-5xl sm:text-xl font-black tracking-tighter text-(--text)">
               <TextWithSecret text="Jonatan" secret="JayF0x" />
             </div>
           )}
         </motion.div>
 
         <motion.div
-          className="font-mono text-sm text-[var(--muted)] md:text-base"
+          className="font-mono text-sm text-(--muted) md:text-base"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          {/* <span>~/code</span> <span className="text-[var(--accent)]">❯</span> */}
-          <div className="mt-2 min-h-[2rem] text-[var(--accent)]">
+          {/* <span>~/code</span> <span className="text-(--accent)">❯</span> */}
+          <div className="mt-2 min-h-[2rem] text-(--accent)">
             <TypeAnimation
               sequence={terminalLines}
               wrapper="span"
               speed={65}
               repeat={Infinity}
             />
-            <span className="ml-1 inline-block h-4 w-[2px] animate-blink bg-[var(--accent)] align-middle" />
+            <span className="ml-1 inline-block h-4 w-[2px] animate-blink bg-(--accent) align-middle" />
           </div>
         </motion.div>
       </motion.div>

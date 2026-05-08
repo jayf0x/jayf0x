@@ -23,7 +23,7 @@ export const InfoPopover = ({ title, items }: InfoPopoverProps) => {
           type="button"
           className={`flex items-center justify-center rounded-full transition-all duration-200 size-4.5 ${
             isOpen
-              ? "text-[var(--accent)] bg-[rgba(79,124,255,0.12)]"
+              ? "text-(--accent) bg-[rgba(79,124,255,0.12)]"
               : "text-[rgba(79,124,255,0.6)] bg-transparent"
           }`}
         >
@@ -49,7 +49,7 @@ const PopoverContent = ({ items }: { items: InfoPopoverProps["items"] }) => (
     <div className="ip-snake" aria-hidden />
 
     {/* Glass panel — sits above the snake */}
-    <div className="relative z-10 backdrop-blur-[28px] backdrop-saturate-200 rounded-[14.5px] overflow-hidden min-w-[196px] max-w-[276px] bg-[var(--ip-glass)]">
+    <div className="relative z-10 backdrop-blur-[28px] backdrop-saturate-200 rounded-[14.5px] overflow-hidden min-w-[196px] max-w-[276px] bg-(--ip-glass)">
       {items.map(([label, href], i) => (
         <motion.div
           key={`${label}-${href}`}
@@ -62,7 +62,7 @@ const PopoverContent = ({ items }: { items: InfoPopoverProps["items"] }) => (
               i < items.length - 1 ? "border-b border-[rgba(255,255,255,0.04)]" : ""
             }`}
           >
-            <span className="shrink-0 size-1 rounded-full transition-all duration-200 bg-[rgba(79,124,255,0.45)] group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_6px_rgba(79,124,255,0.7)]" />
+            <span className="shrink-0 size-1 rounded-full transition-all duration-200 bg-[rgba(79,124,255,0.45)] group-hover:bg-(--accent) group-hover:shadow-[0_0_6px_rgba(79,124,255,0.7)]" />
             <div className="flex-1">
               {href ? (
                 <a

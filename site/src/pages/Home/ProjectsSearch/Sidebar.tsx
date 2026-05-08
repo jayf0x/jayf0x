@@ -64,7 +64,7 @@ export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
                     dateKey="created_at"
                     onSelect={onSelect}
                   />
-                  <div className="shrink-0 h-px bg-[var(--border)] my-1" />
+                  <div className="shrink-0 h-px bg-(--border) my-1" />
                   <SidebarSection
                     title="Recently Updated"
                     repos={repos}
@@ -82,7 +82,7 @@ export const Sidebar = ({ repos, isLoading, onSelect }: SidebarProps) => {
       <div className="relative flex flex-col justify-start pt-3">
         <div
           onClick={() => setOpen((v) => !v)}
-          className="cursor-pointer transition-all hover:scale-150 flex h-6 w-4 items-center justify-center rounded-r-md border border-l-0 border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--accent)]"
+          className="cursor-pointer transition-all hover:scale-150 flex h-6 w-4 items-center justify-center rounded-r-md border border-l-0 border-(--border) bg-(--surface) text-(--muted) hover:text-(--accent)"
         >
           {open ? <ChevronLeft size={10} /> : <PanelLeftOpen size={20} />}
         </div>
@@ -106,7 +106,7 @@ const SidebarSection = ({
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <span className="mb-1.5 shrink-0 font-mono text-[10px] uppercase tracking-widest text-[var(--accent)]">
+      <span className="mb-1.5 shrink-0 font-mono text-[10px] uppercase tracking-widest text-(--accent)">
         {title}
       </span>
       <div className="relative flex-1 min-h-0">
@@ -159,13 +159,13 @@ const SidebarItem = ({
 }) => (
   <button
     type="button"
-    className="group flex items-center justify-between w-full gap-1 rounded-md px-1.5 py-[3px] transition-all origin-left duration-100 text-[var(--muted)] hover:bg-[var(--surface)] hover:scale-125 hover:text-[var(--accent)]"
+    className="group flex items-center justify-between w-full gap-1 rounded-md px-1.5 py-[3px] transition-all origin-left duration-100 text-(--muted) hover:bg-(--surface) hover:scale-125 hover:text-(--accent)"
     onClick={onClick}
   >
     <div className="min-w-0 flex-1 truncate text-left font-mono text-[11px]">
       {repo.name}
     </div>
-    <div className="shrink-0 font-mono text-[9px] text-[var(--muted)]/40 tabular-nums">
+    <div className="shrink-0 font-mono text-[9px] text-(--muted)/40 tabular-nums">
       {fmt(date)}
     </div>
   </button>

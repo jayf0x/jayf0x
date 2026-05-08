@@ -340,7 +340,7 @@ export const PerformanceWidget = () => {
                         {/* Tag + effective state dot */}
                         <div className="flex items-center gap-2 min-w-0">
                           <span
-                            className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-colors duration-300"
+                            className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300"
                             style={{
                               background: effective
                                 ? override !== 'auto'
@@ -366,7 +366,7 @@ export const PerformanceWidget = () => {
                             {cp.tag}
                           </span>
                           <span
-                            className="text-[9px] font-mono tabular-nums flex-shrink-0"
+                            className="text-[9px] font-mono tabular-nums shrink-0"
                             style={{ color: "rgba(255,255,255,0.2)" }}
                           >
                             @{cp.percentage}%
@@ -377,7 +377,7 @@ export const PerformanceWidget = () => {
                         <button
                           type="button"
                           onClick={() => toggleOverride(cp.tag)}
-                          className="flex items-center gap-1.5 px-2 py-0.5 rounded-md flex-shrink-0 transition-all duration-150"
+                          className="flex items-center gap-1.5 px-2 py-0.5 rounded-md shrink-0 transition-all duration-150"
                           style={{
                             background:
                               override === 'on'
@@ -400,7 +400,7 @@ export const PerformanceWidget = () => {
                           }}
                         >
                           <span
-                            className="w-1 h-1 rounded-full flex-shrink-0"
+                            className="w-1 h-1 rounded-full shrink-0"
                             style={{
                               background:
                                 override === "on"

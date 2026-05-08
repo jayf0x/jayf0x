@@ -68,7 +68,7 @@ export const ProjectSection = () => {
           >
             <Search
               size={15}
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-(--muted)"
             />
             <input
               ref={inputRef}
@@ -76,12 +76,12 @@ export const ProjectSection = () => {
               placeholder="Search projects by name, keyword, stack…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 pl-10 pr-10 text-sm text-[var(--text)] placeholder:text-[var(--muted)] outline-none transition-colors duration-150 focus:border-[var(--accent)]"
+              className="w-full rounded-xl border border-(--border) bg-(--surface) py-3 pl-10 pr-10 text-sm text-(--text) placeholder:text-(--muted) outline-none transition-colors duration-150 focus:border-(--accent)"
             />
             <div className="absolute right-3 flex items-center top-0 h-full">
               <X
                 size={13}
-                className="hover:scale-[2]  hover:text-[var(--accent)] hover:rotate-180 transition-all"
+                className="hover:scale-[2]  hover:text-(--accent) hover:rotate-180 transition-all"
                 onClick={() => {
                   setQuery("");
                   inputRef.current?.focus();
@@ -127,7 +127,7 @@ export const ProjectSection = () => {
                 transition={springGentle}
                 className="flex items-center justify-between overflow-hidden"
               >
-                <span className="font-mono text-xs text-[var(--muted)]">
+                <span className="font-mono text-xs text-(--muted)">
                   {results.length}{" "}
                   {results.length === 1 ? "project" : "projects"}
                   {hasActiveFilters &&
@@ -136,7 +136,7 @@ export const ProjectSection = () => {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="font-mono text-xs text-[var(--muted)] transition-colors hover:text-[var(--accent)]"
+                  className="font-mono text-xs text-(--muted) transition-colors hover:text-(--accent)"
                 >
                   clear all
                 </button>
@@ -158,7 +158,7 @@ export const ProjectSection = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
                     transition={springGentle}
-                    className="py-10 text-center font-mono text-sm text-[var(--muted)]"
+                    className="py-10 text-center font-mono text-sm text-(--muted)"
                   >
                     No matches.
                   </motion.p>
@@ -194,7 +194,7 @@ const LoadingSkeleton = () => (
     {Array.from({ length: 4 }).map((_, i) => (
       <div
         key={`skeleton-${i}`}
-        className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--surface)]"
+        className="h-24 animate-pulse rounded-xl border border-(--border) bg-(--surface)"
       />
     ))}
   </div>

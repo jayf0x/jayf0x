@@ -277,9 +277,8 @@ export const ChatWidget = () => {
   const initMessages = useCallback(() => {
     if (isOpen && !hasInitialized) {
       const msgs = [
-        "Hey there 👋",
-        "I am an historical artifact and not a helpful assistant.",
-        "How can I help?",
+        "Hey there 👋 Ever wanted to chat with the first Large Language model?",
+        "I'm rather an historical artifact than a helpful assistant, so beware 😄",
       ];
 
       msgs.forEach((text, idx) => {
@@ -321,7 +320,7 @@ export const ChatWidget = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="w-[380px] rounded-2xl overflow-hidden flex flex-col"
+            className="w-95 rounded-2xl overflow-hidden flex flex-col"
             style={{
               background: "rgba(8, 8, 12, 0.97)",
               border: "1px solid rgba(255,255,255,0.07)",
@@ -333,7 +332,7 @@ export const ChatWidget = () => {
           >
             {/* ── Header ── */}
             <div
-              className="flex items-center justify-between px-4 py-3 flex-shrink-0"
+              className="flex items-center justify-between px-4 py-3 shrink-0"
               style={{
                 background: "rgba(255,255,255,0.025)",
                 borderBottom: "1px solid rgba(255,255,255,0.06)",
@@ -349,7 +348,7 @@ export const ChatWidget = () => {
                 >
                   🤖
                 </div>
-                <span className="text-sm font-semibold text-[var(--text)] tracking-tight">
+                <span className="text-sm font-semibold text-(--text) tracking-tight">
                   <InfoPopover
                     title="OpenAI GPT 1"
                     items={[
@@ -364,7 +363,7 @@ export const ChatWidget = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-[var(--muted)] hover:text-[var(--text)] transition-colors rounded-lg p-1.5 hover:bg-white/5"
+                className="text-(--muted) hover:text-(--text) transition-colors rounded-lg p-1.5 hover:bg-white/5"
               >
                 <X size={15} />
               </button>
@@ -386,7 +385,7 @@ export const ChatWidget = () => {
                   >
                     {msg.role === "assistant" && (
                       <div
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 mb-0.5 select-none"
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                         style={{
                           background: "rgba(79,124,255,0.12)",
                           border: "1px solid rgba(79,124,255,0.2)",
@@ -439,7 +438,7 @@ export const ChatWidget = () => {
                     className="flex items-end gap-2 justify-start"
                   >
                     <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 mb-0.5 select-none"
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                       style={{
                         background: "rgba(79,124,255,0.12)",
                         border: "1px solid rgba(79,124,255,0.2)",
@@ -508,7 +507,7 @@ export const ChatWidget = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="flex-shrink-0 overflow-hidden"
+                  className="shrink-0 overflow-hidden"
                   style={{ borderTop: "1px solid rgba(255,255,255,0.055)" }}
                 >
                   <div className="px-4 pt-2.5 pb-3">
@@ -592,7 +591,7 @@ export const ChatWidget = () => {
 
             {/* ── Input area ── */}
             <div
-              className="px-3 py-3 flex-shrink-0"
+              className="px-3 py-3 shrink-0"
               style={{
                 borderTop: isPending
                   ? "none"
@@ -617,13 +616,13 @@ export const ChatWidget = () => {
                   }
                   disabled={isPending}
                   maxLength={512}
-                  className="flex-1 bg-transparent text-sm text-[var(--text)] outline-none disabled:opacity-40 min-w-0 placeholder:text-[var(--muted)]"
+                  className="flex-1 bg-transparent text-sm text-(--text) outline-none disabled:opacity-40 min-w-0 placeholder:text-(--muted)"
                 />
                 <button
                   type="button"
                   onClick={handleSend}
                   disabled={isPending || !input.trim()}
-                  className="flex-shrink-0 transition-opacity disabled:opacity-25 disabled:cursor-not-allowed"
+                  className="shrink-0 transition-opacity disabled:opacity-25 disabled:cursor-not-allowed"
                   style={{ color: "var(--accent)" }}
                 >
                   <Send size={15} />

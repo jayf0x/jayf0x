@@ -26,7 +26,7 @@ const queryOpts = {
 
 export const RepoCard = ({ repo }: { repo: GithubRepo }) => {
   return (
-    <div className="group flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-150 hover:border-[var(--accent)]">
+    <div className="group flex items-start justify-between gap-4 rounded-xl border border-(--border) bg-(--surface) p-4 transition-all duration-150 hover:border-(--accent)">
       <RepoInfo repo={repo} />
       <RepoLinks repo={repo} />
     </div>
@@ -48,7 +48,7 @@ const RepoInfo = ({ repo }: { repo: GithubRepo }) => {
   return (
     <div className="min-w-0 flex-1 space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold text-[var(--text)]">
+        <h3 className="text-sm font-semibold text-(--text)">
           {repo.name}
         </h3>
         {repo.archived && (
@@ -58,19 +58,19 @@ const RepoInfo = ({ repo }: { repo: GithubRepo }) => {
           </span>
         )}
         {repo.stargazers_count > 0 && (
-          <span className="font-mono text-xs text-[var(--muted)]">
+          <span className="font-mono text-xs text-(--muted)">
             ★ {repo.stargazers_count}
           </span>
         )}
         {repo.pushed_at && (
-          <span className="font-mono text-xs text-[var(--muted)]">
+          <span className="font-mono text-xs text-(--muted)">
             · {timeSince(repo.pushed_at)}
           </span>
         )}
       </div>
 
       {repo.description && (
-        <p className="text-sm leading-snug text-[var(--muted)]">
+        <p className="text-sm leading-snug text-(--muted)">
           {repo.description}
         </p>
       )}
@@ -82,7 +82,7 @@ const RepoInfo = ({ repo }: { repo: GithubRepo }) => {
         {repo.topics.map((t) => (
           <span
             key={t}
-            className="rounded-full border border-[var(--border)] px-2 py-0 font-mono text-[10px] text-[var(--muted)]"
+            className="rounded-full border border-(--border) px-2 py-0 font-mono text-[10px] text-(--muted)"
           >
             {t}
           </span>
@@ -90,7 +90,7 @@ const RepoInfo = ({ repo }: { repo: GithubRepo }) => {
       </div>
 
       {repo.license && (
-        <div className="flex items-center gap-1 text-[var(--muted)]">
+        <div className="flex items-center gap-1 text-(--muted)">
           <Scale size={10} />
           <span className="font-mono text-[10px]">{repo.license.spdx_id}</span>
         </div>
@@ -100,7 +100,7 @@ const RepoInfo = ({ repo }: { repo: GithubRepo }) => {
 };
 
 const iconButtonCls =
-  "rounded-full border border-[var(--accent)]/40 p-1.5 text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-glow)] flex center";
+  "rounded-full border border-(--accent)/40 p-1.5 text-(--accent) transition-colors hover:border-(--accent) hover:bg-(--accent-glow) flex center";
 
 const RepoLinks = ({ repo }: { repo: GithubRepo }) => {
   const { data: previewUrl, isLoading: previewLoading } = useQuery<
@@ -173,7 +173,7 @@ const RepoLinks = ({ repo }: { repo: GithubRepo }) => {
 
       {/* preview image */}
       {previewLoading ? (
-        <div className="mt-1 h-14 w-24 animate-pulse rounded-lg bg-[var(--border)]" />
+        <div className="mt-1 h-14 w-24 animate-pulse rounded-lg bg-(--border)" />
       ) : previewUrl ? (
         <div
           className="w-[250px] h-[150px] transition-opacity group-hover:opacity-100 opacity-8 rounded-md"
@@ -199,7 +199,7 @@ const LinkIcon = ({
   const { data, isLoading } = query;
   if (isLoading)
     return (
-      <div className="h-[30px] w-[30px] animate-pulse rounded-full bg-[var(--border)]" />
+      <div className="h-[30px] w-[30px] animate-pulse rounded-full bg-(--border)" />
     );
   if (!data) return null;
 
