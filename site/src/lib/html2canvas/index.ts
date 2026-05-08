@@ -1,9 +1,16 @@
+/**
+ * A simpler TS version of https://github.com/cullenwebber/three-html-to-canvas
+ */
 import {
   CanvasTexture,
   LinearFilter,
+  Material,
   Matrix4,
+  Mesh,
+  Texture,
   Vector3,
   WebGLRenderer,
+  WebGLProgramParametersWithUniforms,
   VSMShadowMap,
   SRGBColorSpace,
   Scene,
@@ -13,27 +20,32 @@ import {
   MeshStandardMaterial,
   Box3,
 } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import {
+  GLTFLoader,
+  type GLTF,
+} from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { CreateProjectionSceneOptions, GLTFResult } from "./types";
+import { devLog } from "@/utils/logger";
 
 // ── CSS collection ────────────────────────────────────────────────────────────
 
-async function blobToDataUri(blob) {
+async function blobToDataUri(blob: Blob): Promise<string> {
   return new Promise((res, rej) => {
     const r = new FileReader();
-    r.onload = () => res(r.result);
+    r.onload = () => res(r.result as string);
     r.onerror = rej;
     r.readAsDataURL(blob);
   });
 }
 
-async function inlineFontUrls(css) {
+async function inlineFontUrls(css: string): Promise<string> {
   const re = /url\((https:\/\/[^)"']+)\)/g;
   const urls = [...new Set([...css.matchAll(re)].map((m) => m[1]))];
   if (!urls.length) return css;
   const pairs = await Promise.all(
-    urls.map(async (url) => {
+    urls.map(async (url): Promise<[string, string | null]> => {
       try {
         const blob = await fetch(url).then((r) => r.blob());
         return [url, await blobToDataUri(blob)];
@@ -57,7 +69,9 @@ export async function collectDocumentCss() {
           return Array.from(sheet.cssRules)
             .map((r) => r.cssText)
             .join("\n");
-      } catch {}
+      } catch (e) {
+        devLog(e);
+      }
       if (!sheet.href) return "";
       try {
         const css = await fetch(sheet.href).then((r) => r.text());
@@ -75,11 +89,16 @@ export async function collectDocumentCss() {
 // IMPORTANT: the element must have no offscreen/invisible positioning styles —
 // those serialise verbatim and would hide content inside the SVG context.
 
-function createHtmlTexture(element, width, height, pixelRatio = 2) {
+function createHtmlTexture(
+  element: HTMLElement,
+  width: number,
+  height: number,
+  pixelRatio = 2,
+) {
   const canvas = document.createElement("canvas");
   canvas.width = Math.floor(width * pixelRatio);
   canvas.height = Math.floor(height * pixelRatio);
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d")!;
 
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
@@ -118,7 +137,7 @@ function createHtmlTexture(element, width, height, pixelRatio = 2) {
   return {
     texture,
     update,
-    setExtraCss(css) {
+    setExtraCss(css: string) {
       extraCss = css;
     },
     dispose() {
@@ -129,7 +148,7 @@ function createHtmlTexture(element, width, height, pixelRatio = 2) {
 
 // ── Projection shader ─────────────────────────────────────────────────────────
 
-function createProjector(camera, texture) {
+function createProjector(camera: PerspectiveCamera, texture: Texture) {
   const uniforms = {
     projectedTexture: { value: texture },
     projectorViewMatrix: { value: new Matrix4() },
@@ -138,9 +157,10 @@ function createProjector(camera, texture) {
     uLitness: { value: 0 },
   };
 
-  function applyTo(mesh) {
-    if (!mesh.material) return;
-    mesh.material.onBeforeCompile = (shader) => {
+  function applyTo(mesh: Mesh) {
+    if (!mesh.material || Array.isArray(mesh.material)) return;
+    const mat = mesh.material as Material;
+    mat.onBeforeCompile = (shader: WebGLProgramParametersWithUniforms) => {
       Object.assign(shader.uniforms, uniforms);
 
       shader.vertexShader = shader.vertexShader
@@ -193,7 +213,7 @@ vec3 _flatDiffuse = diffuseColor.rgb;`,
 gl_FragColor.rgb = mix( _flatDiffuse, gl_FragColor.rgb, uLitness );`,
         );
     };
-    mesh.material.needsUpdate = true;
+    mat.needsUpdate = true;
   }
 
   function update() {
@@ -217,7 +237,6 @@ gl_FragColor.rgb = mix( _flatDiffuse, gl_FragColor.rgb, uLitness );`,
 //
 // OrbitControls are attached to `container` — events pass through the
 // pointer-events:none canvas to the container element below.
-
 export async function createProjectionScene({
   pageElement,
   modelUrl,
@@ -232,7 +251,7 @@ export async function createProjectionScene({
   cameraFov = 45,
   cameraPosition = { x: 0, y: 0, z: 8 },
   cameraLookAt = { x: 0, y: 0, z: 0 },
-}) {
+}: CreateProjectionSceneOptions) {
   const width = container.clientWidth;
   const height = container.clientHeight;
   const aspect = width / height;
@@ -265,18 +284,11 @@ export async function createProjectionScene({
   camera.lookAt(camTarget);
 
   const controls = new OrbitControls(camera, container);
-  controls.target.set(0, 0, 0);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
   controls.enablePan = true;
   controls.target.copy(camTarget);
   controls.update();
-
-
-  controls.addEventListener("change", () => {
-    console.log("Camera Position:", controls.object.position);
-    console.log("Target:", controls.target);
-});
 
   const ambient = new AmbientLight(0xffffff, 1.2);
   scene.add(ambient);
@@ -307,15 +319,15 @@ export async function createProjectionScene({
   const gltfLoader = new GLTFLoader();
   gltfLoader.setDRACOLoader(dracoLoader);
 
-  const gltf = await new Promise((resolve, reject) => {
+  const gltf = (await new Promise<GLTF>((resolve, reject) => {
     gltfLoader.load(modelUrl, resolve, undefined, reject);
-  });
+  })) as GLTFResult;
 
   const model = gltf.scene;
-  const meshes = [];
+  const meshes: Mesh[] = [];
 
   model.traverse((c) => {
-    if (!c.isMesh) return;
+    if (!(c instanceof Mesh)) return;
     c.material = new MeshStandardMaterial({ color: 0xffffff });
     c.castShadow = true;
     c.receiveShadow = true;
@@ -355,7 +367,7 @@ export async function createProjectionScene({
   await htmlTex.update();
 
   // Render loop
-  let animId;
+  let animId: number;
   (function tick() {
     animId = requestAnimationFrame(tick);
     controls.update();
@@ -369,7 +381,7 @@ export async function createProjectionScene({
     htmlTex.dispose();
     dracoLoader.dispose();
     model.traverse((c) => {
-      if (!c.isMesh) return;
+      if (!(c instanceof Mesh)) return;
       c.geometry?.dispose();
       if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose());
       else c.material?.dispose();
@@ -377,5 +389,5 @@ export async function createProjectionScene({
     canvas.remove();
   }
 
-  return { dispose };
+  return { dispose, camera, scene };
 }

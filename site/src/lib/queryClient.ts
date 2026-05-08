@@ -1,6 +1,7 @@
-import { QueryClient } from "@tanstack/react-query"
+import { devLog } from "@/utils/logger";
+import { QueryClient } from "@tanstack/react-query";
 
-const FIVE_HOURS = 5 * 60 * 60 * 1000
+const FIVE_HOURS = 5 * 60 * 60 * 1000;
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -11,32 +12,32 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 
 /** Thin localStorage cache layer around any async fetch.
  *  Falls back gracefully if localStorage is unavailable. */
 export async function withLocalStorageCache<T>(
   key: string,
   ttl: number,
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<T> {
   try {
-    const raw = localStorage.getItem(key)
+    const raw = localStorage.getItem(key);
     if (raw) {
-      const { data, ts } = JSON.parse(raw) as { data: T; ts: number }
-      if (Date.now() - ts < ttl) return data
+      const { data, ts } = JSON.parse(raw) as { data: T; ts: number };
+      if (Date.now() - ts < ttl) return data;
     }
-  } catch(e) {
-    console.warn(e)
+  } catch (e) {
+    devLog(e);
   }
 
-  const data = await fn()
+  const data = await fn();
 
   try {
-    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }))
-  } catch(e){
-    console.warn(e)
+    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+  } catch (e) {
+    devLog(e);
   }
 
-  return data
+  return data;
 }

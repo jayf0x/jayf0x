@@ -1,7 +1,8 @@
-import { FluidImage, FluidText } from "@jayf0x/fluidity-js";
+import { FluidText } from "@jayf0x/fluidity-js";
 import { useCallback, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
+import { useMotionValue, useMotionValueEvent } from "framer-motion";
 
 export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);
@@ -11,7 +12,7 @@ export const Background = () => {
   const showVoid = usePerformanceCheckpoint("Void", 0, true);
   const showChickenEgg = usePerformanceCheckpoint("🐔🥚", 60);
 
-  const splat = useCallback(
+  const splatCanvas = useCallback(
     (x: number, y: number) => {
       if (isMobile) {
         fluidRef.current?.splat(x, y, x + 20, y + 20, 10);
@@ -22,22 +23,33 @@ export const Background = () => {
     [isMobile],
   );
 
-  useEffect(() => {
-    const onMouseMove = (event: MouseEvent) => {
-      requestAnimationFrame(() => {
-        const x = -event.clientX / window.innerWidth;
-        const y = -event.clientY / window.innerHeight;
-        document.documentElement.style.setProperty("--mx", x.toFixed(2));
-        document.documentElement.style.setProperty("--my", y.toFixed(2));
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
 
-        splat(event.clientX, event.clientY);
-      });
+  useEffect(() => {
+    const onPointerMove = (event: MouseEvent) => {
+      mx.set(-event.clientX / window.innerWidth);
+      my.set(-event.clientY / window.innerHeight);
+
+      splatCanvas(event.clientX, event.clientY);
     };
 
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, {
+      passive: true,
+    });
 
-    return () => window.removeEventListener("mousemove", onMouseMove);
-  }, [splat]);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+    };
+  }, [mx, my, splatCanvas]);
+
+  useMotionValueEvent(mx, "change", (v) => {
+    document.documentElement.style.setProperty("--mx", v.toFixed(2));
+  });
+
+  useMotionValueEvent(my, "change", (v) => {
+    document.documentElement.style.setProperty("--my", v.toFixed(2));
+  });
 
   const fluidTextSpace = " ".repeat(Math.floor(window.innerWidth / 100));
 
@@ -76,7 +88,9 @@ export const Background = () => {
             isWorkerEnabled={true}
             isMouseEnabled={false}
             ref={fluidRef}
-            text={showChickenEgg ? `🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚` : ''}
+            text={
+              showChickenEgg ? `🐔${fluidTextSpace}<3/>${fluidTextSpace}🥚` : ""
+            }
             config={{
               densityDissipation: 0.99,
               // waterColor: [0.8, 0.3, 0.5],

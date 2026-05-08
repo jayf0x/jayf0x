@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Background } from "./components/Background";
 import { ChatWidget } from "./components/ChatWidget";
@@ -18,15 +18,17 @@ const pages: [string, Page][] = [
   ["Info", "info"],
 ];
 
-export const App = () => {
-  const [page, setPage] = useState<Page>("home");
 
+
+export const App = () => {
   const isMobile = useIsMobile();
+  const [page, setPage] = useState<Page>("home");
   const pageVariants = usePageAnimation(page);
   const isVoid = usePerformanceCheckpointValue("Void", true);
 
+
   return (
-    <div className="h-screen w-screen text-[var(--text)]">
+    <div className="h-screen w-screen text-(--text)">
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
         <PerformanceWidget />
         <ChatWidget />
@@ -46,7 +48,7 @@ export const App = () => {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.42, ease: "anticipate" }}
+            transition={{ duration: 0.842, ease: "anticipate" }}
           >
             <div
               className={`flex flex-col relative bg-[#0003] pointer-events-auto isolate ${
@@ -59,7 +61,7 @@ export const App = () => {
               }}
             >
               {/* Navigation */}
-              <nav className="items-center justify-end px-[3rem] pt-[2rem] mb-2 w-full flex">
+              <nav className="items-center justify-end px-12 pt-8 mb-2 w-full flex">
                 <div className="flex items-center gap-6">
                   {pages.map(([label, p]) => (
                     <button
@@ -68,8 +70,8 @@ export const App = () => {
                       onClick={() => setPage(p)}
                       className={`text-lg capitalize transition hover:underline ${
                         p === page
-                          ? "text-[var(--accent)]"
-                          : "text-[var(--muted)] hover:text-[var(--text)]"
+                          ? "text-(--accent)"
+                          : "text-(--muted) hover:text-(--text)"
                       }`}
                     >
                       {label}
@@ -101,28 +103,28 @@ export const App = () => {
   );
 };
 
-let timeoutID = 0;
 const usePageAnimation = (page: Page) => {
-  const [debounced, setDebounced] = useState(page);
+  const prevRef = useRef<Page>(page);
+
+  const prev = prevRef.current;
+  // eslint-disable-next-line react-hooks/refs
+  const prevIndex = pages.findIndex(([_, i]) => i === prev);
+  const nextIndex = pages.findIndex(([_, i]) => i === page);
+
+  // forward = new page has larger index -> enter from right (positive x)
+  const dir = prevIndex < nextIndex ? 1 : -1;
+  const w = typeof window !== "undefined" ? window.innerWidth * dir : 0;
 
   useEffect(() => {
-    // prevents effect changing mid-transition
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => {
-      setDebounced(page);
-    }, 500);
+    // commit the new page after we've calculated direction for this render
+    prevRef.current = page;
   }, [page]);
 
   return useMemo(() => {
-    const w = window.innerWidth * (debounced === "home" ? -1 : 1);
     return {
-      // initial: { opacity: 0.5, x: w },
-      // animate: { opacity: 1, x: 0 },
-      // exit: { opacity: 0.5, x: -w },
-
       initial: { x: w },
       animate: { x: 0 },
       exit: { x: -w },
     };
-  }, [debounced]);
+  }, [w]);
 };
