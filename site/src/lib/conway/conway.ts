@@ -9,27 +9,27 @@ export interface ConwayControls {
 }
 
 const COLORS_CSS_CONWAY = [
-  "rgb(15,25,80)",
-  "rgb(25,50,130)",
-  "rgb(45,95,185)",
-  "rgb(85,175,255)",
-  "rgb(65,150,235)",
-  "rgb(48,115,200)",
-  "rgb(34,80,165)",
-  "rgb(22,58,140)",
-  "rgb(14,38,110)",
+  "var(--c-0f1950)",
+  "var(--c-193282)",
+  "var(--c-2d5fb9)",
+  "var(--c-55afff)",
+  "var(--c-4196eb)",
+  "var(--c-3073c8)",
+  "var(--c-2250a5)",
+  "var(--c-163a8c)",
+  "var(--c-0e266e)",
 ];
 
 const COLORS_CSS_DAYNIGHT = [
-  "rgb(255,245,220)",
-  "rgb(255,215,150)",
-  "rgb(255,180,70)",
-  "rgb(245,135,25)",
-  "rgb(218,90,8)",
-  "rgb(185,55,4)",
-  "rgb(150,28,2)",
-  "rgb(115,10,1)",
-  "rgb(78,3,1)",
+  "var(--text)",
+  "var(--c-ffd796)",
+  "var(--c-ffb446)",
+  "var(--amber)",
+  "var(--c-da5a08)",
+  "var(--c-b93704)",
+  "var(--c-961c02)",
+  "var(--c-730a01)",
+  "var(--c-4e0301)",
 ];
 
 const buildComputeWGSL = (isConway: boolean) => `
@@ -341,7 +341,7 @@ export function createConwayEngine(
         y < rows &&
         current[y * cols + x] === 0
       ) {
-        ctx2d.fillStyle = "rgba(200,220,255,0.12)";
+        ctx2d.fillStyle = "var(--c-c8dcff-a12)";
         ctx2d.fillRect(x * cell + 1, y * cell + 1, cell - 2, cell - 2);
       }
     }

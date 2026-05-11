@@ -42,7 +42,7 @@ const POPOVER_STYLE: Partial<CSSStyleDeclaration> = {
   transition: "opacity 0.12s ease",
   opacity: "0",
   borderRadius: "8px",
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 6px rgba(0, 0, 0, 0.08)",
+  boxShadow: "0 4px 20px var(--bg-a12), 0 1px 6px var(--bg-a8)",
 };
 
 const SCOUT_STYLE: Partial<CSSStyleDeclaration> = {

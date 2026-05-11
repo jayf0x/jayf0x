@@ -8,7 +8,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { TypeAnimation } from "react-type-animation";
-import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
+import { useCheckpointValue } from "@/hooks/usePerformanceCheckpoint";
 
 type AdComp = React.FC;
 
@@ -48,7 +48,7 @@ const FloatingPanel = ({
     <div
       className="ad-float fixed z-20 rounded-lg overflow-hidden shadow-2xl"
       style={{
-        background: "#22c55e30",
+        background: "var(--c-22c55e-a19)",
         animationDelay: `${seed.toFixed(1)}s`,
         width: w,
         height: h,
@@ -62,28 +62,7 @@ const FloatingPanel = ({
 
 export const FakeAds = () => {
   const isMobile = useIsMobile();
-  const showMainAds = usePerformanceCheckpoint("Ads Random", 70);
-  const showSecondaryAds = usePerformanceCheckpoint("Ads Projects", 80);
-
-  const AD_POOL = useMemo(
-    () =>
-      showMainAds
-        ? [
-            showSecondaryAds && MatrixRain,
-            showSecondaryAds && DuckAd,
-            showSecondaryAds && Win98Ad,
-            showSecondaryAds && IdyllicLandscape,
-            FluidityAd,
-            PiipayaAd,
-            AudioBonanzaAd,
-            AqtiveAd,
-            ZippitAd,
-            PurePasteAd,
-            CliUtilsAd,
-          ].filter((i): i is AdComp => Boolean(i))
-        : [],
-    [showMainAds, showSecondaryAds],
-  );
+  const showAds = useCheckpointValue("Ads");
 
   const [slots, setSlots] = useState<Slot[]>(() => {
     const shuffled = [...AD_POOL].sort(() => Math.random() - 0.5);
@@ -92,24 +71,14 @@ export const FakeAds = () => {
 
   const activeCount = isMobile ? 3 : 4;
 
-  const rotateSlot = useCallback(
-    (slotIdx: number) => {
-      setSlots((prev) => {
-        const othersAds = prev.filter((_, i) => i !== slotIdx).map((s) => s.Ad);
-        const available = AD_POOL.filter((a) => !othersAds.includes(a));
-        const next = available[Math.floor(Math.random() * available.length)];
-        return prev.map((s, i) =>
-          i === slotIdx ? { Ad: next, v: s.v + 1 } : s,
-        );
-      });
-    },
-    [AD_POOL],
-  );
-
-  useEffect(() => {
-    const shuffled = [...AD_POOL].sort(() => Math.random() - 0.5);
-    setSlots(shuffled.slice(0, 4).map((Ad, i) => ({ Ad, v: i })));
-  }, [AD_POOL]);
+  const rotateSlot = useCallback((slotIdx: number) => {
+    setSlots((prev) => {
+      const othersAds = prev.filter((_, i) => i !== slotIdx).map((s) => s.Ad);
+      const available = AD_POOL.filter((a) => !othersAds.includes(a));
+      const next = available[Math.floor(Math.random() * available.length)];
+      return prev.map((s, i) => (i === slotIdx ? { Ad: next, v: s.v + 1 } : s));
+    });
+  }, []);
 
   useEffect(() => {
     const timers = SLOT_INTERVALS.slice(0, activeCount).map((ms, i) =>
@@ -117,6 +86,8 @@ export const FakeAds = () => {
     );
     return () => timers.forEach(clearInterval);
   }, [rotateSlot, activeCount]);
+
+  if (!showAds) return null;
 
   return (
     <div className="fixed size-full inset-0 z-10">
@@ -159,17 +130,17 @@ const MatrixRain: AdComp = () => (
       className="absolute inset-0 flex flex-col justify-between p-3"
       style={{
         background:
-          "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 65%)",
+          "linear-gradient(to bottom, var(--bg-a60) 0%, transparent 40%, var(--bg-a80) 65%)",
       }}
     >
       <div className="flex items-center gap-1.5">
         <span
           className="text-[9px] font-bold px-1.5 py-0.5 rounded-sm tracking-widest uppercase"
-          style={{ background: "#f54", color: "#000" }}
+          style={{ background: "var(--c-ff5544)", color: "var(--bg)" }}
         >
           LIVE
         </span>
-        <span className="text-[#00cc44] text-[10px] font-mono opacity-70">
+        <span className="text-(--c-00cc44) text-[10px] font-mono opacity-70">
           MARKET FEED
         </span>
       </div>
@@ -180,14 +151,17 @@ const MatrixRain: AdComp = () => (
           repeat={Infinity}
           omitDeletionAnimation
           className="font-black text-2xl leading-none block"
-          style={{ color: "#f54", textShadow: "0 0 12px #f543" }}
+          style={{
+            color: "var(--c-ff5544)",
+            textShadow: "0 0 12px var(--c-ff5544-a20)",
+          }}
         />
         <p className="text-white/70 text-[11px] mt-0.5">
           Trade crypto. Break free.
         </p>
         <span
           className="mt-2 inline-block text-[10px] font-bold px-2.5 py-1 rounded"
-          style={{ background: "#f54", color: "#000" }}
+          style={{ background: "var(--c-ff5544)", color: "var(--bg)" }}
         >
           Trade Now →
         </span>
@@ -207,30 +181,29 @@ const IdyllicLandscape: AdComp = () => (
       className="absolute inset-0 w-full h-full object-cover scale-110"
       src="https://raw.githubusercontent.com/jayf0x/js-canvas/main/previews/trees.gif"
     />
-    
+
     <div
       className="absolute inset-0"
       style={{
         background:
-          "linear-gradient(to bottom, rgba(50,18,0,0.5) 0%, rgba(10,4,0,0.97) 65%)",
+          "linear-gradient(to bottom, var(--c-321200-a50) 0%, var(--bg) 65%)",
       }}
     />
-    
+
     <div
       className="absolute inset-0 pointer-events-none"
       style={{
         background:
-          "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(212,160,23,0.025) 3px, rgba(212,160,23,0.025) 4px)",
+          "repeating-linear-gradient(0deg, transparent, transparent 3px, var(--c-d4a017-a2) 3px, var(--c-d4a017-a2) 4px)",
       }}
     />
     <div className="absolute inset-0 flex flex-col justify-between p-3">
-      
       <div className="flex items-center">
         <span
           className="text-[7px] font-bold px-1.5 py-0.5 tracking-widest uppercase"
           style={{
-            border: "1.5px solid #d4a017bb",
-            color: "#d4a017cc",
+            border: "1.5px solid var(--c-d4a017-a73)",
+            color: "var(--c-d4a017-a80)",
             borderRadius: "2px",
             fontFamily: "monospace",
           }}
@@ -238,15 +211,14 @@ const IdyllicLandscape: AdComp = () => (
           ✈ TOURISM BOARD OF EDO — EST. 1600
         </span>
       </div>
-      
+
       <div>
         <p
           className="font-black leading-none uppercase"
           style={{
             fontSize: "clamp(28px, 6vw, 42px)",
-            color: "#f5deb3",
-            textShadow:
-              "0 0 40px rgba(212,160,23,0.7), 2px 2px 0 rgba(0,0,0,0.9)",
+            color: "var(--c-f5deb3)",
+            textShadow: "0 0 40px var(--c-d4a017-a70), 2px 2px 0 var(--glass)",
             letterSpacing: "-0.03em",
           }}
         >
@@ -258,7 +230,7 @@ const IdyllicLandscape: AdComp = () => (
         </p>
         <div
           className="mt-1.5 text-[8px] font-mono leading-5"
-          style={{ color: "#d4a01788", fontFamily: "monospace" }}
+          style={{ color: "var(--c-d4a017-a53)", fontFamily: "monospace" }}
         >
           <p>YEAR: 1600 AD &nbsp;·&nbsp; WIFI: NONE ✓</p>
           <p>SAMURAI: ABSOLUTELY ✓</p>
@@ -267,13 +239,13 @@ const IdyllicLandscape: AdComp = () => (
         <div className="mt-2 flex items-end gap-2">
           <span
             className="inline-block text-[10px] font-black px-2.5 py-1 rounded-sm"
-            style={{ background: "#d4a017", color: "#000" }}
+            style={{ background: "var(--c-d4a017)", color: "var(--bg)" }}
           >
             Take a live server and travel →
           </span>
           <span
             className="text-[7px] italic pb-0.5"
-            style={{ color: "#d4a01744" }}
+            style={{ color: "var(--c-d4a017-a27)" }}
           >
             *just JavaScript
           </span>
@@ -289,12 +261,16 @@ const Win98Ad: AdComp = () => (
     target="_blank"
     rel="noreferrer"
     className="block size-full select-none"
-    style={{ background: "#c0c0c0", fontFamily: "Arial, sans-serif" }}
+    style={{
+      background: "var(--overlay-a100-2)",
+      fontFamily: "Arial, sans-serif",
+    }}
   >
     <div
       className="flex items-center justify-between px-1.5 py-0.5"
       style={{
-        background: "linear-gradient(90deg, #000082 0%, #1084d0 100%)",
+        background:
+          "linear-gradient(90deg, var(--bg)082 0%, var(--c-1084d0) 100%)",
         height: "22px",
       }}
     >
@@ -310,11 +286,11 @@ const Win98Ad: AdComp = () => (
             style={{
               width: 16,
               height: 14,
-              background: "#c0c0c0",
-              borderTop: "1px solid #fff",
-              borderLeft: "1px solid #fff",
-              borderRight: "1px solid #808080",
-              borderBottom: "1px solid #808080",
+              background: "var(--overlay-a100-2)",
+              borderTop: "1px solid var(--border-a100)",
+              borderLeft: "1px solid var(--border-a100)",
+              borderRight: "1px solid var(--shadow-a100-3)",
+              borderBottom: "1px solid var(--shadow-a100-3)",
             }}
           >
             {c}
@@ -334,17 +310,17 @@ const Win98Ad: AdComp = () => (
         <br />
         PLAY LIKE IT'S 1998
       </p>
-      <p className="text-center text-[10px] text-[#444] leading-snug px-1">
+      <p className="text-center text-[10px] text-(--shadow-a100-2) leading-snug px-1">
         Artisanal human-made technology.
       </p>
       <div
         className="mt-1 px-4 py-1 text-[11px] font-bold text-black text-center hover:scale-110"
         style={{
-          background: "#c0c0c0",
-          borderTop: "2px solid #ffffff",
-          borderLeft: "2px solid #ffffff",
-          borderRight: "2px solid #808080",
-          borderBottom: "2px solid #808080",
+          background: "var(--overlay-a100-2)",
+          borderTop: "2px solid var(--border-a100)",
+          borderLeft: "2px solid var(--border-a100)",
+          borderRight: "2px solid var(--shadow-a100-3)",
+          borderBottom: "2px solid var(--shadow-a100-3)",
         }}
       >
         Click Here!
@@ -364,7 +340,7 @@ const FluidityAd: AdComp = () => (
       className="absolute inset-0 hue_rot"
       style={{
         background:
-          "radial-gradient(ellipse at 25% 35%, #7c3aed 0%, transparent 55%), radial-gradient(ellipse at 75% 65%, #0ea5e9 0%, transparent 55%), radial-gradient(ellipse at 50% 80%, #ec4899 0%, transparent 50%)",
+          "radial-gradient(ellipse at 25% 35%, var(--c-7c3aed) 0%, transparent 55%), radial-gradient(ellipse at 75% 65%, var(--c-0ea5e9) 0%, transparent 55%), radial-gradient(ellipse at 50% 80%, var(--c-ec4899) 0%, transparent 50%)",
         opacity: 0.9,
         animationDuration: "7s",
       }}
@@ -373,13 +349,13 @@ const FluidityAd: AdComp = () => (
       className="absolute inset-0 flex flex-col justify-between p-3"
       style={{
         background:
-          "linear-gradient(to bottom, rgba(4,0,26,0.72) 0%, transparent 45%, rgba(4,0,26,0.88) 72%)",
+          "linear-gradient(to bottom, var(--glass-a72) 0%, transparent 45%, var(--glass) 72%)",
       }}
     >
       <div className="flex items-center gap-1.5">
         <span
           className="text-[8px] font-bold px-1.5 py-0.5 rounded-sm tracking-widest uppercase"
-          style={{ background: "#4ade80", color: "#000" }}
+          style={{ background: "var(--c-4ade80)", color: "var(--bg)" }}
         >
           FREE
         </span>
@@ -404,10 +380,10 @@ const FluidityAd: AdComp = () => (
         <span
           className="mt-2 inline-block text-[10px] font-bold px-2.5 py-1 rounded-sm"
           style={{
-            background: "rgba(255,255,255,0.14)",
-            color: "#fff",
+            background: "var(--overlay-lg)",
+            color: "var(--border-a100)",
             backdropFilter: "blur(4px)",
-            border: "1px solid rgba(255,255,255,0.18)",
+            border: "1px solid var(--overlay-lg)",
           }}
         >
           Get it now →
@@ -423,7 +399,7 @@ const Redact = ({ w }: { w: number }) => (
     style={{
       width: `${w}ch`,
       height: "1em",
-      background: "rgba(255,255,255,0.88)",
+      background: "var(--border-a88)",
       verticalAlign: "middle",
     }}
   />
@@ -435,7 +411,7 @@ const PiipayaAd: AdComp = () => (
     target="_blank"
     rel="noreferrer"
     className="relative block size-full"
-    style={{ background: "#080812" }}
+    style={{ background: "var(--surface)" }}
   >
     <div className="size-full flex flex-col justify-between p-4">
       <div>
@@ -456,8 +432,8 @@ const PiipayaAd: AdComp = () => (
       <div
         className="w-full rounded-md p-3 font-mono text-[11px] leading-6 text-white/80"
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "var(--overlay-xs)",
+          border: "1px solid var(--border)",
         }}
       >
         <p>
@@ -468,7 +444,7 @@ const PiipayaAd: AdComp = () => (
           .com
         </p>
         <p>
-          is now <span style={{ color: "#4ade80" }}>anonymous.</span>
+          is now <span style={{ color: "var(--c-4ade80)" }}>anonymous.</span>
         </p>
       </div>
       <p className="text-white/25 text-[9px] tracking-wide">PIIPAYA →</p>
@@ -477,20 +453,20 @@ const PiipayaAd: AdComp = () => (
 );
 
 const RED_BAR_COLORS = [
-  "#4d0000",
-  "#660000",
-  "#800000",
-  "#990000",
-  "#b30000",
-  "#cc0000",
-  "#e60000",
-  "#ff0000",
-  "#e60000",
-  "#cc0000",
-  "#b30000",
-  "#990000",
-  "#800000",
-  "#ff1a1a",
+  "var(--c-4d0000)",
+  "var(--c-660000)",
+  "var(--c-800000)",
+  "var(--c-990000)",
+  "var(--c-b30000)",
+  "var(--c-cc0000)",
+  "var(--c-e60000)",
+  "var(--c-ff0000)",
+  "var(--c-e60000)",
+  "var(--c-cc0000)",
+  "var(--c-b30000)",
+  "var(--c-990000)",
+  "var(--c-800000)",
+  "var(--c-ff1a1a)",
 ];
 
 const AudioBonanzaAd: AdComp = () => {
@@ -512,17 +488,16 @@ const AudioBonanzaAd: AdComp = () => {
       target="_blank"
       rel="noreferrer"
       className="relative block size-full overflow-hidden"
-      style={{ background: "#000" }}
+      style={{ background: "var(--bg)" }}
     >
-      
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
           background:
-            "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,0,0,0.04) 3px, rgba(255,0,0,0.04) 4px)",
+            "repeating-linear-gradient(0deg, transparent, transparent 3px, var(--c-ff0000-a4) 3px, var(--c-ff0000-a4) 4px)",
         }}
       />
-      
+
       <div
         className="absolute bottom-0 left-0 right-0 flex items-end gap-px px-1"
         style={{ height: "45%" }}
@@ -540,19 +515,19 @@ const AudioBonanzaAd: AdComp = () => {
           />
         ))}
       </div>
-      
+
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%)",
+            "linear-gradient(to bottom, var(--bg) 0%, var(--bg) 40%, transparent 100%)",
         }}
       />
-      
+
       <div className="absolute inset-0 flex flex-col items-center justify-start pt-3 px-2 text-center z-10">
         <span
           className="text-[7px] font-bold tracking-widest uppercase mb-2"
-          style={{ color: "#ff000099", fontFamily: "monospace" }}
+          style={{ color: "var(--c-ff0000-a60)", fontFamily: "monospace" }}
         >
           JOIN NOW
         </span>
@@ -560,8 +535,9 @@ const AudioBonanzaAd: AdComp = () => {
           className="font-black leading-none uppercase"
           style={{
             fontSize: "clamp(20px, 5vw, 28px)",
-            color: "#ff0000",
-            textShadow: "0 0 20px #ff0000cc, 0 0 50px #ff000055",
+            color: "var(--c-ff0000)",
+            textShadow:
+              "0 0 20px var(--c-ff0000-a80), 0 0 50px var(--c-ff0000-a33)",
             letterSpacing: "-0.02em",
           }}
         >
@@ -575,7 +551,7 @@ const AudioBonanzaAd: AdComp = () => {
         </p>
         <p
           className="text-[8px] mt-2 tracking-widest uppercase font-bold"
-          style={{ color: "#ff000055" }}
+          style={{ color: "var(--c-ff0000-a33)" }}
         >
           TAKE CONTROL
         </p>
@@ -590,14 +566,13 @@ const AqtiveAd: AdComp = () => (
     target="_blank"
     rel="noreferrer"
     className="relative block size-full overflow-hidden"
-    style={{ background: "#010d01" }}
+    style={{ background: "var(--bg)" }}
   >
-    
     <div
       className="absolute inset-0 animate-pulse"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 65%, #00ff001a 0%, transparent 70%)",
+          "radial-gradient(ellipse at 50% 65%, var(--c-00ff00-a10) 0%, transparent 70%)",
         animationDuration: "2s",
       }}
     />
@@ -630,11 +605,15 @@ const AqtiveAd: AdComp = () => (
         className="font-black text-center leading-none uppercase"
         style={{
           fontSize: "clamp(18px, 4.5vw, 26px)",
-          color: "#4ade80",
-          textShadow: "0 0 20px #4ade8099, 0 0 50px #4ade8044",
+          color: "var(--c-4ade80)",
+          textShadow:
+            "0 0 20px var(--c-4ade80-a60), 0 0 50px var(--c-4ade80-a27)",
         }}
       />
-      <p className="text-[9px] text-center" style={{ color: "#4ade8033" }}>
+      <p
+        className="text-[9px] text-center"
+        style={{ color: "var(--c-4ade80-a20)" }}
+      >
         Aqtive — keeps your Mac alive →
       </p>
     </div>
@@ -642,11 +621,11 @@ const AqtiveAd: AdComp = () => (
 );
 
 const ZIPPIT_LINES = [
-  { text: "$ zippit seal ./secrets", color: "#fff" },
-  { text: "Encrypting layer 1 (AES-256)...", color: "#00ff8899" },
-  { text: "Encrypting layer 2 (Kyber-768)...", color: "#00ff8899" },
-  { text: "✓ One greasy encrypted football.", color: "#00ff88" },
-  { text: "Nothing readable inside.", color: "#00ff8866" },
+  { text: "$ zippit seal ./secrets", color: "var(--border-a100)" },
+  { text: "Encrypting layer 1 (AES-256)...", color: "var(--c-00ff88-a60)" },
+  { text: "Encrypting layer 2 (Kyber-768)...", color: "var(--c-00ff88-a60)" },
+  { text: "✓ One greasy encrypted football.", color: "var(--c-00ff88)" },
+  { text: "Nothing readable inside.", color: "var(--c-00ff88-a40)" },
 ];
 
 const ZippitAd: AdComp = () => {
@@ -668,7 +647,7 @@ const ZippitAd: AdComp = () => {
       target="_blank"
       rel="noreferrer"
       className="block size-full p-4 font-mono text-[11px]"
-      style={{ background: "#05050f" }}
+      style={{ background: "var(--glass)" }}
     >
       <div className="flex flex-col gap-1.5 h-full justify-between">
         <p
@@ -691,10 +670,10 @@ const ZippitAd: AdComp = () => {
             </div>
           ))}
           {visible < ZIPPIT_LINES.length && (
-            <span className="animate-pulse text-[#00ff88]">_</span>
+            <span className="animate-pulse text-(--c-00ff88)">_</span>
           )}
           {visible >= ZIPPIT_LINES.length && (
-            <p className="text-[9px] text-[#00ff88]/35 mt-2">🔐 zippit →</p>
+            <p className="text-[9px] text-(--c-00ff88)/35 mt-2">🔐 zippit →</p>
           )}
         </div>
       </div>
@@ -733,7 +712,7 @@ const PurePasteAd: AdComp = () => {
       target="_blank"
       rel="noreferrer"
       className="block size-full"
-      style={{ background: "#080d1c" }}
+      style={{ background: "var(--surface)" }}
     >
       <div className="size-full flex flex-col justify-between p-4">
         <div>
@@ -752,17 +731,19 @@ const PurePasteAd: AdComp = () => {
         <div
           className="w-full rounded p-2 font-mono text-[9px] break-all leading-relaxed"
           style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "var(--overlay-xs)",
+            border: "1px solid var(--border)",
           }}
         >
-          {phase === 0 && <span style={{ color: "#f87171" }}>{DIRTY}</span>}
+          {phase === 0 && <span style={{ color: "var(--red)" }}>{DIRTY}</span>}
           {phase === 1 && (
             <>
-              <span style={{ color: "#4ade80" }}>shop.com/item?id=42</span>
+              <span style={{ color: "var(--c-4ade80)" }}>
+                shop.com/item?id=42
+              </span>
               <span
                 style={{
-                  color: "#f87171",
+                  color: "var(--red)",
                   textDecoration: "line-through",
                   opacity: 0.5,
                 }}
@@ -771,7 +752,9 @@ const PurePasteAd: AdComp = () => {
               </span>
             </>
           )}
-          {phase === 2 && <span style={{ color: "#4ade80" }}>{CLEAN}</span>}
+          {phase === 2 && (
+            <span style={{ color: "var(--c-4ade80)" }}>{CLEAN}</span>
+          )}
         </div>
         <p className="text-white/25 text-[9px]">Pure-Paste →</p>
       </div>
@@ -791,27 +774,27 @@ const DuckAd: AdComp = () => (
       style={{ filter: "contrast(1.3) saturate(0.7) brightness(0.85)" }}
       src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXd1M2N2bnNqdGVydTU3cDcyaXM1ZjhubjNoZnJsam14enRiNTFseSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1gQuJbdCaihTIqu2lB/giphy.gif"
     />
-    
+
     <div
       className="absolute inset-0"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(0,0,0,0.75) 100%)",
+          "radial-gradient(ellipse at 50% 40%, transparent 30%, var(--bg-a75) 100%)",
       }}
     />
-    
+
     <div
       className="absolute inset-0"
       style={{
         background:
-          "linear-gradient(to bottom, rgba(0,40,80,0.45) 0%, rgba(0,10,30,0.88) 75%)",
+          "linear-gradient(to bottom, var(--c-002850-a45) 0%, var(--surface-a88) 75%)",
       }}
     />
     <div className="absolute inset-0 flex flex-col justify-between p-3">
       <div className="flex items-center gap-1.5">
         <span
           className="text-[8px] font-bold px-1.5 py-0.5 rounded-sm tracking-widest uppercase"
-          style={{ background: "#38bdf8", color: "#000" }}
+          style={{ background: "var(--c-38bdf8)", color: "var(--bg)" }}
         >
           HEALTH PSA
         </span>
@@ -824,7 +807,7 @@ const DuckAd: AdComp = () => (
           className="text-white font-black leading-tight"
           style={{
             fontSize: "clamp(13px, 3vw, 17px)",
-            textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+            textShadow: "0 2px 12px var(--bg-a80)",
           }}
         >
           Do you find yourself
@@ -836,7 +819,7 @@ const DuckAd: AdComp = () => (
         </p>
         <span
           className="mt-2 inline-block text-[10px] font-black px-2.5 py-1 rounded-sm"
-          style={{ background: "#38bdf8", color: "#000" }}
+          style={{ background: "var(--c-38bdf8)", color: "var(--bg)" }}
         >
           Take the Duck Test →
         </span>
@@ -853,36 +836,36 @@ const CLI_SLIDES = [
     name: ":git-nuke()",
     headline: "BURN YOUR\nGIT HISTORY.",
     tagline: "Type YES to confirm. It's theatrical.",
-    color: "#ff4500",
-    bg: "#0d0100",
+    color: "var(--c-ff4500)",
+    bg: "var(--bg)",
   },
   {
     name: "git-folder-dl",
     headline: "CHERRY-PICK\nYOUR REPOS.",
     tagline: "TUI sparse checkout. Files only.",
-    color: "#00d4ff",
-    bg: "#00080e",
+    color: "var(--c-00d4ff)",
+    bg: "var(--bg)",
   },
   {
     name: "fn-grep-react",
     headline: "HUNT DOWN\nCOMPONENTS.",
     tagline: "Search. Find. Auto-Prettier.",
-    color: "#ffd700",
-    bg: "#0d0a00",
+    color: "var(--c-ffd700)",
+    bg: "var(--bg)",
   },
   {
     name: ":llm()",
     headline: "CHAT WITH\nLOCAL AI.",
     tagline: "Ollama · Llama · Mistral",
-    color: "#c084fc",
-    bg: "#06000e",
+    color: "var(--c-c084fc)",
+    bg: "var(--bg)",
   },
   {
     name: "app-bgTxt.py",
     headline: "AI DESKTOP\nWALLPAPER.",
     tagline: "Summarize. Render. Set as bg.",
-    color: "#4ade80",
-    bg: "#000e04",
+    color: "var(--c-4ade80)",
+    bg: "var(--bg)",
   },
 ];
 
@@ -932,7 +915,6 @@ const CliUtilsAd: AdComp = () => {
           }}
           className="absolute inset-0 flex flex-col justify-between p-3"
         >
-          
           <span
             className="text-xl"
             style={{
@@ -943,7 +925,7 @@ const CliUtilsAd: AdComp = () => {
           >
             $ {slide.name}
           </span>
-          
+
           <div>
             <p
               className="font-black leading-none uppercase whitespace-pre-line"
@@ -958,12 +940,12 @@ const CliUtilsAd: AdComp = () => {
             </p>
             <p
               className="mt-1.5"
-              style={{ fontSize: "9px", color: "rgba(255,255,255,0.38)" }}
+              style={{ fontSize: "9px", color: "var(--border-a38)" }}
             >
               {slide.tagline}
             </p>
           </div>
-          
+
           <div className="flex items-center gap-1.5">
             {CLI_SLIDES.map((_, i) => (
               <div
@@ -981,7 +963,7 @@ const CliUtilsAd: AdComp = () => {
               className="ml-auto"
               style={{
                 fontSize: "8px",
-                color: "#ffffff18",
+                color: "var(--overlay-md)",
                 fontFamily: "monospace",
               }}
             >
@@ -993,3 +975,17 @@ const CliUtilsAd: AdComp = () => {
     </a>
   );
 };
+
+const AD_POOL = [
+  MatrixRain,
+  DuckAd,
+  Win98Ad,
+  IdyllicLandscape,
+  FluidityAd,
+  PiipayaAd,
+  AudioBonanzaAd,
+  AqtiveAd,
+  ZippitAd,
+  PurePasteAd,
+  CliUtilsAd,
+];

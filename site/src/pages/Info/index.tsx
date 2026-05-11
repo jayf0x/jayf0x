@@ -31,7 +31,7 @@ function TestPattern({ width, height }: { width: number; height: number }) {
     fontSize: 18,
     fontWeight: "bold",
     fontFamily: "monospace",
-    background: "rgba(0,0,0,0.45)",
+    background: "var(--bg-a45)",
     lineHeight: 1.2,
   });
 
@@ -42,13 +42,13 @@ function TestPattern({ width, height }: { width: number; height: number }) {
         width,
         height,
         overflow: "hidden",
-        background: "#000",
+        background: "var(--bg)",
       }}
     >
-      <div style={{ position: "absolute", top: 0, left: 0, width: half, height: half, background: "#00cc44" }} />
-      <div style={{ position: "absolute", top: 0, right: 0, width: half, height: half, background: "#ff2200" }} />
-      <div style={{ position: "absolute", bottom: 0, left: 0, width: half, height: half, background: "#0055ff" }} />
-      <div style={{ position: "absolute", bottom: 0, right: 0, width: half, height: half, background: "#ffcc00" }} />
+      <div style={{ position: "absolute", top: 0, left: 0, width: half, height: half, background: "var(--c-00cc44)" }} />
+      <div style={{ position: "absolute", top: 0, right: 0, width: half, height: half, background: "var(--c-ff2200)" }} />
+      <div style={{ position: "absolute", bottom: 0, left: 0, width: half, height: half, background: "var(--c-0055ff)" }} />
+      <div style={{ position: "absolute", bottom: 0, right: 0, width: half, height: half, background: "var(--gold)" }} />
 
       <div style={{ position: "absolute", top: half, left: 0, right: 0, height: 3, marginTop: -1, background: "white", opacity: 0.7 }} />
       <div style={{ position: "absolute", left: half, top: 0, bottom: 0, width: 3, marginLeft: -1, background: "white", opacity: 0.7 }} />

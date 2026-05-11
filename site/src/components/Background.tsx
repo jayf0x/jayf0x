@@ -1,16 +1,16 @@
 import { FluidText } from "@jayf0x/fluidity-js";
 import { useCallback, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
+import { useCheckpointValue } from "@/hooks/usePerformanceCheckpoint";
 import { useMotionValue, useMotionValueEvent } from "framer-motion";
 
 export const Background = () => {
   const fluidRef = useRef<FluidHandle>(null);
 
   const isMobile = useIsMobile();
-  const showBackground = usePerformanceCheckpoint("Fluid", 50);
-  const showVoid = usePerformanceCheckpoint("Void", 0, true);
-  const showChickenEgg = usePerformanceCheckpoint("🐔🥚", 60);
+  const showVoid = useCheckpointValue("Void");
+  const showBackground = useCheckpointValue("Fluid");
+  const showChickenEgg = useCheckpointValue("🐔🥚");
 
   const splatCanvas = useCallback(
     (x: number, y: number) => {
@@ -93,8 +93,8 @@ export const Background = () => {
       
       
 
-      <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-(--accent) to-[#8b5cf6] opacity-[0.1] blur-3xl" />
-      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-(--accent) to-[#8b5cf6] opacity-[0.1] blur-3xl [animation-delay:3s]" />
+      <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl" />
+      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl [animation-delay:3s]" />
     </div>
   );
 };
@@ -108,7 +108,7 @@ const Void = () => {
       <div
         className="rounded-[100%] lg:size-[70vw] sm:size-full overflow-hidden relative"
         style={{
-          background: "radial-gradient(circle at 100%, #000a, #fff0 50%)",
+          background: "radial-gradient(circle at 100%, var(--bg)a, #fff0 50%)",
         }}
       >
         <FluidText
@@ -127,7 +127,7 @@ const Void = () => {
             specularExp: 0.5,
             refraction: 0,
           }}
-          backgroundColor="radial-gradient(circle at 100%, #000a, #fff0 50%)"
+          backgroundColor="radial-gradient(circle at 100%, var(--bg)a, #fff0 50%)"
           style={{
             filter: "grayscale(0.4)",
             opacity: 0.9,
@@ -136,7 +136,7 @@ const Void = () => {
         <div
           className="absolute z-10 w-full h-full inset-0 pointer-events-none"
           style={{
-            background: "radial-gradient(circle, #fff0,  #000 50%, #000 100%)",
+            background: "radial-gradient(circle, #fff0,  var(--bg) 50%, var(--bg) 100%)",
           }}
         ></div>
       </div>

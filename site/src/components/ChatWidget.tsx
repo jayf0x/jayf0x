@@ -312,7 +312,7 @@ export const ChatWidget = () => {
               border: "1px solid var(--border)",
               backdropFilter: "blur(24px)",
               boxShadow:
-                "0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px var(--overlay-xs) inset",
+                "0 24px 64px var(--bg-a60), 0 0 0 1px var(--overlay-xs) inset",
               height: "520px",
             }}
           >
@@ -328,7 +328,7 @@ export const ChatWidget = () => {
                   className="w-8 h-8 rounded-full flex items-center justify-center text-base select-none"
                   style={{
                     background: "var(--accent-dim)",
-                    border: "1px solid rgba(79,124,255,0.25)",
+                    border: "1px solid var(--accent-glow)",
                   }}
                 >
                   🤖
@@ -372,7 +372,7 @@ export const ChatWidget = () => {
                         className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                         style={{
                           background: "var(--accent-dim)",
-                          border: "1px solid rgba(79,124,255,0.2)",
+                          border: "1px solid var(--accent-glow)",
                         }}
                       >
                         OG
@@ -387,9 +387,9 @@ export const ChatWidget = () => {
                       style={
                         msg.role === "user"
                           ? {
-                              background: "rgba(79, 124, 255, 0.22)",
-                              border: "1px solid rgba(79, 124, 255, 0.28)",
-                              color: "#c8d8ff",
+                              background: "var(--accent-glow)",
+                              border: "1px solid var(--accent-glow)",
+                              color: "var(--c-c8d8ff)",
                             }
                           : {
                               background: "var(--gold-dim)",
@@ -424,7 +424,7 @@ export const ChatWidget = () => {
                       className="w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mb-0.5 select-none"
                       style={{
                         background: "var(--accent-dim)",
-                        border: "1px solid rgba(79,124,255,0.2)",
+                        border: "1px solid var(--accent-glow)",
                       }}
                     >
                       🤖
@@ -495,7 +495,7 @@ export const ChatWidget = () => {
                     <div className="flex items-center justify-between mb-2">
                       <span
                         className="text-[11px] tabular-nums"
-                        style={{ color: "rgba(255,255,255,0.28)" }}
+                        style={{ color: "var(--overlay-lg)" }}
                       >
                         {elapsed}s elapsed
                       </span>
@@ -515,7 +515,7 @@ export const ChatWidget = () => {
                           style={{
                             background: "var(--overlay-sm)",
                             border: "1px solid var(--border)",
-                            color: "rgba(255,255,255,0.45)",
+                            color: "var(--border-a45)",
                           }}
                         >
                           <Square size={9} strokeWidth={2.5} />
@@ -549,7 +549,7 @@ export const ChatWidget = () => {
                           className="h-full rounded-full"
                           style={{
                             background:
-                              "linear-gradient(90deg, color-mix(in srgb, var(--gold) 45%, transparent), rgba(255,214,80,0.85))",
+                              "linear-gradient(90deg, color-mix(in srgb, var(--gold) 45%, transparent), var(--c-ffd650-a85))",
                           }}
                           initial={{ width: "0%" }}
                           animate={{
@@ -629,9 +629,9 @@ export const ChatWidget = () => {
             transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
             className="w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-xl select-none relative"
             style={{
-              background: "linear-gradient(135deg, var(--accent) 0%, #7c4fff 100%)",
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--c-7c4fff) 100%)",
               boxShadow:
-                "0 4px 24px color-mix(in srgb, var(--accent) 35%, transparent), 0 1px 0 rgba(255,255,255,0.15) inset",
+                "0 4px 24px color-mix(in srgb, var(--accent) 35%, transparent), 0 1px 0 var(--overlay-lg) inset",
               border: "1px solid var(--overlay-md)",
             }}
           >
@@ -648,7 +648,7 @@ export const ChatWidget = () => {
                 }}
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--accent) 0%, #7c4fff 100%)",
+                    "linear-gradient(135deg, var(--accent) 0%, var(--c-7c4fff) 100%)",
                 }}
               />
             )}

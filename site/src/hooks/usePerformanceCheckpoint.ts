@@ -4,54 +4,48 @@ import {
   checkpointsAtom,
   checkpointOverridesAtom,
   sliderValueAtom,
-  resolveOverride,
+  type CheckpointItem,
 } from "@/lib/performanceStore";
 
-export const usePerformanceCheckpoint = (
-  tag: string,
-  percentage: number,
-  invert = false,
+export const useRegisterCheckpoints = <
+  const T extends readonly CheckpointItem[],
+>(
+  items: T,
 ) => {
   const setCheckpoints = useSetAtom(checkpointsAtom);
-  const sliderValue = useAtomValue(sliderValueAtom);
-  const checkpoints = useAtomValue(checkpointsAtom);
 
   useEffect(() => {
     setCheckpoints((prev) => {
-      const idx = prev.findIndex((c) => c.tag === tag);
-      if (idx >= 0) {
-        const updated = [...prev];
-        updated[idx] = { tag, percentage };
-        return updated;
+      const updated = prev.slice();
+      for (const item of items) {
+        const idx = updated.findIndex(({ tag }) => tag === item.tag);
+        if (idx >= 0) {
+          updated[idx] = item;
+        } else {
+          updated.push(item);
+        }
       }
-      return [...prev, { tag, percentage }];
+
+      return updated;
     });
-  }, [tag, percentage, setCheckpoints]);
-
-  const overrides = useAtomValue(checkpointOverridesAtom);
-  const threshold =
-    checkpoints.find((c) => c.tag === tag)?.percentage ?? percentage ?? NaN;
-
-  const override = overrides[tag] ?? "auto";
-  return resolveOverride(
-    override,
-    invert ? sliderValue <= threshold : sliderValue >= threshold,
-  );
+  }, [items, setCheckpoints]);
 };
 
-export const usePerformanceCheckpointValue = (
-  tag: Capitalize<string>,
-  invert = false,
-) => {
+export const useCheckpointValue = (tag: CheckpointItem["tag"]) => {
   const sliderValue = useAtomValue(sliderValueAtom);
   const checkpoints = useAtomValue(checkpointsAtom);
 
   const overrides = useAtomValue(checkpointOverridesAtom);
-  const threshold = checkpoints.find((c) => c.tag === tag)?.percentage ?? NaN;
 
   const override = overrides[tag] ?? "auto";
-  return resolveOverride(
-    override,
-    invert ? sliderValue <= threshold : sliderValue >= threshold,
-  );
+  if (override === "on") return true;
+  if (override === "off") return false;
+
+  const item = checkpoints.find((c) => c.tag === tag);
+
+  if (!item) return false;
+
+  return item.invert
+    ? sliderValue <= item.percentage
+    : sliderValue >= item.percentage;
 };

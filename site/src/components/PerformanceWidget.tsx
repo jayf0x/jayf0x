@@ -7,7 +7,6 @@ import {
   checkpointsAtom,
   checkpointOverridesAtom,
   OverrideState,
-  resolveOverride,
 } from "@/lib/performanceStore";
 import { InfoPopover } from "./InfoPopover";
 
@@ -20,10 +19,10 @@ const AMBER_MID = "color-mix(in srgb, var(--amber) 40%, transparent)";
 const AMBER_GLOW = "var(--amber-glow)";
 
 function cycleOverride(current: OverrideState): OverrideState {
-  if (current === 'auto') return 'off';
-  if (current === 'off') return 'on';
-  if (current === 'on') return 'auto';
-  return 'off';
+  if (current === "auto") return "off";
+  if (current === "off") return "on";
+  if (current === "on") return "auto";
+  return "off";
 }
 
 export const PerformanceWidget = () => {
@@ -51,7 +50,7 @@ export const PerformanceWidget = () => {
     (tag: string) => {
       setOverrides((prev) => {
         const next = cycleOverride(prev[tag]);
-        if (next === 'auto') {
+        if (next === "auto") {
           const { [tag]: _, ...rest } = prev;
           return rest;
         }
@@ -80,7 +79,7 @@ export const PerformanceWidget = () => {
                 background: "var(--glass)",
                 backdropFilter: "blur(20px) saturate(1.5)",
                 border: `1px solid ${AMBER_DIM}`,
-                boxShadow: `0 8px 40px rgba(0,0,0,0.65), 0 0 0 1px ${AMBER_GLOW} inset, 0 0 32px ${AMBER_GLOW}`,
+                boxShadow: `0 8px 40px var(--bg-a65), 0 0 0 1px ${AMBER_GLOW} inset, 0 0 32px ${AMBER_GLOW}`,
               }}
             >
               <div className="flex items-center justify-between mb-3">
@@ -120,7 +119,7 @@ export const PerformanceWidget = () => {
               {checkpoints.length > 0 && (
                 <div className="relative h-7 mb-0.5">
                   {checkpoints.map((cp, idx) => {
-                    const overridden = (overrides[cp.tag] ?? 'auto') !== 'auto';
+                    const overridden = (overrides[cp.tag] ?? "auto") !== "auto";
                     const active = value >= cp.percentage;
                     return (
                       <div
@@ -138,7 +137,7 @@ export const PerformanceWidget = () => {
                               ? "var(--overlay-lg)"
                               : active
                                 ? "color-mix(in srgb, var(--amber) 95%, transparent)"
-                                : "rgba(255,255,255,0.22)",
+                                : "var(--overlay-lg)",
                           }}
                         >
                           {cp.tag}
@@ -197,7 +196,7 @@ export const PerformanceWidget = () => {
                     className="absolute inset-y-0 left-0"
                     style={{
                       width: `${value}%`,
-                      background: `linear-gradient(90deg, var(--amber) 0%, #ef4444 60%, #DD3162 100%)`,
+                      background: `linear-gradient(90deg, var(--amber) 0%, var(--c-ef4444) 60%, var(--c-dd3162) 100%)`,
                       opacity: 0.85,
                       border: "1px solid var(--border)",
                       backgroundClip: "padding-box",
@@ -224,8 +223,8 @@ export const PerformanceWidget = () => {
                         width: 1,
                         height: h,
                         background: lit
-                          ? "rgba(255,255,255,0.55)"
-                          : "rgba(255,255,255,0.13)", /* tick mark */
+                          ? "var(--border-a55)"
+                          : "var(--overlay-md)" /* tick mark */,
                         transform: "translateX(-50%)",
                         borderRadius: 0.5,
                         transition: "background 0.15s",
@@ -235,7 +234,7 @@ export const PerformanceWidget = () => {
                 })}
 
                 {checkpoints.map((cp, idx) => {
-                  const overridden = (overrides[cp.tag] ?? 'auto') !== 'auto';
+                  const overridden = (overrides[cp.tag] ?? "auto") !== "auto";
                   const active = value >= cp.percentage;
                   const indexOffset = getLabelOffset(idx);
                   return (
@@ -254,7 +253,7 @@ export const PerformanceWidget = () => {
                           ? "var(--overlay-md)"
                           : active
                             ? AMBER
-                            : "rgba(255,255,255,0.3)",
+                            : "var(--overlay-lg)",
                         boxShadow:
                           !overridden && active
                             ? "0 0 8px 2px color-mix(in srgb, var(--amber) 55%, transparent)"
@@ -276,9 +275,9 @@ export const PerformanceWidget = () => {
                       height: 26,
                       borderRadius: 4,
                       background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,220,150,0.9) 100%)",
+                        "linear-gradient(180deg, var(--border-a96) 0%, var(--c-ffdc96-a90) 100%)",
                       boxShadow:
-                        "0 0 14px color-mix(in srgb, var(--amber) 50%, transparent), 0 3px 8px rgba(0,0,0,0.7)",
+                        "0 0 14px color-mix(in srgb, var(--amber) 50%, transparent), 0 3px 8px var(--bg-a70)",
                     }}
                   >
                     {[0, 1, 2].map((i) => (
@@ -288,7 +287,7 @@ export const PerformanceWidget = () => {
                         style={{
                           width: 6,
                           height: 1,
-                          background: "rgba(0,0,0,0.28)",
+                          background: "var(--bg-a28)",
                         }}
                       />
                     ))}
@@ -314,10 +313,7 @@ export const PerformanceWidget = () => {
                   style={{ borderTop: "1px solid var(--overlay-sm)" }}
                 >
                   {checkpoints.map((cp) => {
-                    const override = overrides[cp.tag] ?? 'auto';
-                    const sliderActive = value >= cp.percentage;
-                    const effective = resolveOverride(override, sliderActive);
-
+                    const override = overrides[cp.tag] ?? "auto";
                     return (
                       <div
                         key={`override-checkpoint-tag-${cp.tag}`}
@@ -327,32 +323,28 @@ export const PerformanceWidget = () => {
                           <span
                             className="w-1.5 h-1.5 rounded-full shrink-0 transition-colors duration-300"
                             style={{
-                              background: effective
-                                ? override !== 'auto'
-                                  ? "var(--green)"
-                                  : AMBER
-                                : "var(--overlay-md)",
-                              boxShadow: effective
-                                ? override !== 'auto'
+                              background:
+                                override !== "auto" ? "var(--green)" : AMBER,
+                              boxShadow:
+                                override !== "auto"
                                   ? "0 0 5px color-mix(in srgb, var(--green) 60%, transparent)"
-                                  : `0 0 5px color-mix(in srgb, var(--amber) 50%, transparent)`
-                                : "none",
+                                  : `0 0 5px color-mix(in srgb, var(--amber) 50%, transparent)`,
                             }}
                           />
                           <span
                             className="text-[11px] font-mono uppercase tracking-wider truncate transition-colors duration-200"
                             style={{
                               color:
-                                override !== 'auto'
-                                  ? "rgba(255,255,255,0.7)"
-                                  : "rgba(255,255,255,0.35)",
+                                override !== "auto"
+                                  ? "var(--border-a70)"
+                                  : "var(--border-a35)",
                             }}
                           >
                             {cp.tag}
                           </span>
                           <span
                             className="text-[9px] font-mono tabular-nums shrink-0"
-                            style={{ color: "rgba(255,255,255,0.2)" }}
+                            style={{ color: "var(--overlay-lg)" }}
                           >
                             @{cp.percentage}%
                           </span>
@@ -364,23 +356,23 @@ export const PerformanceWidget = () => {
                           className="flex items-center gap-1.5 px-2 py-0.5 rounded-md shrink-0 transition-all duration-150"
                           style={{
                             background:
-                              override === 'on'
+                              override === "on"
                                 ? "color-mix(in srgb, var(--green) 12%, transparent)"
-                                : override === 'off'
+                                : override === "off"
                                   ? "color-mix(in srgb, var(--red) 10%, transparent)"
                                   : "var(--overlay-xs)",
                             border:
-                              override === 'on'
+                              override === "on"
                                 ? "1px solid color-mix(in srgb, var(--green) 30%, transparent)"
-                                : override === 'off'
+                                : override === "off"
                                   ? "1px solid color-mix(in srgb, var(--red) 25%, transparent)"
                                   : "1px solid var(--border)",
                             color:
-                              override === 'on'
+                              override === "on"
                                 ? "var(--green)"
-                                : override === 'off'
+                                : override === "off"
                                   ? "var(--red)"
-                                  : "rgba(255,255,255,0.28)",
+                                  : "var(--overlay-lg)",
                           }}
                         >
                           <span
@@ -391,11 +383,11 @@ export const PerformanceWidget = () => {
                                   ? "var(--green)"
                                   : override === "off"
                                     ? "var(--red)"
-                                    : "rgba(255,255,255,0.25)",
+                                    : "var(--overlay-lg)",
                             }}
                           />
                           <span className="text-[9px] font-mono uppercase tracking-wider">
-                            {override ?? 'auto'}
+                            {override ?? "auto"}
                           </span>
                         </button>
                       </div>
@@ -429,12 +421,12 @@ export const PerformanceWidget = () => {
         transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
         className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
         style={{
-          background: isOpen ? AMBER_GLOW : "rgba(10,10,14,0.88)",
+          background: isOpen ? AMBER_GLOW : "var(--glass)",
           backdropFilter: "blur(14px)",
           border: `1px solid ${isOpen ? AMBER_MID : AMBER_DIM}`,
           boxShadow: isOpen
-            ? `0 0 28px color-mix(in srgb, var(--amber) 20%, transparent), 0 4px 20px rgba(0,0,0,0.5), 0 1px 0 var(--overlay-sm) inset`
-            : `0 4px 20px rgba(0,0,0,0.45), 0 1px 0 var(--overlay-sm) inset`,
+            ? `0 0 28px color-mix(in srgb, var(--amber) 20%, transparent), 0 4px 20px var(--bg-a50), 0 1px 0 var(--overlay-sm) inset`
+            : `0 4px 20px var(--bg-a45), 0 1px 0 var(--overlay-sm) inset`,
           color: AMBER,
         }}
       >

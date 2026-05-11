@@ -1,29 +1,24 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createConwayEngine, ConwayControls } from "@/lib/conway/conway";
 import { FileHeart, Pause, Play } from "lucide-react";
 
 import "./styles.css";
 import { InfoPopover } from "@/components/InfoPopover";
-import { usePerformanceCheckpoint } from "@/hooks/usePerformanceCheckpoint";
+import { useCheckpointValue } from "@/hooks/usePerformanceCheckpoint";
 
 type SimMode = "conway" | "daynight";
 
-export const Resume = memo(() => {
+export const Resume = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ConwayControls | null>(null);
   const [simMode, setSimMode] = useState<SimMode>("conway");
   const [isPaused, setIsPaused] = useState(false);
 
-  const showRedButton = usePerformanceCheckpoint("Red Button", 30);
-
-  const showConway = usePerformanceCheckpoint("Conway", 20);
-  const showConwayInvert = usePerformanceCheckpoint("Conway?", 15, true);
-  const showConwayCertain = usePerformanceCheckpoint("Conway!", 10);
-
-  const isConwayVisible = showConwayCertain && (showConway || showConwayInvert);
+  const showConway = useCheckpointValue("Conway");
+  const showRedButton = useCheckpointValue("Red Button");
 
   useEffect(() => {
-    if (!canvasRef.current || !isConwayVisible) return;
+    if (!canvasRef.current || !showConway) return;
     const engine = createConwayEngine(
       canvasRef.current,
       simMode === "conway",
@@ -34,7 +29,7 @@ export const Resume = memo(() => {
       engine.destroy();
       engineRef.current = null;
     };
-  }, [simMode, isConwayVisible]);
+  }, [simMode, showConway]);
 
   const handleModeToggle = (next: SimMode) => {
     if (next === simMode) return;
@@ -55,7 +50,9 @@ export const Resume = memo(() => {
       <canvas ref={canvasRef} className="absolute inset-0 size-full block" />
       {showRedButton && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
-          <span className="text-[#9994] text-sm uppercase">Download PDF</span>
+          <span className="text-(--overlay-a27) text-sm uppercase">
+            Download PDF
+          </span>
           <div className="pointer-events-auto">
             <a
               href="https://raw.githubusercontent.com/jayf0x/jayf0x/main/assets/Jonatan-Verstraete-resume-2026.pdf"
@@ -74,7 +71,7 @@ export const Resume = memo(() => {
           </div>
         </div>
       )}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto bg-red">
+      <div className="absolute bottom-4 left-4 flex items-center gap-2 pointer-events-auto">
         <div className="sim-mode-toggle">
           <button
             onClick={() => handleModeToggle("conway")}
@@ -109,4 +106,4 @@ export const Resume = memo(() => {
       </div>
     </div>
   );
-});
+};

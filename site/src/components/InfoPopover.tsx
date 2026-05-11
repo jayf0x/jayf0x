@@ -42,7 +42,7 @@ const PopoverContent = ({ items }: { items: InfoPopoverProps["items"] }) => (
     className="relative p-[1.5px] rounded-2xl"
     style={{
       background: "var(--accent-dim)",
-      boxShadow: "0 24px 64px rgba(0,0,0,0.65), 0 0 0 1px var(--overlay-xs) inset",
+      boxShadow: "0 24px 64px var(--bg-a65), 0 0 0 1px var(--overlay-xs) inset",
     }}
   >
     
@@ -62,7 +62,7 @@ const PopoverContent = ({ items }: { items: InfoPopoverProps["items"] }) => (
               i < items.length - 1 ? "border-b border-(--overlay-xs)" : ""
             }`}
           >
-            <span className="shrink-0 size-1 rounded-full transition-all duration-200 bg-[rgba(79,124,255,0.45)] group-hover:bg-(--accent) group-hover:shadow-[0_0_6px_color-mix(in_srgb,var(--accent)_70%,transparent)]" />
+            <span className="shrink-0 size-1 rounded-full transition-all duration-200 bg-(--accent-a45) group-hover:bg-(--accent) group-hover:shadow-[0_0_6px_color-mix(in_srgb,var(--accent)_70%,transparent)]" />
             <div className="flex-1">
               {href ? (
                 <a

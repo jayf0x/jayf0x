@@ -34,8 +34,8 @@
 
   /* Punch out the center — only the 1.5 px border ring remains visible */
   -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+    linear-gradient(var(--border-a100) 0 0) content-box,
+    linear-gradient(var(--border-a100) 0 0);
   -webkit-mask-composite: destination-out;
   mask-composite: exclude;
   padding: 1.5px;

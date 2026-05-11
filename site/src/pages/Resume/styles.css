@@ -7,15 +7,15 @@
   outline: none;
   background: radial-gradient(
     circle at 36% 32%,
-    #ff9090 0%,
-    #e00000 48%,
-    #7a0000 100%
+    var(--c-ff9090) 0%,
+    var(--c-e00000) 48%,
+    var(--c-7a0000) 100%
   );
   box-shadow:
-    0 0 28px rgba(255, 55, 55, 0.65),
-    0 8px 24px rgba(0, 0, 0, 0.6),
-    inset 0 3px 7px rgba(255, 190, 190, 0.45),
-    inset 0 -3px 5px rgba(0, 0, 0, 0.45);
+    0 0 28px var(--c-ff3737-a65),
+    0 8px 24px var(--bg-a60),
+    inset 0 3px 7px var(--c-ffbebe-a45),
+    inset 0 -3px 5px var(--bg-a45);
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease;
@@ -24,10 +24,10 @@
 #red-button:hover {
   transform: scale(1.1);
   box-shadow:
-    0 0 55px rgba(255, 55, 55, 0.95),
-    0 12px 28px rgba(0, 0, 0, 0.55),
-    inset 0 3px 7px rgba(255, 190, 190, 0.5),
-    inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+    0 0 55px var(--c-ff3737-a95),
+    0 12px 28px var(--bg-a55),
+    inset 0 3px 7px var(--c-ffbebe-a50),
+    inset 0 -3px 5px var(--bg-a40);
 }
 
 /* ── Simulation controls ─────────────────────────────────────────────────── */
@@ -40,24 +40,24 @@
   height: 30px;
   border-radius: 6px;
   border: 1px solid var(--overlay-md);
-  background: rgba(10, 12, 20, 0.6);
-  color: rgba(255, 255, 255, 0.55);
+  background: var(--surface-a60);
+  color: var(--border-a55);
   cursor: pointer;
   backdrop-filter: blur(6px);
   transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
 .sim-ctrl-btn:hover {
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(30, 35, 55, 0.75);
-  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--border-a90);
+  background: var(--c-1e2337-a75);
+  border-color: var(--overlay-lg);
 }
 
 .sim-mode-toggle {
   display: flex;
   border-radius: 6px;
   border: 1px solid var(--overlay-md);
-  background: rgba(10, 12, 20, 0.6);
+  background: var(--surface-a60);
   backdrop-filter: blur(6px);
   overflow: hidden;
 }
@@ -67,7 +67,7 @@
   font-size: 11px;
   font-family: inherit;
   letter-spacing: 0.03em;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--border-a40);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -80,20 +80,20 @@
 }
 
 .sim-mode-toggle button:hover {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--border-a80);
   background: var(--overlay-sm);
 }
 
 .sim-mode-toggle button.active {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--border-a90);
   background: var(--overlay-md);
 }
 
 #red-button:active {
   transform: scale(0.91);
   box-shadow:
-    0 0 18px rgba(255, 55, 55, 0.5),
-    0 4px 10px rgba(0, 0, 0, 0.65),
-    inset 0 5px 10px rgba(0, 0, 0, 0.5),
-    inset 0 -1px 3px rgba(255, 150, 150, 0.2);
+    0 0 18px var(--c-ff3737-a50),
+    0 4px 10px var(--bg-a65),
+    inset 0 5px 10px var(--bg-a50),
+    inset 0 -1px 3px var(--c-ff9696-a20);
 }

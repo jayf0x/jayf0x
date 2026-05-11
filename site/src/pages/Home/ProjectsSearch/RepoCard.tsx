@@ -229,7 +229,7 @@ const StackBadge = ({
     <span
       className={`inline-block shrink-0 rounded font-mono font-medium ${px} ${text}`}
       style={{
-        background: m.bg === "transparent" ? "rgba(255,255,255,0.06)" : m.bg,
+        background: m.bg === "transparent" ? "var(--overlay-sm)" : m.bg,
         color: m.color,
       }}
     >

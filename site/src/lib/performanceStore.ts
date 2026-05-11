@@ -1,21 +1,13 @@
 import { atom } from "jotai";
 
-export interface PerformanceCheckpoint {
-  tag: string;
+export type CheckpointItem = {
+  tag: Capitalize<string>;
   percentage: number;
-}
+  invert?: boolean;
+};
 
 export type OverrideState = "on" | "off" | "auto";
 
-export function resolveOverride(
-  override: OverrideState,
-  fallback: boolean,
-): boolean {
-  if (override === "on") return true;
-  if (override === "off") return false;
-  return fallback;
-}
-
 export const sliderValueAtom = atom<number>(50);
-export const checkpointsAtom = atom<PerformanceCheckpoint[]>([]);
+export const checkpointsAtom = atom<CheckpointItem[]>([]);
 export const checkpointOverridesAtom = atom<Record<string, OverrideState>>({});

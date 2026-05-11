@@ -1,25 +1,25 @@
 export type StackMeta = { color: string; bg: string; label: string };
 
 const meta: Record<string, StackMeta> = {
-  swift: { color: "#fff", bg: "#F05138", label: "Swift" },
-  python: { color: "#fff", bg: "#3776AB", label: "Py" },
-  typescript: { color: "#fff", bg: "#3178C6", label: "TS" },
-  javascript: { color: "#000", bg: "#F7DF1E", label: "JS" },
-  rust: { color: "#fff", bg: "#CE422B", label: "Rs" },
-  go: { color: "#fff", bg: "#00ADD8", label: "Go" },
-  bash: { color: "#fff", bg: "#3e4144", label: "Bash" },
-  yaml: { color: "#fff", bg: "#6b4c9a", label: "YAML" },
-  react: { color: "#000", bg: "#61DAFB", label: "Re" },
-  svelte: { color: "#fff", bg: "#FF3E00", label: "Sv" },
-  swiftui: { color: "#fff", bg: "#0071E3", label: "SUI" },
-  tauri: { color: "#fff", bg: "#FFC131", label: "Tau" },
-  webgl: { color: "#fff", bg: "#9B4DCA", label: "GL" },
-  automator: { color: "#fff", bg: "#555", label: "Auto" },
-  macos: { color: "#fff", bg: "#1d1d1f", label: "macOS" },
-  cli: { color: "#d4d4d4", bg: "#1e1e1e", label: "CLI" },
+  swift: { color: "var(--border-a100)", bg: "var(--c-f05138)", label: "Swift" },
+  python: { color: "var(--border-a100)", bg: "var(--c-3776ab)", label: "Py" },
+  typescript: { color: "var(--border-a100)", bg: "var(--c-3178c6)", label: "TS" },
+  javascript: { color: "var(--bg)", bg: "var(--c-f7df1e)", label: "JS" },
+  rust: { color: "var(--border-a100)", bg: "var(--c-ce422b)", label: "Rs" },
+  go: { color: "var(--border-a100)", bg: "var(--c-00add8)", label: "Go" },
+  bash: { color: "var(--border-a100)", bg: "var(--shadow-a100)", label: "Bash" },
+  yaml: { color: "var(--border-a100)", bg: "var(--c-6b4c9a)", label: "YAML" },
+  react: { color: "var(--bg)", bg: "var(--c-61dafb)", label: "Re" },
+  svelte: { color: "var(--border-a100)", bg: "var(--c-ff3e00)", label: "Sv" },
+  swiftui: { color: "var(--border-a100)", bg: "var(--c-0071e3)", label: "SUI" },
+  tauri: { color: "var(--border-a100)", bg: "var(--c-ffc131)", label: "Tau" },
+  webgl: { color: "var(--border-a100)", bg: "var(--c-9b4dca)", label: "GL" },
+  automator: { color: "var(--border-a100)", bg: "var(--muted)", label: "Auto" },
+  macos: { color: "var(--border-a100)", bg: "var(--surface-2)", label: "macOS" },
+  cli: { color: "var(--overlay-a100-3)", bg: "var(--surface-2)", label: "CLI" },
 };
 
-const FALLBACK: StackMeta = { color: "#a0a0b0", bg: "transparent", label: "" };
+const FALLBACK: StackMeta = { color: "var(--overlay-a100)", bg: "transparent", label: "" };
 
 export function getStackMeta(key: string): StackMeta {
   return meta[key.toLowerCase()] ?? { ...FALLBACK, label: key };
