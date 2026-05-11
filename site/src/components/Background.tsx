@@ -17,7 +17,7 @@ export const Background = () => {
       if (isMobile) {
         fluidRef.current?.splat(x, y, x + 20, y + 20, 10);
       } else {
-        fluidRef.current?.move({ x, y });
+        fluidRef.current?.move(x, y);
       }
     },
     [isMobile],
@@ -64,7 +64,6 @@ export const Background = () => {
           className="absolute inset-0 opacity-100"
           title="bun add @jayf0x/fluidity-js"
         >
-          
           <FluidText
             isWorkerEnabled={true}
             isMouseEnabled={false}
@@ -90,11 +89,8 @@ export const Background = () => {
         </div>
       )}
 
-      
-      
-
-      <div className="blob absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl" />
-      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-gradient-to-tr from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl [animation-delay:3s]" />
+      <div className="blob absolute -left-40 -top-40 h-125 w-125 rounded-full bg-gradient-to-br from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl" />
+      <div className="blob absolute -bottom-40 -right-40 h-[420px] w-[420px] rounded-full bg-linear-to-tr from-(--accent) to-(--c-8b5cf6) opacity-[0.1] blur-3xl [animation-delay:3s]" />
     </div>
   );
 };
@@ -104,7 +100,6 @@ const Void = () => {
 
   return (
     <div className="w-full h-full flex justify-center items-center relative">
-      
       <div
         className="rounded-[100%] lg:size-[70vw] sm:size-full overflow-hidden relative"
         style={{
@@ -128,6 +123,10 @@ const Void = () => {
             refraction: 0,
           }}
           backgroundColor="radial-gradient(circle at 100%, var(--bg)a, #fff0 50%)"
+          quality={{
+            dpr: 0.1,
+            sim: 0.1
+          }}
           style={{
             filter: "grayscale(0.4)",
             opacity: 0.9,
@@ -136,7 +135,8 @@ const Void = () => {
         <div
           className="absolute z-10 w-full h-full inset-0 pointer-events-none"
           style={{
-            background: "radial-gradient(circle, #fff0,  var(--bg) 50%, var(--bg) 100%)",
+            background:
+              "radial-gradient(circle, #fff0,  var(--bg) 50%, var(--bg) 100%)",
           }}
         ></div>
       </div>

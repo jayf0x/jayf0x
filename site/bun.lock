@@ -6,7 +6,7 @@
       "name": "jayf0x-app",
       "dependencies": {
         "@gradio/client": "^2.2.0",
-        "@jayf0x/fluidity-js": "^0.1.5",
+        "@jayf0x/fluidity-js": "^0.1.6",
         "@tanstack/react-query": "^5.100.9",
         "@types/node": "^25.6.0",
         "axios": "^1.16.0",
@@ -110,7 +110,7 @@
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.3", "", {}, "sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ=="],
 
-    "@jayf0x/fluidity-js": ["@jayf0x/fluidity-js@0.1.5", "", { "peerDependencies": { "react": ">=17.0.0", "react-dom": ">=17.0.0" } }, "sha512-10uvhuVidMflAV8owCRX06pyteuxe58OpBItckFtuOtsdE0zdKh4HYy9UucaS0cWJT7xaBG8YKNEATjPzfZWvg=="],
+    "@jayf0x/fluidity-js": ["@jayf0x/fluidity-js@0.1.6", "", { "peerDependencies": { "react": ">=17.0.0", "react-dom": ">=17.0.0" } }, "sha512-jMqIY+xUckA36UlsAvXn4WXTkL8CoMPDjWVN0+VOFsdSzCK5t8ABXl1CHDWeiIpbd76ttCWFHbtHhGvRWAyJsg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 
