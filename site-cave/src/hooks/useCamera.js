@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 
 export function useCamera() {
   const videoRef = useRef(null)
@@ -25,6 +25,21 @@ export function useCamera() {
       }
     }
   }, [isActive])
+
+
+  useEffect(()=>{
+    const video = document.createElement('video')
+    video.id = "VID_STREAM"
+    video.playsInline = true
+    video.muted = true
+    video.style.display = 'none'
+
+    videoRef.current = video
+
+    return ()=>{
+      video.remove()
+    }
+  },[])
 
   return { videoRef, isActive, toggle }
 }

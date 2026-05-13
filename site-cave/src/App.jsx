@@ -1,10 +1,8 @@
 import { useRef, useCallback } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCamera } from "./hooks/useCamera";
-// segmentation moved into ProjectionCanvas
-import { useVision } from "./hooks/useVision";
+import { useAnalyze } from "./hooks/useAnalyze";
 import ProjectionCanvas from "./components/ProjectionCanvas";
-import VideoFeed from "./components/VideoFeed";
 import VisionPanel from "./components/VisionPanel";
 
 const queryClient = new QueryClient();
@@ -18,7 +16,7 @@ function Cave() {
     return canvasRef.current?.captureFrame() ?? null;
   }, []);
 
-  const { isLoading, result, error } = useVision(captureFrame);
+  const { isLoading, result, error } = useAnalyze(captureFrame);
 
   return (
     <div
@@ -30,7 +28,6 @@ function Cave() {
       }}
     >
       <ProjectionCanvas ref={canvasRef} videoRef={videoRef} isActive={isActive} />
-      <VideoFeed videoRef={videoRef} />
 
       <button
         onClick={toggle}

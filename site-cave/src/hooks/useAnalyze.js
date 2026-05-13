@@ -5,15 +5,15 @@ import { devLog } from "../utils";
 
 const MAX_HIS = 5;
 
-export function useVision(captureFrame = () => {}) {
+export const useAnalyze = (captureFrame = () => {}) => {
   const captureRef = useRef(captureFrame);
   const timeoutRef = useRef(null);
   const history = useRef([]);
 
   const scheduleNext = () => {
     timeoutRef.current = setTimeout(() => {
-      captureRef.current?.().then((base64 = '') => {
-        if (!base64 || !base64.startsWith('data:image/jpeg;base64')) {
+      captureRef.current?.().then((base64 = "") => {
+        if (!base64 || !base64.startsWith("data:image/jpeg;base64")) {
           devLog("Invalid canvas image", base64);
           return;
         }
@@ -61,4 +61,4 @@ export function useVision(captureFrame = () => {}) {
     result: data ?? "",
     error,
   };
-}
+};
