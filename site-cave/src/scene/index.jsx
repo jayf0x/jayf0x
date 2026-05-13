@@ -13,7 +13,8 @@ const CaveScene = forwardRef(function CaveScene({ videoRef, isActive }, ref) {
   return (
     <Canvas
       gl={{ preserveDrawingBuffer: true }}
-      camera={{ position: [0, 0, 5], fov: 75 }}
+      shadows
+      camera={{ position: [0.3, -0.2, 5], fov: 65 }}
       style={{
         display: "block",
         width: "100vw",
@@ -22,7 +23,7 @@ const CaveScene = forwardRef(function CaveScene({ videoRef, isActive }, ref) {
         inset: 0,
       }}
     >
-      <color attach="background" args={["#f5f0e8"]} />
+      <color attach="background" args={["#080604"]} />
       <SceneContent
         videoRef={videoRef}
         isActive={isActive}
