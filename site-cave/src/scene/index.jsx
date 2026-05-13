@@ -14,7 +14,7 @@ const CaveScene = forwardRef(function CaveScene({ videoRef, isActive }, ref) {
     <Canvas
       gl={{ preserveDrawingBuffer: true }}
       shadows
-      camera={{ position: [0.3, -0.2, 5], fov: 65 }}
+      camera={{ position: [2, 0.2, 5], fov: 65 }}
       style={{
         display: "block",
         width: "100vw",

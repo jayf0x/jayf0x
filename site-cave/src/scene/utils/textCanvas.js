@@ -56,6 +56,7 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
+
 export function buildTextCanvas() {
   const W = 2048;
   const H = 1024;

@@ -5,26 +5,17 @@ import {
   EffectComposer,
   GodRays,
   Bloom,
-  DepthOfField,
-  Noise,
   Vignette,
-  Glitch,
 } from "@react-three/postprocessing";
 import * as THREE from "three";
-import { buildGoboCanvas } from "./utils/textCanvas";
-// import { VideoShadow } from "./VideoShadow";
 import { useCaptureFrame } from "./hooks/useCaptureFrame";
 import { Dust } from "./Dust";
+import { ProjectionSurface } from "./ProjectionSurface";
+import { SCENE_CONFIG as C } from "./config";
 
 useGLTF.preload("/wall.glb");
 
-const WallMesh = memo(function WallMesh({
-  wallX,
-  wallY,
-  wallZ,
-  wallScale,
-  wallRotX,
-}) {
+const WallMesh = memo(function WallMesh({ wallX, wallY, wallZ, wallScale, wallRotX }) {
   const { scene } = useGLTF("/wall.glb");
 
   useEffect(() => {
@@ -50,7 +41,6 @@ const WallMesh = memo(function WallMesh({
   );
 });
 
-// Small QA cube — visible in leva, casts shadow on wall
 const QACube = memo(function QACube({ x, y, z, scale }) {
   return (
     <mesh position={[x, y, z]} scale={scale} castShadow receiveShadow>
@@ -68,123 +58,92 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
   useCaptureFrame(captureRef);
 
   const {
-    lightX,
-    lightY,
-    lightZ,
-    lightIntensity,
-    lightAngle,
-    lightPenumbra,
-    wallX,
-    wallY,
-    wallZ,
-    wallScale,
-    wallRotX,
-    ambientIntensity,
-    dustOpacity,
-    showGodRays,
-    bloomIntensity,
-    fogDensity,
-    fogColor,
-    // god-rays origin (decoupled from spotlight — must stay within camera frustum)
-    sunX,
-    sunY,
-    sunZ,
-    sunSize,
-    godRaysDensity,
-    godRaysWeight,
-    godRaysDecay,
-    fireIntensity,
-    // QA
-    cubeX,
-    cubeY,
-    cubeZ,
-    cubeScale,
+    lightX, lightY, lightZ,
+    lightIntensity, lightAngle, lightPenumbra,
+    wallX, wallY, wallZ, wallScale, wallRotX,
+    ambientIntensity, dustOpacity,
+    showGodRays, bloomIntensity, fogDensity, fogColor,
+    sunX, sunY, sunZ, sunSize,
+    godRaysDensity, godRaysWeight, godRaysDecay, fireIntensity,
+    cubeX, cubeY, cubeZ, cubeScale,
   } = useControls({
     Projector: folder({
-      lightX: { value: 0, min: -5, max: 5, step: 0.01 },
-      lightY: { value: 0.5, min: -5, max: 5, step: 0.01 },
-      lightZ: { value: 3.5, min: -5, max: 5, step: 0.01 },
-      lightIntensity: { value: 18, min: 0, max: 80, step: 0.5 },
-      lightAngle: { value: 0.45, min: 0.05, max: 1.2, step: 0.01 },
-      lightPenumbra: { value: 0.35, min: 0, max: 1, step: 0.01 },
+      lightX: { value: C.lightX, min: -5, max: 5, step: 0.01 },
+      lightY: { value: C.lightY, min: -5, max: 5, step: 0.01 },
+      lightZ: { value: C.lightZ, min: -5, max: 5, step: 0.01 },
+      lightIntensity: { value: C.lightIntensity, min: 0, max: 80, step: 0.5 },
+      lightAngle: { value: C.lightAngle, min: 0.05, max: 1.2, step: 0.01 },
+      lightPenumbra: { value: C.lightPenumbra, min: 0, max: 1, step: 0.01 },
     }),
     Wall: folder({
-      wallX: { value: 0, min: -5, max: 5, step: 0.01 },
-      wallY: { value: 0, min: -5, max: 5, step: 0.01 },
-      wallZ: { value: 0, min: -10, max: 2, step: 0.01 },
-      wallScale: { value: 0, min: 0.05, max: 5, step: 0.01 },
-      wallRotX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
+      wallX: { value: C.wallX, min: -5, max: 5, step: 0.01 },
+      wallY: { value: C.wallY, min: -5, max: 5, step: 0.01 },
+      wallZ: { value: C.wallZ, min: -10, max: 2, step: 0.01 },
+      wallScale: { value: C.wallScale, min: 0.05, max: 5, step: 0.01 },
+      wallRotX: { value: C.wallRotX, min: -Math.PI, max: Math.PI, step: 0.01 },
     }),
     Atmosphere: folder({
-      ambientIntensity: { value: 3, min: 0, max: 10, step: 0.01 },
-      dustOpacity: { value: 0.35, min: 0, max: 1, step: 0.01 },
-      fogColor: { value: "#000" },
-      fogDensity: { value: 0.09, min: 0, max: 0.5, step: 0.001 },
-      bloomIntensity: { value: 0.6, min: 0, max: 3, step: 0.05 },
+      ambientIntensity: { value: C.ambientIntensity, min: 0, max: 10, step: 0.01 },
+      dustOpacity: { value: C.dustOpacity, min: 0, max: 1, step: 0.01 },
+      fogColor: { value: C.fogColor },
+      fogDensity: { value: C.fogDensity, min: 0, max: 0.5, step: 0.001 },
+      bloomIntensity: { value: C.bloomIntensity, min: 0, max: 1.5, step: 0.05 },
     }),
     "God Rays": folder({
-      showGodRays: { value: true },
-      // position independently — must be in camera frustum (z < 5 when camera is at z=5)
-      sunX: { value: 0, min: -5, max: 5, step: 0.01 },
-      sunY: { value: 0, min: -5, max: 5, step: 0.01 },
-      sunZ: { value: 1.9, min: -5, max: 5, step: 0.01 },
-      sunSize: { value: 0.3, min: 0.01, max: 1, step: 0.01 },
-      godRaysDensity: { value: 0.96, min: 0, max: 1, step: 0.01 },
-      godRaysWeight: { value: 0.6, min: 0, max: 1, step: 0.01 },
-      godRaysDecay: { value: 0.93, min: 0, max: 1, step: 0.01 },
-      fireIntensity: { value: 8, min: 0, max: 40, step: 0.5 },
+      showGodRays: { value: C.showGodRays },
+      sunX: { value: C.sunX, min: -5, max: 5, step: 0.01 },
+      sunY: { value: C.sunY, min: -5, max: 5, step: 0.01 },
+      sunZ: { value: C.sunZ, min: -5, max: 5, step: 0.01 },
+      sunSize: { value: C.sunSize, min: 0.01, max: 1, step: 0.01 },
+      godRaysDensity: { value: C.godRaysDensity, min: 0, max: 1, step: 0.01 },
+      godRaysWeight: { value: C.godRaysWeight, min: 0, max: 1, step: 0.01 },
+      godRaysDecay: { value: C.godRaysDecay, min: 0, max: 1, step: 0.01 },
+      fireIntensity: { value: C.fireIntensity, min: 0, max: 40, step: 0.5 },
     }),
     "QA Cube": folder({
-      cubeX: { value: 0, min: -5, max: 5, step: 0.01 },
-      cubeY: { value: 0, min: -5, max: 5, step: 0.01 },
-      cubeZ: { value: 2, min: -5, max: 5, step: 0.01 },
-      cubeScale: { value: 0.4, min: 0.01, max: 5, step: 0.01 },
+      cubeX: { value: C.cubeX, min: -5, max: 5, step: 0.01 },
+      cubeY: { value: C.cubeY, min: -5, max: 5, step: 0.01 },
+      cubeZ: { value: C.cubeZ, min: -5, max: 5, step: 0.01 },
+      cubeScale: { value: C.cubeScale, min: 0.01, max: 5, step: 0.01 },
     }),
   });
 
-  // Build gobo texture once
-  const goboTex = useMemo(() => {
-    const canvas = buildGoboCanvas();
-    return new THREE.CanvasTexture(canvas);
-  }, []);
-  useEffect(() => () => goboTex.dispose(), [goboTex]);
+  const projTarget = useMemo(
+    () => new THREE.WebGLRenderTarget(1024, 512, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+    }),
+    [],
+  );
+  useEffect(() => () => projTarget.dispose(), [projTarget]);
 
-  // Wire SpotLight target after mount
   useEffect(() => {
     const spot = spotRef.current;
-    const target = targetRef.current;
-    if (!spot || !target) return;
-    spot.target = target;
-    target.updateMatrixWorld();
+    const tgt = targetRef.current;
+    if (!spot || !tgt) return;
+    spot.target = tgt;
+    tgt.updateMatrixWorld();
   }, []);
 
-  // Spotlight (projector behind viewer — does NOT need to be in frustum)
   const lightPos = useMemo(
     () => [0.8 + lightX, -2 + lightY, 4 + lightZ],
     [lightX, lightY, lightZ],
   );
-
-  // Sun must be BEHIND the cube from the camera's perspective (sun.z < cube.z)
   const sunPos = useMemo(() => [sunX, sunY, sunZ], [sunX, sunY, sunZ]);
 
   return (
     <>
-      {/* Cave atmosphere fog — exponential, dark warm shadow */}
       <fogExp2 attach="fog" args={[fogColor, fogDensity]} />
-
       <ambientLight intensity={ambientIntensity} color="#6a5a3a" />
-
-      {/* SpotLight target anchor at scene centre */}
       <group ref={targetRef} position={[0, 0, 0]} />
 
-      {/* Projector spotlight — casts gobo text light onto wall + shadows */}
       <spotLight
         ref={spotRef}
         position={lightPos}
         intensity={lightIntensity}
         angle={lightAngle}
         penumbra={lightPenumbra}
-        map={goboTex}
+        map={projTarget.texture}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.001}
@@ -192,11 +151,10 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
       />
       <OrbitControls />
 
-      {/* GodRays source — mesh required by GodRays effect; pointLight adds real fire illumination */}
-      <mesh ref={setSunMesh} position={sunPos}>
+      {/* <mesh ref={setSunMesh} position={sunPos}>
         <sphereGeometry args={[sunSize, 12, 12]} />
         <meshBasicMaterial color="#ff6a00" />
-      </mesh>
+      </mesh> */}
       <pointLight
         position={sunPos}
         intensity={fireIntensity}
@@ -209,50 +167,35 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
 
       <WallMesh {...{ wallX, wallY, wallZ, wallScale, wallRotX }} />
 
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]} receiveShadow>
+        <planeGeometry args={[40, 40]} />
+        <meshStandardMaterial color="#0a0805" roughness={1} metalness={0} />
+      </mesh>
+
       <QACube x={cubeX} y={cubeY} z={cubeZ} scale={cubeScale} />
 
-      {/* <Dust opacity={dustOpacity} /> */}
-      {/* <VideoShadow videoRef={videoRef} isActive={isActive} /> */}
+      {/* DEBUG: shows projTarget content — remove after fixing */}
+      <mesh position={[0, 0, 2]}>
+        <planeGeometry args={[3, 1.5]} />
+        <meshBasicMaterial map={projTarget.texture} side={THREE.DoubleSide} />
+      </mesh>
+
+      {/* DEBUG: white wall to verify spotlight projection */}
+      <mesh position={[0, 0, -2]} receiveShadow>
+        <planeGeometry args={[12, 8]} />
+        <meshStandardMaterial color="#ffffff" roughness={1} metalness={0} />
+      </mesh>
+
+      <Dust opacity={dustOpacity} />
+
+      <ProjectionSurface target={projTarget} videoRef={videoRef} isActive={isActive} />
 
       <Preload all />
 
-      {/* depth worlds:
-          - scene geometry uses renderer depthBuffer (managed by Canvas shadows prop)
-          - GodRays reads depth internally via needsDepthTexture (handled by postprocessing)
-          - Bloom operates on color only
-          - stencilBuffer={false} prevents depth/stencil sharing → kills blit error */}
-      <EffectComposer
-      // multisampling={1}
-      // depthBuffer={true}
-      // stencilBuffer={false}
-      >
-        {/* {showGodRays && sunMesh ? (
-          <GodRays
-            sun={sunMesh}
-            samples={60}
-            density={godRaysDensity}
-            decay={godRaysDecay}
-            weight={godRaysWeight}
-            exposure={0.6}
-            clampMax={1}
-            blur
-          />
-        ) : null}
-        <Bloom
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.4}
-          intensity={bloomIntensity}
-        /> */}
-
-        {/* <DepthOfField
-          focusDistance={0}
-          focalLength={10.102}
-          height={window.height}
-        /> */}
-        <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
-        {/* <Noise opacity={0.02} /> */}
+      {/* multisampling={0} prevents EffectComposer from allocating extra MSAA buffers. */}
+      {/* <EffectComposer multisampling={0}>
+        <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={bloomIntensity} />
         <Vignette eskil={false} offset={0.1} darkness={0.8} />
-
         {showGodRays && sunMesh && (
           <GodRays
             sun={sunMesh}
@@ -267,7 +210,7 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
             blur
           />
         )}
-      </EffectComposer>
+      </EffectComposer> */}
     </>
   );
 }

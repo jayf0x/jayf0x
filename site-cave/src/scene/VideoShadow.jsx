@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/immutability */
 import { useEffect, useMemo, useRef } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -26,19 +25,25 @@ void main() {
 }
 `;
 
-export function VideoShadow({ videoRef, isActive }) {
-  const { viewport } = useThree();
+/**
+ * VideoShadow — renders the webcam silhouette as a dark overlay on the wall.
+ * Must be a child of ProjectionSurface so it shares the wall's coordinate origin.
+ *
+ * planeSize: [width, height] in world units covering the projection area.
+ *   Computed in SceneContent from the camera frustum at wall depth.
+ */
+export function VideoShadow({ videoRef, isActive, planeSize }) {
   const meshRef = useRef();
+  const { size } = useThree();
+  const aspect = size.width / size.height;
 
-  // Create material once imperatively — prevents R3F prop reconciliation from
-  // overwriting uniforms.uVideo back to null on every parent re-render.
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
-        uniforms: { uVideo: { value: null }, uThreshold: { value: 0.6 } },
+        uniforms: { uVideo: { value: null }, uThreshold: { value: 0.5 } },
         vertexShader,
         fragmentShader,
-        transparent: true,
+        transparent: false,
       }),
     [],
   );
@@ -50,6 +55,10 @@ export function VideoShadow({ videoRef, isActive }) {
 
     const tex = new THREE.VideoTexture(videoRef.current);
     tex.minFilter = THREE.LinearFilter;
+    // Mirror horizontally so the silhouette matches the user's perceived reflection
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.repeat.set(-1, 1);
+    tex.offset.set(1, 0);
     mat.uniforms.uVideo.value = tex;
 
     return () => {
@@ -58,14 +67,12 @@ export function VideoShadow({ videoRef, isActive }) {
     };
   }, [isActive, videoRef, mat]);
 
+  // Default: cover the projection area with a 16:9-ish plane
+  const [pw, ph] = planeSize ?? [14 * aspect, 14];
+
   return (
-    <mesh
-      ref={meshRef}
-      visible={isActive}
-      scale={[-viewport.width, viewport.height, 1]}
-      position={[0, 0, 0.01]}
-    >
-      <planeGeometry args={[1, 1]} />
+    <mesh ref={meshRef} visible={isActive}>
+      <planeGeometry args={[pw, ph]} />
       <primitive object={mat} attach="material" />
     </mesh>
   );
