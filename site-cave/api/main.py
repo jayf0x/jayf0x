@@ -51,7 +51,7 @@ async def analyze(req: AnalyzeRequest):
         messages=[
             {
                 "role": "system",
-SYS_PROMPT
+                "content": SYS_PROMPT
             },{
                 "role": "user",
                 "content": f"{message}What do you see now?",
