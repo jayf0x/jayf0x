@@ -1,7 +1,7 @@
 import { useRef, useCallback } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCamera } from "./hooks/useCamera";
-import { useSegmentation } from "./hooks/useSegmentation";
+// segmentation moved into ProjectionCanvas
 import { useVision } from "./hooks/useVision";
 import ProjectionCanvas from "./components/ProjectionCanvas";
 import VideoFeed from "./components/VideoFeed";
@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 function Cave() {
   const canvasRef = useRef(null);
   const { videoRef, isActive, toggle } = useCamera();
-  const maskRef = useSegmentation(videoRef, isActive);
+  // segmentation handled inside ProjectionCanvas now
 
   const captureFrame = useCallback(() => {
     return canvasRef.current?.captureFrame() ?? null;
@@ -29,7 +29,7 @@ function Cave() {
         position: "relative",
       }}
     >
-      <ProjectionCanvas ref={canvasRef} maskRef={maskRef} isActive={isActive} />
+      <ProjectionCanvas ref={canvasRef} videoRef={videoRef} isActive={isActive} />
       <VideoFeed videoRef={videoRef} />
 
       <button

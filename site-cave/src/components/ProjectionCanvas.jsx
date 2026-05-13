@@ -1,118 +1,294 @@
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
+import {
+  useRef,
+  useEffect,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import { devLog } from "../utils";
 
-const TITLE = 'phantom-lens'
+const TITLE = "phantom-lens";
 const DESC =
-  'A privacy-first camera tool that redacts faces in real time before footage leaves the device.'
+  "A privacy-first camera tool that redacts faces in real time before footage leaves the device.";
 
 function wrapText(ctx, text, maxWidth) {
-  const words = text.split(' ')
-  const lines = []
-  let current = ''
+  const words = text.split(" ");
+  const lines = [];
+  let current = "";
   for (const word of words) {
-    const test = current ? current + ' ' + word : word
+    const test = current ? current + " " + word : word;
     if (ctx.measureText(test).width > maxWidth && current) {
-      lines.push(current)
-      current = word
+      lines.push(current);
+      current = word;
     } else {
-      current = test
+      current = test;
     }
   }
-  if (current) lines.push(current)
-  return lines
+  if (current) lines.push(current);
+  return lines;
 }
 
-// maskRef: offscreen canvas with dark silhouette on transparent bg (from useSegmentation)
-const ProjectionCanvas = forwardRef(function ProjectionCanvas({ maskRef, isActive }, ref) {
-  const canvasRef = useRef(null)
-  const rafRef = useRef(null)
+// Internally manages an offscreen `mask` canvas with the dark silhouette.
+const CDN = "https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation";
 
-  const captureFrame = useCallback(() => {
-    return canvasRef.current?.toDataURL('image/jpeg', 0.8) ?? null
-  }, [])
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = src;
+    s.crossOrigin = "anonymous";
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
 
-  useImperativeHandle(ref, () => ({ captureFrame }), [captureFrame])
+// Accepts `videoRef` and `isActive`. Creates internal `maskRef`.
+const ProjectionCanvas = forwardRef(function ProjectionCanvas(
+  { videoRef, isActive },
+  ref,
+) {
+  const canvasRef = useRef(null);
+  const rafRef = useRef(null);
+
+  // Cached main canvas context to avoid repeated getContext calls.
+  const ctxRef = useRef(null);
+
+  // Mask object holds the offscreen canvas and its context.
+  const maskObjRef = useRef({ canvas: null, ctx: null });
+
+  // Cached text layout (static-ish) computed on resize.
+  const layoutRef = useRef({ titleSize: null, descSize: null, lines: [] });
+
+  // Cached draw parameters for mask scaling to avoid per-frame recalculation.
+  const drawParamsRef = useRef({
+    lastMaskW: 0,
+    lastMaskH: 0,
+    lastCanvasW: 0,
+    lastCanvasH: 0,
+    scale: 1,
+    dw: 0,
+    dh: 0,
+    dx: 0,
+    dy: 0,
+  });
+
+  // Async capture that uses toBlob -> FileReader to avoid blocking the main thread.
+  const captureFrame = useCallback((quality = 0.8) => {
+    const canvas = canvasRef.current;
+    return new Promise((resolve) => {
+      if (!canvas) {
+        devLog("No canvas");
+        return resolve(null);
+      }
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            devLog("No blob for image");
+            return resolve(null);
+          }
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        },
+        "image/jpeg",
+        quality,
+      );
+    });
+  }, []);
+
+  useImperativeHandle(ref, () => ({ captureFrame }), [captureFrame]);
+
+  // Manage the segmentation mask: load MediaPipe and draw into an offscreen mask canvas.
+  useEffect(() => {
+    // lazily create offscreen mask canvas and cache its ctx
+    if (!maskObjRef.current.canvas) {
+      const c = document.createElement("canvas");
+      maskObjRef.current.canvas = c;
+      maskObjRef.current.ctx = c.getContext("2d");
+    }
+    const activeRef = { current: false };
+    let rafId;
+
+    if (!isActive) {
+      // clear mask when inactive
+      const obj = maskObjRef.current;
+      obj.ctx?.clearRect(0, 0, obj.canvas.width, obj.canvas.height);
+      return;
+    }
+
+    activeRef.current = true;
+
+    loadScript(`${CDN}/selfie_segmentation.js`).then(() => {
+      if (!activeRef.current) return;
+
+      const seg = new window.SelfieSegmentation({
+        locateFile: (file) => `${CDN}/${file}`,
+      });
+      seg.setOptions({ modelSelection: 1 });
+
+      seg.onResults((results) => {
+        const obj = maskObjRef.current;
+        const canvas = obj.canvas;
+        const video = videoRef?.current;
+        if (!canvas || !video || !results.segmentationMask) return;
+
+        const w = video.videoWidth || 640;
+        const h = video.videoHeight || 480;
+        if (canvas.width !== w) canvas.width = w;
+        if (canvas.height !== h) canvas.height = h;
+
+        // re-acquire context after size changes
+        obj.ctx = canvas.getContext("2d");
+        const ctx = obj.ctx;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.drawImage(results.segmentationMask, 0, 0, w, h);
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = "#111111fe";
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = "source-over";
+      });
+
+      const loop = async () => {
+        if (!activeRef.current) return;
+        if (videoRef.current?.readyState >= 2) {
+          await seg.send({ image: videoRef.current });
+        }
+        rafId = requestAnimationFrame(loop);
+      };
+      rafId = requestAnimationFrame(loop);
+    });
+
+    return () => {
+      activeRef.current = false;
+      cancelAnimationFrame(rafId);
+    };
+  }, [isActive, videoRef]);
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // cache the drawing context
+    ctxRef.current = canvas.getContext("2d");
 
     const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      canvas.width = cw;
+      canvas.height = ch;
+
+      // re-acquire ctx after size change (resizing clears state)
+      ctxRef.current = canvas.getContext("2d");
+
+      // compute text layout once per resize
+      const ctx = ctxRef.current;
+      const titleSize = Math.max(36, Math.min(72, cw * 0.07));
+      const descSize = Math.max(14, Math.min(22, cw * 0.022));
+      ctx.font = `400 ${descSize}px system-ui, sans-serif`;
+      const maxW = Math.min(cw * 0.65, 640);
+      const lines = wrapText(ctx, DESC, maxW);
+      layoutRef.current = { titleSize, descSize, lines };
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
     const draw = () => {
-      const w = canvas.width
-      const h = canvas.height
+      const ctx = ctxRef.current;
+      const w = canvas.width;
+      const h = canvas.height;
 
-      ctx.fillStyle = '#f5f0e8'
-      ctx.fillRect(0, 0, w, h)
+      ctx.fillStyle = "#f5f0e8";
+      ctx.fillRect(0, 0, w, h);
 
-      // Vignette — simulate projector light
-      const vignette = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.7)
-      vignette.addColorStop(0, 'rgba(255,255,255,0)')
-      vignette.addColorStop(1, 'rgba(0,0,0,0.18)')
-      ctx.fillStyle = vignette
-      ctx.fillRect(0, 0, w, h)
+      // Projected text (uses cached layout)
+      ctx.save();
+      ctx.filter = "blur(0.6px)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
 
-      // Projected text
-      ctx.save()
-      ctx.filter = 'blur(0.6px)'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
+      const { titleSize, descSize, lines } = layoutRef.current;
+      ctx.font = `900 ${titleSize}px system-ui, sans-serif`;
+      ctx.fillStyle = "#0a0a0a";
+      ctx.fillText(TITLE, w / 2, h / 2 - titleSize * 0.9);
 
-      const titleSize = Math.max(36, Math.min(72, w * 0.07))
-      ctx.font = `900 ${titleSize}px system-ui, sans-serif`
-      ctx.fillStyle = '#0a0a0a'
-      ctx.fillText(TITLE, w / 2, h / 2 - titleSize * 0.9)
-
-      const descSize = Math.max(14, Math.min(22, w * 0.022))
-      ctx.font = `400 ${descSize}px system-ui, sans-serif`
-      ctx.fillStyle = '#1a1a1a'
-      const maxW = Math.min(w * 0.65, 640)
-      const lines = wrapText(ctx, DESC, maxW)
-      lines.forEach((line, i) => {
-        ctx.fillText(line, w / 2, h / 2 + titleSize * 0.4 + i * (descSize * 1.5))
-      })
-      ctx.restore()
+      ctx.font = `400 ${descSize}px system-ui, sans-serif`;
+      ctx.fillStyle = "#1a1a1a";
+      for (let i = 0; i < lines.length; i++) {
+        ctx.fillText(
+          lines[i],
+          w / 2,
+          h / 2 + titleSize * 0.4 + i * (descSize * 1.5),
+        );
+      }
+      ctx.restore();
 
       // Shadow layer — segmentation silhouette only (no raw camera)
-      if (isActive && maskRef?.current) {
-        const mask = maskRef.current
-        if (mask.width > 0 && mask.height > 0) {
-          const scale = Math.min(w / mask.width, h / mask.height)
-          const dw = mask.width * scale
-          const dh = mask.height * scale
-          const dx = (w - dw) / 2
-          const dy = (h - dh) / 2
-
-          ctx.save()
-          ctx.translate(dx + dw, dy)
-          ctx.scale(-1, 1) // mirror
-          ctx.drawImage(mask, 0, 0, dw, dh)
-          ctx.restore()
+      const obj = maskObjRef.current;
+      if (
+        isActive &&
+        obj &&
+        obj.canvas &&
+        obj.canvas.width > 0 &&
+        obj.canvas.height > 0
+      ) {
+        const mask = obj.canvas;
+        const dp = drawParamsRef.current;
+        if (
+          mask.width !== dp.lastMaskW ||
+          mask.height !== dp.lastMaskH ||
+          w !== dp.lastCanvasW ||
+          h !== dp.lastCanvasH
+        ) {
+          const scale = Math.min(w / mask.width, h / mask.height);
+          const dw = mask.width * scale;
+          const dh = mask.height * scale;
+          const dx = (w - dw) / 2;
+          const dy = (h - dh) / 2;
+          dp.lastMaskW = mask.width;
+          dp.lastMaskH = mask.height;
+          dp.lastCanvasW = w;
+          dp.lastCanvasH = h;
+          dp.scale = scale;
+          dp.dw = dw;
+          dp.dh = dh;
+          dp.dx = dx;
+          dp.dy = dy;
         }
+
+        ctx.save();
+        ctx.translate(dp.dx + dp.dw, dp.dy);
+        ctx.scale(-1, 1); // mirror
+        ctx.drawImage(mask, 0, 0, dp.dw, dp.dh);
+        ctx.restore();
       }
 
-      rafRef.current = requestAnimationFrame(draw)
-    }
+      rafRef.current = requestAnimationFrame(draw);
+    };
 
-    rafRef.current = requestAnimationFrame(draw)
+    rafRef.current = requestAnimationFrame(draw);
     return () => {
-      cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('resize', resize)
-    }
-  }, [maskRef, isActive])
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", resize);
+    };
+  }, [isActive, videoRef]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{ display: 'block', width: '100vw', height: '100vh', position: 'fixed', inset: 0 }}
+      style={{
+        display: "block",
+        width: "100vw",
+        height: "100vh",
+        position: "fixed",
+        inset: 0,
+      }}
     />
-  )
-})
+  );
+});
 
-export default ProjectionCanvas
+export default ProjectionCanvas;

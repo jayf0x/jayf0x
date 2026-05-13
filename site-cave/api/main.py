@@ -27,7 +27,7 @@ app.add_middleware(
 
 class AnalyzeRequest(BaseModel):
     image: str    # base64 jpeg, may include data URI prefix
-    prompt: str
+    history: list[str]
 
 @app.post("/analyze")
 async def analyze(req: AnalyzeRequest):

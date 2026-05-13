@@ -5,22 +5,26 @@ import { devLog } from "../utils";
 
 const MAX_HIS = 5;
 
-export function useVision(captureFrame) {
+export function useVision(captureFrame = () => {}) {
   const captureRef = useRef(captureFrame);
   const timeoutRef = useRef(null);
   const history = useRef([]);
 
-
   const scheduleNext = () => {
     timeoutRef.current = setTimeout(() => {
-      const dataUrl = captureRef.current?.();
-      if (dataUrl) mutate(dataUrl);
+      captureRef.current?.().then((base64 = '') => {
+        if (!base64 || !base64.startsWith('data:image/jpeg;base64')) {
+          devLog("Invalid canvas image", base64);
+          return;
+        }
+        mutate(base64);
+      });
     }, 3000);
   };
 
-  const mutationFn = useCallback(async (image) => {
+  const mutationFn = useCallback(async (imageBase64) => {
     const response = await axios.post("http://127.0.0.1:8042/analyze", {
-      image,
+      image: imageBase64,
       history: history.current,
     });
     const text = response.data.result;
@@ -37,7 +41,7 @@ export function useVision(captureFrame) {
     return text;
   }, []);
 
-  const {data, isPending, error, mutate} = useMutation({
+  const { data, isPending, error, mutate } = useMutation({
     mutationFn,
     onSettled: scheduleNext,
   });
@@ -48,9 +52,9 @@ export function useVision(captureFrame) {
     return () => clearTimeout(timeoutRef.current);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(()=>{
+  useEffect(() => {
     captureRef.current = captureFrame;
-  },[captureFrame])
+  }, [captureFrame]);
 
   return {
     isLoading: isPending,
