@@ -2,21 +2,29 @@ import { useRef, useCallback } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCamera } from "./hooks/useCamera";
 import { useAnalyze } from "./hooks/useAnalyze";
-import ProjectionCanvas from "./components/ProjectionCanvas";
+import CaveScene from "./scene";
 import VisionPanel from "./components/VisionPanel";
 
 const queryClient = new QueryClient();
 
+// Isolated so useAnalyze re-renders never propagate up to Cave or CaveScene.
+function AnalysisOverlay({ captureFrame }) {
+  const { isLoading, result, error } = useAnalyze(captureFrame);
+  return (
+    <VisionPanel
+      status={isLoading ? "analyzing" : "ready"}
+      result={error ? `Error: ${error.message}` : result}
+    />
+  );
+}
+
 function Cave() {
   const canvasRef = useRef(null);
   const { videoRef, isActive, toggle } = useCamera();
-  // segmentation handled inside ProjectionCanvas now
 
   const captureFrame = useCallback(() => {
     return canvasRef.current?.captureFrame() ?? null;
   }, []);
-
-  const { isLoading, result, error } = useAnalyze(captureFrame);
 
   return (
     <div
@@ -27,7 +35,7 @@ function Cave() {
         position: "relative",
       }}
     >
-      <ProjectionCanvas ref={canvasRef} videoRef={videoRef} isActive={isActive} />
+      <CaveScene ref={canvasRef} videoRef={videoRef} isActive={isActive} />
 
       <button
         onClick={toggle}
@@ -51,10 +59,7 @@ function Cave() {
         {isActive ? "Shadow On" : "Enable Shadow"}
       </button>
 
-      <VisionPanel
-        status={isLoading ? "analyzing" : "ready"}
-        result={error ? `Error: ${error.message}` : result}
-      />
+      <AnalysisOverlay captureFrame={captureFrame} />
     </div>
   );
 }
