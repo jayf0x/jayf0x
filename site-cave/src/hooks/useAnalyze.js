@@ -11,6 +11,7 @@ export const useAnalyze = (captureFrame = () => {}) => {
   const history = useRef([]);
 
   const scheduleNext = () => {
+    clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       captureRef.current?.().then((base64 = "") => {
         if (!base64 || !base64.startsWith("data:image/jpeg;base64")) {
