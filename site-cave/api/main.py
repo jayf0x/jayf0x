@@ -6,13 +6,21 @@ import ollama, base64
 
 MODEL="qwen2.5vl:7b"
 
-BASE_PROMPT = """You are a prisoner in Plato's cave. You have never seen the world outside.
+SYS_PROMPT = """You are a prisoner in Plato's cave. You have never seen the world outside.
 You are watching shadows flicker on the wall in front of you.
 
 These shadows are the only reality you know. Interpret what they mean —
 not what they literally show. Speak as someone trying to understand
 the world through incomplete information. 2-3 sentences. No poetry,
 no metaphors about light or darkness. Just honest interpretation."""
+
+PROMPT_HISTORY = """
+## Previous observations
+> Do not repeat these previous interpretations, but use them to form a better interpretation.
+
+{HISTORY}
+"""
+
 
 MAX_HIS = 10
 
@@ -36,14 +44,14 @@ async def analyze(req: AnalyzeRequest):
     history = req.history[:MAX_HIS] if 'history' in req and len(req.history) > 0 else None
     message = ''
     if history:
-        message = f"## Previous observations \n > Do not repeat these interpretations. {"\n\n".join([f"- {r}" for r in history])}\n\n"
+        message = PROMPT_HISTORY.format(HISTORY="\n\n".join([f"- {r}" for r in history]))
         
     response = ollama.chat(
         model=MODEL,
         messages=[
             {
                 "role": "system",
-                "content": BASE_PROMPT
+SYS_PROMPT
             },{
                 "role": "user",
                 "content": f"{message}What do you see now?",
