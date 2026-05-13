@@ -3,6 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import ollama, base64
 
+
+MODEL="qwen2.5vl:7b"
+
+BASE_PROMPT = """You are a prisoner in Plato's cave. You have never seen the world outside.
+You are watching shadows flicker on the wall in front of you.
+
+These shadows are the only reality you know. Interpret what they mean —
+not what they literally show. Speak as someone trying to understand
+the world through incomplete information. 2-3 sentences. No poetry,
+no metaphors about light or darkness. Just honest interpretation."""
+
+MAX_HIS = 10
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -11,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class AnalyzeRequest(BaseModel):
     image: str    # base64 jpeg, may include data URI prefix
     prompt: str
@@ -18,18 +32,34 @@ class AnalyzeRequest(BaseModel):
 @app.post("/analyze")
 async def analyze(req: AnalyzeRequest):
     image_bytes = base64.b64decode(req.image.split(",")[-1])
-
+    
+    history = req.history[:MAX_HIS] if 'history' in req and len(req.history) > 0 else None
+    message = ''
+    if history:
+        message = f"## Previous observations \n > Do not repeat these interpretations. {"\n\n".join([f"- {r}" for r in history])}\n\n"
+        
     response = ollama.chat(
-        model="qwen2.5vl:7b",
-        messages=[{
-            "role": "user",
-            "content": req.prompt,
-            "images": [image_bytes],
-        }]
+        model=MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": BASE_PROMPT
+            },{
+                "role": "user",
+                "content": f"{message}What do you see now?",
+                "images": [image_bytes],
+            }],
+        options={
+            "temperature": 0.9
+        }
     )
     return {"result": response["message"]["content"]}
 
 
 if __name__ == "__main__":
+
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8042)
+
+
+# OLLAMA_FLASH_ATTENTION="1" OLLAMA_KV_CACHE_TYPE="q8_0" /opt/homebrew/opt/ollama/bin/ollama serve

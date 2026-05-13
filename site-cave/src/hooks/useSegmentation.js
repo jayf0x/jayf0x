@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react'
+import { devLog } from '../utils';
 
 const CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation'
 
@@ -37,7 +38,10 @@ export function useSegmentation(videoRef, isActive) {
       if (!activeRef.current) return
 
       const seg = new window.SelfieSegmentation({
-        locateFile: (file) => `${CDN}/${file}`,
+        locateFile: (file) => {
+          devLog('Load segment file:', file)
+          return `${CDN}/${file}`
+        },
       })
       seg.setOptions({ modelSelection: 1 })
 
