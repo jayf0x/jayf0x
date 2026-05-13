@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Preload } from "@react-three/drei";
 import * as THREE from "three";
 import { buildTextCanvas } from "./utils/textCanvas";
 import { VideoShadow } from "./VideoShadow";
@@ -29,6 +29,8 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
         <planeGeometry args={[1, 1]} />
         <meshBasicMaterial />
       </mesh>
+
+      <Preload all />
 
       <VideoShadow videoRef={videoRef} isActive={isActive} />
       <OrbitControls />
