@@ -30,7 +30,7 @@ void main() {
 `;
 
 /**
- * VideoShadow — luma-threshold shadow layer for the ProjectionSurface gobo.
+ * ProjectedVideoCam — luma-threshold shadow layer for the ProjectionSurface gobo.
  *
  * Designed to run inside ProjectionSurface's createPortal scene (same coordinate
  * space as Mp4Mesh / TextMesh). Geometry fills the orthographic camera view.
@@ -43,7 +43,7 @@ void main() {
  *
  * Use at renderOrder=2 so it paints on top of Mp4Mesh (0) and TextMesh (1).
  */
-export function VideoShadow({ videoRef, isActive }) {
+export const MeshVideoCam = ({ videoRef, isActive }) => {
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -102,4 +102,4 @@ export function VideoShadow({ videoRef, isActive }) {
       <primitive object={mat} attach="material" />
     </mesh>
   );
-}
+};

@@ -1,9 +1,30 @@
-export const TITLE = "phantom-lens";
-export const DESC =
+import { useMemo, useEffect } from "react";
+import * as THREE from "three";
+
+export const MeshText = () => {
+  const texture = useMemo(() => new THREE.CanvasTexture(buildGoboCanvas()), []);
+  useEffect(() => () => texture.dispose(), [texture]);
+
+  return (
+    <mesh renderOrder={1}>
+      <planeGeometry args={[2, 1]} />
+      <meshBasicMaterial
+        map={texture}
+        blending={THREE.AdditiveBlending}
+        depthTest={false}
+        depthWrite={false}
+        transparent
+      />
+    </mesh>
+  );
+};
+
+const TITLE = "phantom-lens";
+const DESC =
   "A privacy-first camera tool that redacts faces in real time before footage leaves the device.";
 
 // Gobo canvas: bright text on black — used as SpotLight map so text shape = projected light
-export function buildGoboCanvas() {
+function buildGoboCanvas() {
   const W = 2048;
   const H = 1024;
   const canvas = document.createElement("canvas");
@@ -36,7 +57,11 @@ export function buildGoboCanvas() {
   ctx.font = `400 ${descSize}px system-ui, sans-serif`;
   ctx.fillStyle = "#dddddd";
   for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], W / 2, H / 2 + titleSize * 0.4 + i * (descSize * 1.5));
+    ctx.fillText(
+      lines[i],
+      W / 2,
+      H / 2 + titleSize * 0.4 + i * (descSize * 1.5),
+    );
   }
 
   // Sharp pass on top to keep edges crisp
@@ -48,7 +73,11 @@ export function buildGoboCanvas() {
   ctx.font = `400 ${descSize}px system-ui, sans-serif`;
   ctx.fillStyle = "#dddddd";
   for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], W / 2, H / 2 + titleSize * 0.4 + i * (descSize * 1.5));
+    ctx.fillText(
+      lines[i],
+      W / 2,
+      H / 2 + titleSize * 0.4 + i * (descSize * 1.5),
+    );
   }
   ctx.restore();
 
@@ -71,4 +100,3 @@ function wrapText(ctx, text, maxWidth) {
   if (current) lines.push(current);
   return lines;
 }
-

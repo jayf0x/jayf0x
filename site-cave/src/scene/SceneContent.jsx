@@ -3,12 +3,18 @@ import { useGLTF, Preload, OrbitControls } from "@react-three/drei";
 import { useControls, folder } from "leva";
 import * as THREE from "three";
 import { Dust } from "./Dust";
-import { ProjectionSurface } from "./ProjectionSurface";
+import { ProjectedSurface } from "./projected/ProjectedSurface";
 import { SCENE_CONFIG as C } from "./config";
 
 useGLTF.preload("/wall.glb");
 
-const WallMesh = memo(function WallMesh({ wallX, wallY, wallZ, wallScale, wallRotX }) {
+const WallMesh = memo(function WallMesh({
+  wallX,
+  wallY,
+  wallZ,
+  wallScale,
+  wallRotX,
+}) {
   const { scene } = useGLTF("/wall.glb");
 
   useEffect(() => {
@@ -39,12 +45,25 @@ export default function SceneContent({ videoRef, isActive }) {
   const targetRef = useRef();
 
   const {
-    lightX, lightY, lightZ,
-    lightIntensity, lightAngle, lightPenumbra,
-    wallX, wallY, wallZ, wallScale, wallRotX,
-    ambientIntensity, dustOpacity,
-    fogDensity, fogColor,
-    sunX, sunY, sunZ, fireIntensity,
+    lightX,
+    lightY,
+    lightZ,
+    lightIntensity,
+    lightAngle,
+    lightPenumbra,
+    wallX,
+    wallY,
+    wallZ,
+    wallScale,
+    wallRotX,
+    ambientIntensity,
+    dustOpacity,
+    fogDensity,
+    fogColor,
+    sunX,
+    sunY,
+    sunZ,
+    fireIntensity,
   } = useControls({
     Projector: folder({
       lightX: { value: C.lightX, min: -5, max: 5, step: 0.01 },
@@ -62,7 +81,12 @@ export default function SceneContent({ videoRef, isActive }) {
       wallRotX: { value: C.wallRotX, min: -Math.PI, max: Math.PI, step: 0.01 },
     }),
     Atmosphere: folder({
-      ambientIntensity: { value: C.ambientIntensity, min: 0, max: 30, step: 0.01 },
+      ambientIntensity: {
+        value: C.ambientIntensity,
+        min: 0,
+        max: 30,
+        step: 0.01,
+      },
       dustOpacity: { value: C.dustOpacity, min: 0, max: 1, step: 0.01 },
       fogColor: { value: C.fogColor },
       fogDensity: { value: C.fogDensity, min: 0, max: 0.5, step: 0.001 },
@@ -76,10 +100,11 @@ export default function SceneContent({ videoRef, isActive }) {
   });
 
   const projTarget = useMemo(
-    () => new THREE.WebGLRenderTarget(2048, 1024, {
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
-    }),
+    () =>
+      new THREE.WebGLRenderTarget(2048, 1024, {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+      }),
     [],
   );
   useEffect(() => () => projTarget.dispose(), [projTarget]);
@@ -137,7 +162,11 @@ export default function SceneContent({ videoRef, isActive }) {
 
       <Dust opacity={dustOpacity} />
 
-      <ProjectionSurface target={projTarget} videoRef={videoRef} isActive={isActive} />
+      <ProjectedSurface
+        target={projTarget}
+        videoRef={videoRef}
+        isActive={isActive}
+      />
 
       <Preload all />
     </>
