@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { createPortal, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { MeshVideo } from "./MeshVideo";
-import { MeshText } from "./MeshText";
-import { MeshVideoCam } from "./MeshVideoCam";
+import { Video } from "./components/Video";
+import { ProjectText } from "./components/ProjectText";
+import { VideoCam } from "./components/VideoCam";
+
 
 export function ProjectedSurface({ target, videoRef, isActive }) {
   const [scene, camera] = useMemo(() => {
@@ -27,9 +28,9 @@ export function ProjectedSurface({ target, videoRef, isActive }) {
 
   return createPortal(
     <>
-      <MeshVideo />
-      <MeshText />
-      <MeshVideoCam videoRef={videoRef} isActive={isActive} />
+      <Video />
+      <ProjectText title="Phantom Lens" description="A privacy-first camera tool that redacts faces in real time before footage leaves the device." />
+      <VideoCam videoRef={videoRef} isActive={isActive} />
     </>,
     scene,
   );

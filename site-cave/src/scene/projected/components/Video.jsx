@@ -16,7 +16,7 @@ import * as THREE from "three";
  * Everything is projected onto the wall via the spotlight gobo — no floating planes.
  */
 
-export const MeshVideo = () => {
+export const Video = () => {
   const meshRef = useRef();
   const matRef = useRef();
 

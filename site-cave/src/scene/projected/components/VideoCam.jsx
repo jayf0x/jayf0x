@@ -43,7 +43,7 @@ void main() {
  *
  * Use at renderOrder=2 so it paints on top of Mp4Mesh (0) and TextMesh (1).
  */
-export const MeshVideoCam = ({ videoRef, isActive }) => {
+export const VideoCam = ({ videoRef, isActive }) => {
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
