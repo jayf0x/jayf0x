@@ -76,7 +76,7 @@ export default function SceneContent({ videoRef, isActive }) {
   });
 
   const projTarget = useMemo(
-    () => new THREE.WebGLRenderTarget(1024, 512, {
+    () => new THREE.WebGLRenderTarget(2048, 1024, {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
     }),

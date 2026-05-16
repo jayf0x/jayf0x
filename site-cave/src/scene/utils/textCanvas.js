@@ -25,12 +25,28 @@ export function buildGoboCanvas() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
+  // Glow pass: soft halo behind the text, widens the readable area when projected
+  ctx.shadowColor = "#ffffff";
+  ctx.shadowBlur = 80;
+  ctx.font = `900 ${titleSize}px system-ui, sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(TITLE, W / 2, H / 2 - titleSize * 0.9);
+
+  ctx.shadowBlur = 40;
+  ctx.font = `400 ${descSize}px system-ui, sans-serif`;
+  ctx.fillStyle = "#dddddd";
+  for (let i = 0; i < lines.length; i++) {
+    ctx.fillText(lines[i], W / 2, H / 2 + titleSize * 0.4 + i * (descSize * 1.5));
+  }
+
+  // Sharp pass on top to keep edges crisp
+  ctx.shadowBlur = 0;
   ctx.font = `900 ${titleSize}px system-ui, sans-serif`;
   ctx.fillStyle = "#ffffff";
   ctx.fillText(TITLE, W / 2, H / 2 - titleSize * 0.9);
 
   ctx.font = `400 ${descSize}px system-ui, sans-serif`;
-  ctx.fillStyle = "#bbbbbb";
+  ctx.fillStyle = "#dddddd";
   for (let i = 0; i < lines.length; i++) {
     ctx.fillText(lines[i], W / 2, H / 2 + titleSize * 0.4 + i * (descSize * 1.5));
   }

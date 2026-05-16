@@ -9,28 +9,39 @@ void main() {
 }
 `;
 
-// Dark pixels → shadow, light pixels → transparent.
-// smoothstep gives soft edges for a more natural silhouette.
+// Luma threshold → opaque dark patch where subject is dark, transparent where bright.
+// Renders inside ProjectionSurface's portal scene as a gobo layer.
+// In the gobo: dark patches block spotlight → shadow on wall.
+// uThreshold: luma cutoff (lower = more of the image becomes shadow)
+// uSoftness:  smoothstep half-width (higher = softer shadow edges)
 const fragmentShader = `
 uniform sampler2D uVideo;
 uniform float uThreshold;
+uniform float uSoftness;
 varying vec2 vUv;
+
 void main() {
   vec4 col = texture2D(uVideo, vUv);
   float luma = dot(col.rgb, vec3(0.299, 0.587, 0.114));
-  float shadow = 1.0 - smoothstep(uThreshold - 0.15, uThreshold + 0.15, luma);
+  float shadow = 1.0 - smoothstep(uThreshold - uSoftness, uThreshold + uSoftness, luma);
   if (shadow < 0.01) discard;
-  gl_FragColor = vec4(0.05, 0.04, 0.06, shadow * 0.9);
+  gl_FragColor = vec4(0.0, 0.0, 0.0, shadow * 0.95);
 }
 `;
 
 /**
- * VideoShadow — dark silhouette overlay on the wall.
+ * VideoShadow — luma-threshold shadow layer for the ProjectionSurface gobo.
  *
- * When `isActive` (webcam on): uses the live webcam feed, mirrored.
- * Otherwise: loops /video.mp4 through the same shadow shader.
- * Both paths produce a luma-based dark overlay — dark source areas cast shadow,
- * light areas are transparent.
+ * Designed to run inside ProjectionSurface's createPortal scene (same coordinate
+ * space as Mp4Mesh / TextMesh). Geometry fills the orthographic camera view.
+ *
+ * When isActive (webcam on): uses the live webcam feed, mirrored left-right.
+ * Otherwise: falls back to /video.mp4 through the same shader.
+ *
+ * Dark source pixels → opaque black patch in the gobo → spotlight blocked → shadow on wall.
+ * Light source pixels → discarded → gobo unchanged → light passes through.
+ *
+ * Use at renderOrder=2 so it paints on top of Mp4Mesh (0) and TextMesh (1).
  */
 export function VideoShadow({ videoRef, isActive }) {
   const mat = useMemo(
@@ -39,10 +50,12 @@ export function VideoShadow({ videoRef, isActive }) {
         uniforms: {
           uVideo: { value: null },
           uThreshold: { value: 0.5 },
+          uSoftness: { value: 0.18 },
         },
         vertexShader,
         fragmentShader,
         transparent: true,
+        depthTest: false,
         depthWrite: false,
       }),
     [],
@@ -50,7 +63,6 @@ export function VideoShadow({ videoRef, isActive }) {
 
   useEffect(() => () => mat.dispose(), [mat]);
 
-  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => {
     if (isActive && videoRef?.current) {
       const tex = new THREE.VideoTexture(videoRef.current);
@@ -85,8 +97,8 @@ export function VideoShadow({ videoRef, isActive }) {
   }, [isActive, videoRef, mat]);
 
   return (
-    <mesh position={[0, 0, 1]}>
-      <planeGeometry args={[16, 10]} />
+    <mesh renderOrder={2}>
+      <planeGeometry args={[2, 1]} />
       <primitive object={mat} attach="material" />
     </mesh>
   );

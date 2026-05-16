@@ -3,7 +3,7 @@ export const SCENE_CONFIG = {
   lightX: 0,
   lightY: 0.5,
   lightZ: 3.5,
-  lightIntensity: 18,
+  lightIntensity: 40,
   lightAngle: 0.45,
   lightPenumbra: 0.35,
 
@@ -15,7 +15,7 @@ export const SCENE_CONFIG = {
   wallRotX: 0,
 
   // Atmosphere
-  ambientIntensity: 20,
+  ambientIntensity: 2,
   dustOpacity: 0.35,
   fogColor: "#000",
   fogDensity: 0.09,
@@ -24,5 +24,5 @@ export const SCENE_CONFIG = {
   sunX: 0,
   sunY: 0,
   sunZ: 3,
-  fireIntensity: 8,
+  fireIntensity: 12,
 };

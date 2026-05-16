@@ -1,164 +1,100 @@
-# Shadow Effect — Demo Plan
+# Shadow Effect — Plan
 
-Async from PLAN.md. Goal: find the best shadow technique before wiring it into the main scene.
-Each demo is an isolated standalone page. Once a winner is found, it replaces the MediaPipe approach in `ProjectionCanvas.jsx` / Stage 1 of PLAN.md.
-
----
-
-## Setup
-
-All demos live in `src/demos/shadow/`.
-Add routes in `App.jsx` or a dedicated `DemoApp.jsx` (swap `main.jsx` entry during dev).
-
-**Test video:** drop `public/test-video.mp4` — should contain moving objects (hands, person, car, pet — something with distinct silhouette against a plain background). Demos support toggling between test video and live webcam.
-
-Each demo exports a `getShadowTexture(renderer, videoTexture) → THREE.Texture` function so they're swappable once a winner is picked.
+Async from PLAN.md. Tracks improvements to the shadow/projection effect quality.
 
 ---
 
-## Demo A — Threshold shader (baseline)
+## Current architecture (as of Stage 3)
 
-**Technique:** grayscale → contrast boost → threshold cutoff. Dark pixels become shadow, light become transparent. Entire pipeline in a GLSL fragment shader applied to a `VideoTexture`.
+All shadow/projection happens through the **SpotLight gobo** system:
 
-**Expected look:** crude, unstable, very "cave painting". Probably the strongest aesthetic of all.
+1. `ProjectionSurface.jsx` renders 3 layers to a `WebGLRenderTarget` (2048x1024):
+   - **Layer 0** (`Mp4Mesh`, renderOrder=0) — looping `/video.mp4`, base layer
+   - **Layer 1** (`TextMesh`, renderOrder=1) — white text, `AdditiveBlending`
+   - **Layer 2** (`VideoShadow`, renderOrder=2) — luma-threshold shadow, `NormalBlending`
+2. That render target is fed into `spotLight.map` (gobo) in `SceneContent.jsx`
+3. The spotlight projects the gobo onto the rocky wall GLB
 
-**Why test first:** near-zero cost, works on any device, no libs.
+The gobo scene background is `#151515` (near-black) — provides a faint base glow
+so the person silhouette is visible across the entire spotlight cone, not just over text/video.
 
-Files:
-- `src/demos/shadow/DemoA.jsx` — R3F scene, plane mesh, shader material
-- `src/demos/shadow/shaders/threshold.glsl`
-
-Shader inputs:
-- `uVideo` — video texture
-- `uThreshold` — float 0–1 (UI slider)
-- `uContrast` — float multiplier
-- `uInvert` — bool (dark or light silhouette)
-
-UI controls: threshold slider, contrast slider, source toggle (webcam / test video).
-
-**Morphology:** add optional `uBlurRadius` for soft shadow edges — keeps fire-lit feel.
+`VideoShadow.jsx` handles both webcam (live, mirrored) and `/video.mp4` (fallback) through
+a luma-threshold GLSL shader: dark source pixels → opaque black in gobo → blocks light → shadow on wall.
 
 ---
 
-## Demo B — Background subtraction
+## Known limitations
 
-**Technique:** average first N frames into a static background texture. Each new frame: `abs(current - background)`. Diff above threshold = foreground = shadow.
-
-**Expected look:** environment disappears, only moving subjects survive. Very strong for public-space / outdoor footage.
-
-**Why test:** research notes say this "may actually be the strongest baseline technique".
-
-Files:
-- `src/demos/shadow/DemoB.jsx`
-- `src/demos/shadow/shaders/bg-subtract.glsl`
-
-Implementation:
-- Capture background by averaging 30–60 frames at startup (or on keypress `R` to re-learn)
-- Store as `THREE.WebGLRenderTarget` (background accumulation texture)
-- Fragment shader: diff + threshold + morphology dilation (fill small holes)
-
-Shader inputs:
-- `uVideo` — current frame
-- `uBackground` — learned background texture
-- `uSensitivity` — diff threshold
-- `uDilation` — morphology radius
-
-UI: "Re-learn background" button, sensitivity slider, source toggle.
-
-**Test with test video:** use footage with a static background and something moving through it (car, person).
+- **No segmentation** — shadow is purely luma-based. In a well-lit room where the person is
+  bright, they won't show as shadow. Works best with backlighting or a light background.
+- **Shadow only blocks content light** — the gobo base (#151515) is very dim, so the shadow
+  is much more visible over the video/text area than in the "empty" parts of the beam.
+- **Cave wall normals fight the projection** — the roughness/normal map on the GLB mesh
+  scatters projected light, reducing readability. We want the wall to receive the projection
+  cleanly but still look rocky.
 
 ---
 
-## Demo C — Temporal accumulation / ghost trails
+## Future improvements (not yet implemented)
 
-**Technique:** diff current frame vs previous frame → only moving pixels survive → accumulate into a "memory" buffer with exponential decay.
+### High impact — try first
 
-**Expected look:** motion leaves traces, stationary subjects fade. Ritual echoes, spirit trails. Movement memory.
+**A. Normal map suppression in projection zone**
+Reduce `roughness` / `normalScale` on the wall material specifically inside the spotlight
+cone using a custom `onBeforeCompile` shader injection or a secondary mesh layer.
+Expected: text and shadow read much more cleanly on the craggy wall.
 
-**Why test:** highest artistic potential per the research notes. "The wall remembering movement."
+**B. Projection blur (soft cave diffusion)**
+Add a two-pass Gaussian blur to the render target before it is fed to the spotlight map.
+Implementation: ping-pong render targets with a blur kernel shader, or a custom
+EffectComposer pass. A 4-8px blur makes projected light look like it is scattering on rough
+stone rather than a sharp gobo.
+Expected: much stronger cave feel, less "digital slide projector".
 
-Files:
-- `src/demos/shadow/DemoC.jsx`
-- `src/demos/shadow/shaders/temporal-diff.glsl`
-- `src/demos/shadow/shaders/accumulate.glsl`
+**C. Animated edge glow on shadow**
+Second shader pass: detect the silhouette edge (Sobel or difference-of-gaussians) and add
+a subtle emissive halo (amber/orange, animated pulse) — like heat shimmer around a shadow
+from a nearby flame.
 
-Implementation (ping-pong render targets):
-1. `temporal-diff.glsl`: `abs(currentFrame - prevFrame)` → motion mask
-2. `accumulate.glsl`: `newAccum = motionMask + prevAccum * uDecay`
-3. Render accumulated texture as shadow
+**D. Background subtraction for better silhouette**
+Average first 30 frames into a static background texture. Each new frame: diff against
+background. Only changed pixels become shadow. Removes ambient noise, produces clean
+silhouette even in dark environments. Requires ping-pong render target at startup.
 
-Shader inputs:
-- `uCurrent` — current video frame
-- `uPrev` — previous frame (render target)
-- `uAccum` — accumulated shadow buffer
-- `uDecay` — float 0.8–0.99 (slow fade = long ghost, fast fade = crisp motion)
-- `uMotionThreshold` — diff sensitivity
+**E. Temporal accumulation / ghost trails**
+Shadow memory buffer: `newAccum = shadow + prevAccum * decay`. Shadows linger and fade
+slowly — fire-cast shadows flickering on the wall. `uDecay` slider (0.85-0.98) controls
+trace persistence. Highest artistic potential of all approaches.
 
-UI: decay slider, threshold slider, source toggle.
+### Medium impact
 
----
+**F. Gobo brightness boost via emissive blend**
+Replace Mp4Mesh meshBasicMaterial with a custom shader that adds an emissive boost pass
+(`color * uBrightness + uEmissive`) so dark video frames still project visibly.
 
-## Demo D — MediaPipe + morphological cleanup
+**G. Spotlight color temperature animation**
+Slowly animate `spotLight.color` between warm amber and cool blue — simulates fire flicker.
+Subtle (+/-10% Kelvin shift) but contributes greatly to the cave illusion.
 
-**Technique:** current MediaPipe selfie segmentation (already in `ProjectionCanvas.jsx`) but with proper GPU-side morphological cleanup instead of raw mask output.
+**H. Shadow sharpness control in leva**
+Expose `uThreshold` and `uSoftness` from `VideoShadow.jsx` as leva controls for QA tuning
+without code changes.
 
-**Why test:** baseline comparison. The current implementation applies the mask directly with no cleanup — this tests whether cleanup alone fixes its weaknesses.
+### Lower priority
 
-Files:
-- `src/demos/shadow/DemoD.jsx`
-- `src/demos/shadow/shaders/morphology.glsl`
+**I. MediaPipe segmentation (proper silhouette)**
+Optional path for the shadow layer. Produces a clean body-only mask regardless of lighting.
+CPU cost is the main concern. Only activate in webcam mode. Luma shader stays as video fallback.
 
-Morphology shader passes (applied to MediaPipe output mask):
-1. Erosion (remove noise)
-2. Dilation (fill holes, thicken)
-3. Gaussian blur (soft edges — fire-lit feel)
-4. Optional: edge detection pass for contour-only mode
-
-Shader inputs:
-- `uMask` — raw MediaPipe segmentation texture
-- `uErosion` / `uDilation` — kernel radius
-- `uBlur` — blur radius
-- `uContourOnly` — bool
-
-UI: all morphology sliders, contour toggle, source toggle.
-
----
-
-## Demo E — Combo / focus slider
-
-Only build this after A–D are evaluated.
-
-**Concept:** single slider from 0–100 that blends techniques:
-- 0–25%: Demo A (threshold only)
-- 25–50%: Demo B (background subtraction)
-- 50–75%: Demo C (temporal accumulation)
-- 75–100%: Demo D (MediaPipe + cleanup)
-
-Each step is a qualitatively different abstraction, not just "more accurate".
-
-Files:
-- `src/demos/shadow/DemoE.jsx` — imports shaders from A–D
+**J. Contour-only mode**
+Shader variant: only the silhouette edge (2-4px) renders as shadow, not the filled body.
+Outline-only projection — very cave-painting aesthetic.
 
 ---
 
-## Evaluation criteria per demo
+## Notes
 
-After running each demo with test video + webcam, note:
-- Aesthetic quality (does it feel like cave shadows?)
-- Edge stability (too noisy? too clean?)
-- Performance (FPS on laptop, FPS on phone if tested)
-- Failure modes (breaks when X happens)
-- Emotional feel
-
-Winner feeds into PLAN.md Stage 1 as the `getShadowTexture` implementation.
-
----
-
-## Notes for agent
-
-- All shaders use `THREE.ShaderMaterial` inside R3F, not post-processing passes — keeps it composable
-- Ping-pong render targets pattern: two `THREE.WebGLRenderTarget`, swap each frame
-- `VideoTexture` from Three.js wraps a `<video>` element — same source works for both test video and webcam
-- Test video source: `const src = mode === 'webcam' ? stream : '/test-video.mp4'`
-- Keep each demo runnable in isolation — no imports from main app except `useCamera.js`
-- Current MediaPipe approach to replace: `ProjectionCanvas.jsx:125–170` (selfie segmentation loop)
+- All shader work lives in `VideoShadow.jsx` and `ProjectionSurface.jsx`
+- Wall material changes go in `SceneContent.jsx` → `WallMesh`
+- Test with `/video.mp4` first (controlled source), then live webcam
+- User does visual QA — no automated tests

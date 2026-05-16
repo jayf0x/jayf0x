@@ -2,16 +2,21 @@ import { useMemo, useEffect, useRef } from "react";
 import { createPortal, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { buildGoboCanvas } from "./utils/textCanvas";
+import { VideoShadow } from "./VideoShadow";
 
 /**
  * ProjectionSurface — composites layers into `target` for the spotlight gobo.
  *
  * Layers (rendered in an offscreen scene via createPortal):
  *   0  mp4 video    — looping video, base layer (hidden until first frame plays)
- *   1  text         — white text on black, AdditiveBlending (adds brightness on top)
- *   2  webcam       — user silhouette, MultiplyBlending (dims where person is dark)
+ *   1  text         — white text on black, AdditiveBlending (adds brightness)
+ *   2  shadow       — luma-threshold silhouette, NormalBlending (blocks light where dark)
  *
- * Everything is projected onto the wall via the spotlight — no floating planes.
+ * Scene background is near-black (#151515) rather than pure black so there is a
+ * faint base everywhere in the spotlight cone — this makes the shadow silhouette
+ * visible even outside the video/text areas.
+ *
+ * Everything is projected onto the wall via the spotlight gobo — no floating planes.
  */
 
 function Mp4Mesh() {
@@ -74,46 +79,12 @@ function TextMesh() {
   );
 }
 
-function WebcamMesh({ videoRef }) {
-  const matRef = useRef();
-
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-
-    const tex = new THREE.VideoTexture(vid);
-    tex.minFilter = THREE.LinearFilter;
-    tex.wrapS = THREE.RepeatWrapping;
-    tex.repeat.set(-1, 1);
-    tex.offset.set(1, 0);
-
-    const mat = matRef.current;
-    if (mat) { mat.map = tex; mat.needsUpdate = true; }
-
-    return () => {
-      tex.dispose();
-      if (mat) { mat.map = null; mat.needsUpdate = true; }
-    };
-  }, [videoRef]);
-
-  return (
-    <mesh renderOrder={2}>
-      <planeGeometry args={[2, 1]} />
-      <meshBasicMaterial
-        ref={matRef}
-        blending={THREE.MultiplyBlending}
-        depthTest={false}
-        depthWrite={false}
-        transparent
-      />
-    </mesh>
-  );
-}
-
 export function ProjectionSurface({ target, videoRef, isActive }) {
   const [scene, camera] = useMemo(() => {
     const s = new THREE.Scene();
-    s.background = new THREE.Color(0x000000);
+    // Near-black instead of pure black — provides a faint base glow across the
+    // entire spotlight cone so the shadow silhouette is visible outside text/video.
+    s.background = new THREE.Color(0x151515);
     const cam = new THREE.OrthographicCamera(-1, 1, 0.5, -0.5, 0.1, 10);
     cam.position.set(0, 0, 5);
     return [s, cam];
@@ -132,7 +103,7 @@ export function ProjectionSurface({ target, videoRef, isActive }) {
     <>
       <Mp4Mesh />
       <TextMesh />
-      {isActive && videoRef?.current && <WebcamMesh videoRef={videoRef} />}
+      <VideoShadow videoRef={videoRef} isActive={isActive} />
     </>,
     scene,
   );
