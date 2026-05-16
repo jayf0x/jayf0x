@@ -1,14 +1,7 @@
-import { useRef, useEffect, useMemo, useState, memo } from "react";
+import { useRef, useEffect, useMemo, memo } from "react";
 import { useGLTF, Preload, OrbitControls } from "@react-three/drei";
 import { useControls, folder } from "leva";
-import {
-  EffectComposer,
-  GodRays,
-  Bloom,
-  Vignette,
-} from "@react-three/postprocessing";
 import * as THREE from "three";
-import { useCaptureFrame } from "./hooks/useCaptureFrame";
 import { Dust } from "./Dust";
 import { ProjectionSurface } from "./ProjectionSurface";
 import { SCENE_CONFIG as C } from "./config";
@@ -41,31 +34,17 @@ const WallMesh = memo(function WallMesh({ wallX, wallY, wallZ, wallScale, wallRo
   );
 });
 
-const QACube = memo(function QACube({ x, y, z, scale }) {
-  return (
-    <mesh position={[x, y, z]} scale={scale} castShadow receiveShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#5a4020" roughness={0.85} metalness={0.05} />
-    </mesh>
-  );
-});
-
-export default function SceneContent({ videoRef, isActive, captureRef }) {
+export default function SceneContent({ videoRef, isActive }) {
   const spotRef = useRef();
   const targetRef = useRef();
-  const [sunMesh, setSunMesh] = useState(null);
-
-  useCaptureFrame(captureRef);
 
   const {
     lightX, lightY, lightZ,
     lightIntensity, lightAngle, lightPenumbra,
     wallX, wallY, wallZ, wallScale, wallRotX,
     ambientIntensity, dustOpacity,
-    showGodRays, bloomIntensity, fogDensity, fogColor,
-    sunX, sunY, sunZ, sunSize,
-    godRaysDensity, godRaysWeight, godRaysDecay, fireIntensity,
-    cubeX, cubeY, cubeZ, cubeScale,
+    fogDensity, fogColor,
+    sunX, sunY, sunZ, fireIntensity,
   } = useControls({
     Projector: folder({
       lightX: { value: C.lightX, min: -5, max: 5, step: 0.01 },
@@ -83,28 +62,16 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
       wallRotX: { value: C.wallRotX, min: -Math.PI, max: Math.PI, step: 0.01 },
     }),
     Atmosphere: folder({
-      ambientIntensity: { value: C.ambientIntensity, min: 0, max: 10, step: 0.01 },
+      ambientIntensity: { value: C.ambientIntensity, min: 0, max: 30, step: 0.01 },
       dustOpacity: { value: C.dustOpacity, min: 0, max: 1, step: 0.01 },
       fogColor: { value: C.fogColor },
       fogDensity: { value: C.fogDensity, min: 0, max: 0.5, step: 0.001 },
-      bloomIntensity: { value: C.bloomIntensity, min: 0, max: 1.5, step: 0.05 },
     }),
-    "God Rays": folder({
-      showGodRays: { value: C.showGodRays },
+    Fire: folder({
       sunX: { value: C.sunX, min: -5, max: 5, step: 0.01 },
       sunY: { value: C.sunY, min: -5, max: 5, step: 0.01 },
       sunZ: { value: C.sunZ, min: -5, max: 5, step: 0.01 },
-      sunSize: { value: C.sunSize, min: 0.01, max: 1, step: 0.01 },
-      godRaysDensity: { value: C.godRaysDensity, min: 0, max: 1, step: 0.01 },
-      godRaysWeight: { value: C.godRaysWeight, min: 0, max: 1, step: 0.01 },
-      godRaysDecay: { value: C.godRaysDecay, min: 0, max: 1, step: 0.01 },
       fireIntensity: { value: C.fireIntensity, min: 0, max: 40, step: 0.5 },
-    }),
-    "QA Cube": folder({
-      cubeX: { value: C.cubeX, min: -5, max: 5, step: 0.01 },
-      cubeY: { value: C.cubeY, min: -5, max: 5, step: 0.01 },
-      cubeZ: { value: C.cubeZ, min: -5, max: 5, step: 0.01 },
-      cubeScale: { value: C.cubeScale, min: 0.01, max: 5, step: 0.01 },
     }),
   });
 
@@ -151,10 +118,6 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
       />
       <OrbitControls />
 
-      {/* <mesh ref={setSunMesh} position={sunPos}>
-        <sphereGeometry args={[sunSize, 12, 12]} />
-        <meshBasicMaterial color="#ff6a00" />
-      </mesh> */}
       <pointLight
         position={sunPos}
         intensity={fireIntensity}
@@ -172,45 +135,11 @@ export default function SceneContent({ videoRef, isActive, captureRef }) {
         <meshStandardMaterial color="#0a0805" roughness={1} metalness={0} />
       </mesh>
 
-      <QACube x={cubeX} y={cubeY} z={cubeZ} scale={cubeScale} />
-
-      {/* DEBUG: shows projTarget content — remove after fixing */}
-      <mesh position={[0, 0, 2]}>
-        <planeGeometry args={[3, 1.5]} />
-        <meshBasicMaterial map={projTarget.texture} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* DEBUG: white wall to verify spotlight projection */}
-      <mesh position={[0, 0, -2]} receiveShadow>
-        <planeGeometry args={[12, 8]} />
-        <meshStandardMaterial color="#ffffff" roughness={1} metalness={0} />
-      </mesh>
-
       <Dust opacity={dustOpacity} />
 
       <ProjectionSurface target={projTarget} videoRef={videoRef} isActive={isActive} />
 
       <Preload all />
-
-      {/* multisampling={0} prevents EffectComposer from allocating extra MSAA buffers. */}
-      {/* <EffectComposer multisampling={0}>
-        <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={bloomIntensity} />
-        <Vignette eskil={false} offset={0.1} darkness={0.8} />
-        {showGodRays && sunMesh && (
-          <GodRays
-            sun={sunMesh}
-            samples={60}
-            density={godRaysDensity}
-            decay={godRaysDecay}
-            weight={godRaysWeight}
-            exposure={0.6}
-            clampMax={1}
-            width={800}
-            height={800}
-            blur
-          />
-        )}
-      </EffectComposer> */}
     </>
   );
 }

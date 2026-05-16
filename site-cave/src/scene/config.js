@@ -15,27 +15,14 @@ export const SCENE_CONFIG = {
   wallRotX: 0,
 
   // Atmosphere
-  ambientIntensity: 3,
+  ambientIntensity: 20,
   dustOpacity: 0.35,
   fogColor: "#000",
   fogDensity: 0.09,
-  // Bloom above ~1.5 causes runaway render-target accumulation and can crash the tab.
-  bloomIntensity: 0.6,
 
-  // Fire / God Rays
-  showGodRays: true,
+  // Fire point light
   sunX: 0,
   sunY: 0,
   sunZ: 3,
-  sunSize: 0.3,
-  godRaysDensity: 0.96,
-  godRaysWeight: 0.6,
-  godRaysDecay: 0.93,
   fireIntensity: 8,
-
-  // QA Cube
-  cubeX: 0,
-  cubeY: 0,
-  cubeZ: 1,
-  cubeScale: 0.4,
 };

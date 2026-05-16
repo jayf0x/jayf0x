@@ -1,6 +1,15 @@
-import { forwardRef, useRef, useImperativeHandle } from "react";
-import { Canvas } from "@react-three/fiber";
+import { forwardRef, useRef, useImperativeHandle, useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import SceneContent from "./SceneContent";
+import { captureFrame } from "./utils/captureFrame";
+
+function CaptureSetup({ captureRef }) {
+  const { gl } = useThree();
+  useEffect(() => {
+    captureRef.current = (quality) => captureFrame(gl, quality);
+  }, [gl, captureRef]);
+  return null;
+}
 
 const CaveScene = forwardRef(function CaveScene({ videoRef, isActive }, ref) {
   const captureRef = useRef(null);
@@ -24,11 +33,8 @@ const CaveScene = forwardRef(function CaveScene({ videoRef, isActive }, ref) {
       }}
     >
       <color attach="background" args={["#080604"]} />
-      <SceneContent
-        videoRef={videoRef}
-        isActive={isActive}
-        captureRef={captureRef}
-      />
+      <CaptureSetup captureRef={captureRef} />
+      <SceneContent videoRef={videoRef} isActive={isActive} />
     </Canvas>
   );
 });
